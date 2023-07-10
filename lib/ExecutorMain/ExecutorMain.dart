@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_code_editor/flutter_code_editor.dart';
 import 'package:flutter_code_editor/flutter_code_editor.dart';
-import 'package:flutter_highlight/themes/tomorrow-night-eighties.dart';
+import 'package:flutter_highlight/themes/monokai.dart';
 import 'package:highlight/languages/lua.dart';
 
 final controller = CodeController(
-  text: '...', // Initial code
+  text: '', // Initial code
   language: lua,
 );
 
@@ -15,14 +15,19 @@ class TextArea extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SizedBox(
-        width: 500,
-        height: 500,
-        child: CodeTheme(
-          data: CodeThemeData(styles: tomorrowNightEightiesTheme),
-          child: SingleChildScrollView(
-            child: CodeField(
-              controller: controller,
+      body: Container(
+        decoration: const BoxDecoration(
+          color: Color(0XFF3B4348)
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(8),
+          child: CodeTheme(
+            data: CodeThemeData(styles: monokaiTheme),
+            child: SingleChildScrollView(
+              child: CodeField(
+                background: const Color(0XFF3B4348),
+                controller: controller,
+              ),
             ),
           ),
         ),
@@ -45,6 +50,9 @@ class ExecutorMain extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(body: CodeEditor());
+    return const Padding(
+      padding: EdgeInsets.only(top: 30),
+      child: Scaffold(body: CodeEditor()),
+    );
   }
 }
