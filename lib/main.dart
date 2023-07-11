@@ -102,7 +102,14 @@ class MainWindow extends StatelessWidget {
           Flexible(
             child: Row(
               children: [
-                Text(""),
+                Text("asd"),
+                Container(
+                  width: 10,
+                  height: 10,
+                  decoration: BoxDecoration(
+                    
+                  )
+                ),
                 ExecutorMain(),
               ],
             ),
