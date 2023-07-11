@@ -99,21 +99,16 @@ class MainWindow extends StatelessWidget {
               ],
             ),
           ),
-          Flexible(
-            child: Row(
-              children: [
-                Text("asd"),
-                Container(
-                  width: 10,
-                  height: 10,
-                  decoration: BoxDecoration(
-                    
-                  )
-                ),
-                ExecutorMain(),
-              ],
-            ),
-          ),
+          ExecutorMain(),
+          // Flexible(
+          //   child: Row(
+          //     children: [
+          //       Text("asd"),
+          //       Container(width: 10, height: 10, decoration: BoxDecoration()),
+          //       // ExecutorMain(),
+          //     ],
+          //   ),
+          // ),
         ],
       ),
     );
