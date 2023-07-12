@@ -144,12 +144,23 @@ class MainWindow extends StatelessWidget {
                 Container(
                   // Executor Window
                   width: MediaQuery.of(context).size.width - 50,
-                  height: MediaQuery.of(context).size.height - 200,
+                  height: MediaQuery.of(context).size.height - 250,
                   child: const ExecutorMain(),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(top: 4, bottom: 8),
+                  child: Container(
+                    width: MediaQuery.of(context).size.width - 50,
+                    height: 150,
+                    decoration: const BoxDecoration(
+                      color: Color(0XFF3B4348),
+                      borderRadius: BorderRadius.all(Radius.circular(6)),
+                    ),
+                  ),
                 ),
               ],
             ),
-            Expanded(child: Container())
+
             //
           ])
         ],

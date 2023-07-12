@@ -16,7 +16,10 @@ class TextArea extends StatelessWidget {
     return Scaffold(
       body: Container(
         height: double.infinity,
-        decoration: const BoxDecoration(color: Color(0XFF3B4348)),
+        decoration: const BoxDecoration(
+          color: Color(0XFF3B4348),
+          borderRadius: BorderRadius.all(Radius.circular(6)),
+        ),
         child: Padding(
           padding: const EdgeInsets.all(8),
           child: CodeTheme(
