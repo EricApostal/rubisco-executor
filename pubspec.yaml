@@ -28,18 +28,24 @@ environment:
 # the latest version available on pub.dev. To see which dependencies have newer
 # versions available, run `flutter pub outdated`.
 dependencies:
+  flutter:
+    sdk: flutter
+
   bitsdojo_window: ^0.1.5
   window_manager: ^0.3.5
   universal_platform: ^1.0.0+1
   flutter_code_editor: ^0.3.0
-  flutter:
-    sdk: flutter
-    
-
-
-  # The following adds the Cupertino Icons font to your application.
-  # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2
+
+    # When depending on this package from a real application you should use:
+    #   webview_window: ^x.y.z
+    # See https://dart.dev/tools/pub/dependencies#version-constraints
+    # The example app is bundled with the plugin so we use a path dependency on
+    # the parent directory to use the current plugin's version.
+    # path: ../
+  path_provider: ^2.0.7
+  webview_universal: ^0.0.4
+
 
 dev_dependencies:
   flutter_test:
