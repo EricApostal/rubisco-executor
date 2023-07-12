@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:rubisco_one/ExecutorMain/ExecutorMain.dart';
-import 'package:rubisco_one/Misc/sidebar.dart';
 
 void main() {
   runApp(const MyApp());
@@ -29,7 +28,7 @@ class MyApp extends StatelessWidget {
         scaffoldBackgroundColor: const Color(0xFF1E1E1E),
         useMaterial3: true,
       ),
-      home: MainWindow(),
+      home: const MainWindow(),
     );
   }
 }
@@ -74,10 +73,13 @@ class WindowButtons extends StatelessWidget {
 }
 
 class MainWindow extends StatelessWidget {
+  const MainWindow({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
             height: 50,
@@ -99,16 +101,57 @@ class MainWindow extends StatelessWidget {
               ],
             ),
           ),
-          ExecutorMain(),
-          // Flexible(
-          //   child: Row(
-          //     children: [
-          //       Text("asd"),
-          //       Container(width: 10, height: 10, decoration: BoxDecoration()),
-          //       // ExecutorMain(),
-          //     ],
-          //   ),
-          // ),
+          Row(mainAxisAlignment: MainAxisAlignment.start, children: [
+            // Sidebar
+            Container(
+              width: 50,
+              height: MediaQuery.of(context).size.height - 50,
+              decoration: const BoxDecoration(color: Color(0xFF1E1E1E)),
+            ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  decoration: const BoxDecoration(color: Color(0xFF1E1E1E)),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(right: 4.0),
+                        child: Container(
+                          width: 150,
+                          height: 35,
+                          decoration: const BoxDecoration(
+                            color: Color(0XFF3B4348),
+                            borderRadius: BorderRadius.all(Radius.circular(6)),
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(right: 4.0),
+                        child: Container(
+                          width: 150,
+                          height: 35,
+                          decoration: const BoxDecoration(
+                            color: Color(0XFF3B4348),
+                            borderRadius: BorderRadius.all(Radius.circular(6)),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Container(
+                  // Executor Window
+                  width: MediaQuery.of(context).size.width - 50,
+                  height: MediaQuery.of(context).size.height - 200,
+                  child: const ExecutorMain(),
+                ),
+              ],
+            ),
+            Expanded(child: Container())
+            //
+          ])
         ],
       ),
     );
