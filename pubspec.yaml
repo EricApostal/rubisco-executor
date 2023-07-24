@@ -44,7 +44,7 @@ dependencies:
     # the parent directory to use the current plugin's version.
     # path: ../
   path_provider: ^2.0.7
-  webview_universal: ^0.0.4
+  blossom_tabs: ^4.0.0
 
 
 dev_dependencies:
