@@ -1,16 +1,13 @@
-import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
 
 import 'package:blossom_tabs/blossom_tabs.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_code_editor/flutter_code_editor.dart';
-import 'package:highlight/languages/lua.dart';
-import 'package:flutter_highlight/themes/monokai.dart';
 import 'package:webview_windows/webview_windows.dart';
 import 'package:flutter/services.dart';
 import 'dart:async';
 import 'package:path/path.dart' as p;
+import 'package:google_fonts/google_fonts.dart';
 
 String getAssetFileUrl(String asset) {
   final assetsDirectory = p.join(
@@ -133,11 +130,6 @@ class _ExampleBrowser extends State<ExampleBrowser> {
   }
 }
 
-final controller = CodeController(
-  text: '', // Initial code
-  language: lua,
-);
-
 class ExecutorMain extends StatelessWidget {
   const ExecutorMain({Key? key}) : super(key: key);
 
@@ -166,7 +158,7 @@ Widget buildTab(
           title,
           softWrap: false,
           overflow: TextOverflow.fade,
-          style: TextStyle(
+          style: const TextStyle(
             color: Colors.white, // Set the text color to white
           ),
         ),
@@ -214,23 +206,12 @@ class _TabState extends State<Tabs> {
 
   @override
   void initState() {
-    _tabs = ['main', 'b', 'c', 'd', 'e']
+    _tabs = ['Tab 1']
         .map(
           (e) => _getTab(e),
-          //     BlossomTab.fromJson<int>(
-          //   {
-          //     "id": e,
-          //     "data": {"value": int.parse(e.codeUnits.join())},
-          //     "title": e.toUpperCase(),
-          //     "isSticky": e == 'd' ? true : false,
-          //     "maxWidth": 200.0,
-          //     "stickyWidth": 50.0
-          //   },
-          //   (map) => map['value'],
-          // ),
         )
         .toList();
-    _controller = BlossomTabController<int>(currentTab: 'b', tabs: _tabs);
+    _controller = BlossomTabController<int>(currentTab: 'Tab 1', tabs: _tabs);
     super.initState();
   }
 
@@ -250,15 +231,13 @@ class _TabState extends State<Tabs> {
                 selectedColor: const Color(0xFF222735),
                 dragColor: const Color(0xFF222735),
                 stickyColor: Colors.white,
-                dividerColor: const Color(0xFF13141A),
+                dividerColor: Color.fromARGB(255, 255, 255, 255),
+                shadowColor: const Color(0xFF13141A),
                 bottomColor: const Color(0xFF222735),
-                margin: const EdgeInsets.only(left: 4, top: 0, right: 140),
+                margin: const EdgeInsets.only(left: 60, top: 0, right: 10),
                 tabBarMargin: 0,
-                tabBuilder: (context, tab, isActive) => buildTab(
-                  context,
-                  isActive: isActive,
-                  title: tab.id,
-                ),
+                tabBuilder: (context, tab, isActive) =>
+                    buildTab(context, isActive: isActive, title: tab.id),
                 tabActions: (context, tab) => [
                   Listener(
                     onPointerDown: (_) {
@@ -289,7 +268,7 @@ class _TabState extends State<Tabs> {
                       onTap: () {
                         final z = _controller.tabs.map((e) => e.id).toList()
                           ..sort();
-                        var c = z.isEmpty ? 'a' : z.last;
+                        var c = z.isEmpty ? 'Tab 0' : z.last;
                         final lastCharacter =
                             String.fromCharCode(c.codeUnitAt(c.length - 1) + 1);
                         c = c.substring(0, c.length - 1) + lastCharacter;

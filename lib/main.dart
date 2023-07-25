@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:rubisco_one/ExecutorMain/ExecutorMain.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 void main() {
   runApp(const MyApp());
@@ -158,14 +159,16 @@ class ButtonSection extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
-          const Text(
-            "Status: Injecting...",
-            style: TextStyle(
-              fontSize: 16,
-              fontFamily: 'Roboto',
-              color: Color(0xFFFFFFFF),
+          Padding(
+            padding: const EdgeInsets.only(top: 8),
+            child: Text(
+              "Status: Injecting...",
+              style: GoogleFonts.robotoMono(
+                fontSize: 14,
+                color: const Color(0xFFFFFFFF),
+              ),
+              textAlign: TextAlign.center,
             ),
-            textAlign: TextAlign.center,
           ),
           Expanded(child: Container()),
           ButtonContainer(
