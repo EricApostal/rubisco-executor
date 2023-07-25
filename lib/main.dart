@@ -72,13 +72,13 @@ class MainWindow extends StatelessWidget {
             color: const Color(0xFF13141A),
             child: Row(
               children: [
-                const Padding(
-                  padding: EdgeInsets.only(left: 12),
+                Padding(
+                  padding: const EdgeInsets.only(left: 12),
                   child: Text(
                     "RUBISCO",
-                    style: TextStyle(
+                    style: GoogleFonts.istokWeb(
                       fontSize: 24,
-                      color: Color(0xFFFFFFFF),
+                      color: Color(0xFFA1A1A1),
                     ),
                   ),
                 ),
