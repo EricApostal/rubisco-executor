@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:rubisco_one/ExecutorMain/ExecutorMain.dart';
 
-
 void main() {
   runApp(const MyApp());
   doWhenWindowReady(() {
@@ -18,7 +17,6 @@ void main() {
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -26,29 +24,14 @@ class MyApp extends StatelessWidget {
       title: 'Rubisco',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        primaryColor: const Color(0XFF13141A),
-        scaffoldBackgroundColor: const Color(0XFF13141A),
+        primaryColor: const Color(0xFF13141A),
+        scaffoldBackgroundColor: const Color(0xFF13141A),
         useMaterial3: true,
       ),
       home: const MainWindow(),
     );
   }
 }
-
-final buttonColors = WindowButtonColors(
-  iconNormal: const Color.fromARGB(255, 255, 255, 255),
-  // mouseOver: const Color.fromARGB(255, 37, 211, 255),
-  // mouseDown: const Color.fromARGB(255, 37, 211, 255),
-  // iconMouseOver: Color.fromARGB(255, 37, 211, 255),
-  // iconMouseDown: Color.fromARGB(255, 37, 211, 255),
-);
-
-final closeButtonColors = WindowButtonColors(
-  iconNormal: const Color.fromARGB(255, 255, 255, 255),
-  mouseOver: const Color.fromARGB(255, 220, 54, 54),
-  // mouseDown: Color.fromARGB(255, 159, 3, 3),
-  // iconMouseOver: Color.fromARGB(255, 159, 3, 3),
-);
 
 class WindowButtons extends StatelessWidget {
   const WindowButtons({Key? key}) : super(key: key);
@@ -94,7 +77,7 @@ class MainWindow extends StatelessWidget {
                     "RUBISCO",
                     style: TextStyle(
                       fontSize: 24,
-                      color: Color.fromARGB(255, 255, 255, 255),
+                      color: Color(0xFFFFFFFF),
                     ),
                   ),
                 ),
@@ -103,39 +86,143 @@ class MainWindow extends StatelessWidget {
               ],
             ),
           ),
-          Row(mainAxisAlignment: MainAxisAlignment.start, children: [
-            // Sidebar
-            Container(
-              width: 80, // SIDEBAR WIDTH
-              height: MediaQuery.of(context).size.height - 50,
-              decoration: const BoxDecoration(color: Color(0xFF13141A)),
-            ),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
-                  // Executor Window
-                  width: MediaQuery.of(context).size.width - 90, // 90 = sidebar width + margin
-                  height: MediaQuery.of(context).size.height - 250,
-                  child: const ExecutorMain(),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(top: 4, bottom: 8),
-                  child: Container(
-                    width: MediaQuery.of(context).size.width - 90, // 90 = sidebar width + margin
-                    height: 180,
-                    decoration: const BoxDecoration(
-                      color: Color(0xFF222735),
-                      borderRadius: BorderRadius.all(Radius.circular(6)),
-                    ),
+          const Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Sidebar(),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  ExecutorWindow(),
+                  Padding(
+                    padding: EdgeInsets.only(top: 8, bottom: 4),
+                    child: ButtonSection(),
                   ),
-                ),
-              ],
-            ),
-
-            //
-          ])
+                ],
+              ),
+            ],
+          ),
         ],
+      ),
+    );
+  }
+}
+
+// Constants for button colors
+final buttonColors = WindowButtonColors(
+  iconNormal: const Color.fromARGB(255, 255, 255, 255),
+);
+
+final closeButtonColors = WindowButtonColors(
+  iconNormal: const Color.fromARGB(255, 255, 255, 255),
+  mouseOver: const Color.fromARGB(255, 220, 54, 54),
+);
+
+class Sidebar extends StatelessWidget {
+  const Sidebar({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 80,
+      height: MediaQuery.of(context).size.height - 50,
+      decoration: const BoxDecoration(color: Color(0xFF13141A)),
+    );
+  }
+}
+
+class ExecutorWindow extends StatelessWidget {
+  const ExecutorWindow({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: MediaQuery.of(context).size.width - 89,
+      height: MediaQuery.of(context).size.height - 130,
+      child: const ExecutorMain(),
+    );
+  }
+}
+
+class ButtonSection extends StatelessWidget {
+  const ButtonSection({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: MediaQuery.of(context).size.width - 90,
+      height: 40,
+      decoration: const BoxDecoration(
+        borderRadius: BorderRadius.all(Radius.circular(6)),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          const Text(
+            "Status: Injecting...",
+            style: TextStyle(
+              fontSize: 16,
+              fontFamily: 'Roboto',
+              color: Color(0xFFFFFFFF),
+            ),
+            textAlign: TextAlign.center,
+          ),
+          Expanded(child: Container()),
+          ButtonContainer(
+            color: const Color(0xFF00C2FF),
+            label: "Inject",
+            onPressed: () {
+              print("Injecting...");
+            },
+          ),
+          const SizedBox(width: 8),
+          ButtonContainer(
+            color: const Color(0xFF43FF83),
+            label: "Run",
+            onPressed: () {
+              print("Running script!");
+            },
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class ButtonContainer extends StatelessWidget {
+  const ButtonContainer({
+    Key? key,
+    required this.color,
+    required this.label,
+    required this.onPressed,
+  }) : super(key: key);
+
+  final Color color;
+  final String label;
+  final VoidCallback onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 100,
+      height: 40,
+      decoration: BoxDecoration(
+        color: color,
+        borderRadius: BorderRadius.all(Radius.circular(6)),
+      ),
+      child: TextButton(
+        onPressed: onPressed,
+        child: Center(
+          child: Text(
+            label,
+            style: const TextStyle(
+              fontSize: 18,
+              fontFamily: 'Railway',
+              color: Color(0xFF212122),
+            ),
+            textAlign: TextAlign.center,
+          ),
+        ),
       ),
     );
   }

@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 import 'dart:math';
 
 import 'package:blossom_tabs/blossom_tabs.dart';
@@ -6,6 +7,131 @@ import 'package:flutter/material.dart';
 import 'package:flutter_code_editor/flutter_code_editor.dart';
 import 'package:highlight/languages/lua.dart';
 import 'package:flutter_highlight/themes/monokai.dart';
+import 'package:webview_windows/webview_windows.dart';
+import 'package:flutter/services.dart';
+import 'dart:async';
+import 'package:path/path.dart' as p;
+
+String getAssetFileUrl(String asset) {
+  final assetsDirectory = p.join(
+      p.dirname(Platform.resolvedExecutable), 'data', 'flutter_assets', asset);
+
+  return Uri.file(assetsDirectory).toString();
+}
+
+final navigatorKey = GlobalKey<NavigatorState>();
+
+class ExampleBrowser extends StatefulWidget {
+  @override
+  State<ExampleBrowser> createState() => _ExampleBrowser();
+}
+
+class _ExampleBrowser extends State<ExampleBrowser> {
+  final _controller = WebviewController();
+  final _textController = TextEditingController();
+  bool _isWebviewSuspended = false;
+
+  @override
+  void initState() {
+    super.initState();
+    initPlatformState();
+  }
+
+  Future<void> initPlatformState() async {
+    // Optionally initialize the webview environment using
+    // a custom user data directory
+    // and/or a custom browser executable directory
+    // and/or custom chromium command line flags
+    //await WebviewController.initializeEnvironment(
+    //    additionalArguments: '--show-fps-counter');
+
+    try {
+      await _controller.initialize();
+      _controller.url.listen((url) {
+        _textController.text = url;
+      });
+
+      await _controller.setBackgroundColor(Colors.transparent);
+      await _controller.setPopupWindowPolicy(WebviewPopupWindowPolicy.deny);
+      await _controller.loadUrl(
+          'file://C:/Users/Eric/Documents/software/exploits/Synapse X/bin/Monaco/Monaco.html');
+
+      if (!mounted) return;
+      setState(() {});
+    } on PlatformException catch (e) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        showDialog(
+            context: context,
+            builder: (_) => AlertDialog(
+                  title: Text('Error'),
+                  content: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('Code: ${e.code}'),
+                      Text('Message: ${e.message}'),
+                    ],
+                  ),
+                  actions: [
+                    TextButton(
+                      child: Text('Continue'),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                    )
+                  ],
+                ));
+      });
+    }
+  }
+
+  Widget compositeView() {
+    if (!_controller.value.isInitialized) {
+      return const Text(
+        '', // 'Not Initialized', // blank so it doesn't look goofy
+        style: TextStyle(
+          fontSize: 24.0,
+          fontWeight: FontWeight.w900,
+        ),
+      );
+    } else {
+      return Webview(
+        _controller,
+        permissionRequested: _onPermissionRequested,
+      );
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return compositeView();
+  }
+
+  Future<WebviewPermissionDecision> _onPermissionRequested(
+      String url, WebviewPermissionKind kind, bool isUserInitiated) async {
+    final decision = await showDialog<WebviewPermissionDecision>(
+      context: navigatorKey.currentContext!,
+      builder: (BuildContext context) => AlertDialog(
+        title: const Text('WebView permission requested'),
+        content: Text('WebView has requested permission \'$kind\''),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () =>
+                Navigator.pop(context, WebviewPermissionDecision.deny),
+            child: const Text('Deny'),
+          ),
+          TextButton(
+            onPressed: () =>
+                Navigator.pop(context, WebviewPermissionDecision.allow),
+            child: const Text('Allow'),
+          ),
+        ],
+      ),
+    );
+
+    return decision ?? WebviewPermissionDecision.none;
+  }
+}
 
 final controller = CodeController(
   text: '', // Initial code
@@ -28,8 +154,6 @@ Widget buildTab(
   Widget? icon,
   Widget? activeIcon,
   String? title,
-  TextStyle? style,
-  TextStyle? activeStyle,
 }) {
   var children = [
     (isActive ? activeIcon ?? icon : icon) ??
@@ -42,7 +166,9 @@ Widget buildTab(
           title,
           softWrap: false,
           overflow: TextOverflow.fade,
-          style: isActive ? activeStyle ?? style : style,
+          style: TextStyle(
+            color: Colors.white, // Set the text color to white
+          ),
         ),
       ),
   ];
@@ -83,12 +209,12 @@ class _TabState extends State<Tabs> {
         id: e,
         data: int.parse(e.codeUnits.join()),
         title: e.toUpperCase(),
-        isSticky: e == 'd',
+        // isSticky: e == 'd',
       );
 
   @override
   void initState() {
-    _tabs = ['a', 'b', 'c', 'd', 'e']
+    _tabs = ['main', 'b', 'c', 'd', 'e']
         .map(
           (e) => _getTab(e),
           //     BlossomTab.fromJson<int>(
@@ -132,56 +258,29 @@ class _TabState extends State<Tabs> {
                   context,
                   isActive: isActive,
                   title: tab.id,
-                  activeStyle: tab.id == 'd'
-                      ? null
-                      : const TextStyle(color: Colors.white),
-                  /*
-                          I may make D a sort of script "overview". Not completely sure yet, but seems like a cool idea.
-                        */
-                  icon: tab.id == 'd'
-                      ? null
-                      : const Padding(
-                          padding: EdgeInsets.all(4.0),
-                          child: Icon(
-                            Icons.ac_unit,
-                            size: 14,
-                            color: Colors.white,
-                          ),
-                        ),
-                  activeIcon: tab.id == 'd'
-                      ? null
-                      : const Padding(
-                          padding: EdgeInsets.all(8.0),
-                          child: Icon(
-                            Icons.ac_unit,
-                            size: 14,
-                            color: Colors.white,
-                          ),
-                        ),
                 ),
                 tabActions: (context, tab) => [
-                  if (tab.id != 'd')
-                    Listener(
-                      onPointerDown: (_) {
-                        _controller.removeTabById(tab.id);
-                      },
-                      child: const Padding(
-                        padding: EdgeInsets.all(4.0),
-                        child: Icon(
-                          Icons.close,
-                          size: 14,
-                          color: Colors.white,
-                        ),
+                  Listener(
+                    onPointerDown: (_) {
+                      _controller.removeTabById(tab.id);
+                    },
+                    child: const Padding(
+                      padding: EdgeInsets.all(4.0),
+                      child: Icon(
+                        Icons.close,
+                        size: 14,
+                        color: Colors.white,
                       ),
                     ),
+                  ),
                 ],
                 bottomBar: BlossomTabControllerScopeDescendant<int>(
                     builder: (context, controller) {
                   // Future.delayed(Duration.zero)
                   //     .then((_) => print(jsonEncode(controller.toJson())));
                   return Container(
-                    color: controller.currentTab == 'd' ? Colors.white : null,
-                  );
+                      //color: controller.currentTab == 'd' ? Colors.white : null,
+                      );
                 }),
                 actions: [
                   Padding(
@@ -204,17 +303,10 @@ class _TabState extends State<Tabs> {
           ),
         ),
         body: BlossomTabView<int>(
-                builder: (tab) => CodeTheme(
-                  data: CodeThemeData(styles: monokaiTheme),
-                  child: SingleChildScrollView(
-                    child: CodeField(
-                      background: const Color(0xff13141A),
-                      controller: controller,
-                    ),
-                  ),
-                ),
-            
-        ),
+            builder: (tab) => Padding(
+                  padding: const EdgeInsets.only(top: 8.0),
+                  child: ExampleBrowser(),
+                )),
       ),
     );
   }
@@ -232,7 +324,6 @@ class NewTabBtn extends StatefulWidget {
 }
 
 class _NewTabBtnState extends State<NewTabBtn> {
-
   @override
   Widget build(BuildContext context) {
     return InkWell(
