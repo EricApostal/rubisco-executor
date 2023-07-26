@@ -8,6 +8,7 @@ import 'package:flutter/services.dart';
 import 'dart:async';
 import 'package:path/path.dart' as p;
 import 'package:google_fonts/google_fonts.dart';
+import 'package:rubisco_one/Misc/utils.dart';
 
 String getAssetFileUrl(String asset) {
   final assetsDirectory = p.join(
@@ -92,9 +93,21 @@ class _ExampleBrowser extends State<ExampleBrowser> {
         ),
       );
     } else {
-      return Webview(
-        _controller,
-        permissionRequested: _onPermissionRequested,
+      return Scaffold(
+        floatingActionButtonLocation: FloatingActionButtonLocation.endTop,
+        floatingActionButton: ButtonContainer(
+            color: const Color(0xFF43FF83),
+            label: "Run",
+            onPressed: () {
+              _controller.executeScript("editor.getValue()").then((value) {
+                print(value);
+              });
+            },
+          ),
+        body: Webview(
+          _controller,
+          permissionRequested: _onPermissionRequested,
+        ),
       );
     }
   }
@@ -221,6 +234,7 @@ class _TabState extends State<Tabs> {
     return BlossomTabControllerScope(
       controller: _controller,
       child: Scaffold(
+        
         appBar: PreferredSize(
           preferredSize: const Size.fromHeight(40),
           child: Stack(

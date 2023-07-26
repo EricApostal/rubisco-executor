@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:rubisco_one/ExecutorMain/ExecutorMain.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:rubisco_one/Misc/utils.dart';
 
 void main() {
   runApp(const MyApp());
@@ -171,20 +172,15 @@ class ButtonSection extends StatelessWidget {
             ),
           ),
           Expanded(child: Container()),
-          ButtonContainer(
-            color: const Color(0xFF00C2FF),
-            label: "Inject",
-            onPressed: () {
-              print("Injecting...");
-            },
-          ),
-          const SizedBox(width: 8),
-          ButtonContainer(
-            color: const Color(0xFF43FF83),
-            label: "Run",
-            onPressed: () {
-              print("Running script!");
-            },
+          Padding(
+            padding: const EdgeInsets.only(right: 14),
+            child: ButtonContainer(
+              color: const Color(0xFF00C2FF),
+              label: "Inject",
+              onPressed: () {
+                print("Injecting...");
+              },
+            ),
           ),
         ],
       ),
@@ -192,41 +188,4 @@ class ButtonSection extends StatelessWidget {
   }
 }
 
-class ButtonContainer extends StatelessWidget {
-  const ButtonContainer({
-    Key? key,
-    required this.color,
-    required this.label,
-    required this.onPressed,
-  }) : super(key: key);
 
-  final Color color;
-  final String label;
-  final VoidCallback onPressed;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: 100,
-      height: 40,
-      decoration: BoxDecoration(
-        color: color,
-        borderRadius: BorderRadius.all(Radius.circular(6)),
-      ),
-      child: TextButton(
-        onPressed: onPressed,
-        child: Center(
-          child: Text(
-            label,
-            style: const TextStyle(
-              fontSize: 18,
-              fontFamily: 'Railway',
-              color: Color(0xFF212122),
-            ),
-            textAlign: TextAlign.center,
-          ),
-        ),
-      ),
-    );
-  }
-}
