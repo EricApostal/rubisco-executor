@@ -142,8 +142,8 @@ class Sidebar extends StatelessWidget {
                     height: 55,
                     width: 55,
                     decoration:
-                        BoxDecoration(color: const Color(0xFF222735),
-                        borderRadius: BorderRadius.circular( 8 )
+                        BoxDecoration(color: Color.fromARGB(255, 77, 180, 232),
+                        borderRadius: BorderRadius.circular( 12 )
                         ),
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
@@ -163,7 +163,7 @@ class Sidebar extends StatelessWidget {
                     width: 55,
                     decoration:
                         BoxDecoration(color: const Color(0xFF222735),
-                        borderRadius: BorderRadius.circular( 8 )
+                        borderRadius: BorderRadius.circular( 12 )
                         ),
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
@@ -185,7 +185,7 @@ class Sidebar extends StatelessWidget {
                     width: 55,
                     decoration:
                         BoxDecoration(color: const Color(0xFF222735),
-                        borderRadius: BorderRadius.circular( 8 )
+                        borderRadius: BorderRadius.circular( 12 )
                         ),
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
