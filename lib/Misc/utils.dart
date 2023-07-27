@@ -24,7 +24,7 @@ class ButtonContainer extends StatelessWidget {
       height: height,
       decoration: BoxDecoration(
         color: color,
-        borderRadius: BorderRadius.all(Radius.circular(6)),
+        borderRadius: BorderRadius.all(Radius.circular(14)),
       ),
       child: TextButton(
         onPressed: onPressed,

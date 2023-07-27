@@ -49,7 +49,10 @@ dependencies:
   google_fonts: ^4.0.4
   path: ^1.8.3
   csharp_rpc: ^0.0.7
+  flutter_svg: ^2.0.7
   
+
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -71,6 +74,9 @@ flutter:
   # included with your application, so that you can use the icons in
   # the material Icons class.
   uses-material-design: true
+
+  assets:
+    - assets/
 
   # To add assets to your application, add an assets section, like this:
   # assets:

@@ -141,7 +141,7 @@ class ExecutorWindow extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: MediaQuery.of(context).size.width - 89,
-      height: MediaQuery.of(context).size.height - 130,
+      height: MediaQuery.of(context).size.height - 170,
       child: const ExecutorMain(),
     );
   }
@@ -150,50 +150,24 @@ class ExecutorWindow extends StatelessWidget {
 class ButtonSection extends StatelessWidget {
   const ButtonSection({Key? key}) : super(key: key);
 
-
   @override
   Widget build(BuildContext context) {
-    var pathToCsharpExecutableFile = "C:/Users/Eric/source/repos/DartDLL/DartDLL/bin/Release/net7.0/DartDLL.exe";
+    var pathToCsharpExecutableFile =
+        "C:/Users/Eric/source/repos/DartDLL/DartDLL/bin/Release/net7.0/DartDLL.exe";
 
-    return Container(
-      width: MediaQuery.of(context).size.width - 90,
-      height: 40,
-      decoration: const BoxDecoration(
-        borderRadius: BorderRadius.all(Radius.circular(6)),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: [
-          Padding(
-            padding: const EdgeInsets.only(top: 8),
-            child: Text(
-              "Status: Injecting...",
-              style: GoogleFonts.robotoMono(
-                fontSize: 14,
-                color: const Color(0xFFFFFFFF),
-              ),
-              textAlign: TextAlign.center,
-            ),
-          ),
-          Expanded(child: Container()),
-          Padding(
-            padding: const EdgeInsets.only(right: 14),
-            child: ButtonContainer(
-              color: const Color(0xFF00C2FF),
-              label: "Inject",
-              onPressed: () async {
-                // create instance of CsharpRpc
-                CsharpRpc csharpRpc = await CsharpRpc(pathToCsharpExecutableFile).start();
-                var currentDateTime = await csharpRpc.invoke(method: "Inject");
-                
-                print(currentDateTime);
-              },
-            ),
-          ),
-        ],
+    return Padding(
+      padding: const EdgeInsets.only(left: 32),
+      child: Container(
+        width: MediaQuery.of(context).size.width - 90 - 32,
+        height: 100,
+        decoration: const BoxDecoration(
+            borderRadius: BorderRadius.all(Radius.circular(6)),
+            color: Color(0xFF222735)),
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text("[4:20:69] Rubisco has injected!", style: GoogleFonts.robotoMono(color: Color(0xFFF7F7F7), fontSize: 14)),
+            )
       ),
     );
   }
 }
-
-

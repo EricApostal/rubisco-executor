@@ -9,6 +9,7 @@ import 'dart:async';
 import 'package:path/path.dart' as p;
 import 'package:google_fonts/google_fonts.dart';
 import 'package:rubisco_one/Misc/utils.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 String getAssetFileUrl(String asset) {
   final assetsDirectory = p.join(
@@ -52,7 +53,7 @@ class _ExampleBrowser extends State<ExampleBrowser> {
       await _controller.setBackgroundColor(Colors.transparent);
       await _controller.setPopupWindowPolicy(WebviewPopupWindowPolicy.deny);
       await _controller.loadUrl(
-          'file://C:/Users/Eric/Documents/software/exploits/Synapse X/bin/Monaco/Monaco.html');
+          'file://C:/Users/proga/Desktop/roblox/Electron/bin/monacoEditor/Monaco.html');
 
       if (!mounted) return;
       setState(() {});
@@ -94,25 +95,25 @@ class _ExampleBrowser extends State<ExampleBrowser> {
       );
     } else {
       return Scaffold(
-        floatingActionButtonLocation: FloatingActionButtonLocation.endTop,
+        floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
         floatingActionButton: Padding(
-          padding: const EdgeInsets.only(top: 20.0),
-          child: ButtonContainer(
-            height: 40,
-            width: 80,
-              color: const Color(0xFF43FF83),
-              label: "Run",
-              onPressed: () {
-                _controller.executeScript("editor.getValue()").then((value) {
-                  /*
-                  I can't believe this worked so fast lol
-                  This is where you would call some sort of execute script function
-                  */
-                  print(value);
-                });
-              },
-            ),
-        ),
+            padding: const EdgeInsets.only(top: 20.0),
+            child: Container(
+              width: 55,
+              height: 55,
+              decoration: const BoxDecoration(
+                color: Color(0xFF00FFA3),
+                borderRadius: BorderRadius.all(Radius.circular(14)),
+              ),
+              child: TextButton(
+                onPressed: () {},
+                child: Center(
+                    child: SvgPicture.asset("assets/play_arrow.svg",
+                        colorFilter: const ColorFilter.mode(
+                            Color(0xFF13141A), BlendMode.srcIn),
+                        semanticsLabel: 'Run script')),
+              ),
+            )),
         body: Webview(
           _controller,
           permissionRequested: _onPermissionRequested,
@@ -243,13 +244,12 @@ class _TabState extends State<Tabs> {
     return BlossomTabControllerScope(
       controller: _controller,
       child: Scaffold(
-        
         appBar: PreferredSize(
-          preferredSize: const Size.fromHeight(40),
+          preferredSize: const Size.fromHeight(38),
           child: Stack(
             children: [
               BlossomTabBar<int>(
-                height: 40,
+                height: 38,
                 bottomBarHeight: 0,
                 selectedColor: const Color(0xFF222735),
                 dragColor: const Color(0xFF222735),
