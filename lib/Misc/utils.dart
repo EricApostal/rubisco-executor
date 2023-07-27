@@ -7,17 +7,21 @@ class ButtonContainer extends StatelessWidget {
     required this.color,
     required this.label,
     required this.onPressed,
+    this.height = 40,
+    this.width = 100,
   }) : super(key: key);
 
   final Color color;
   final String label;
   final VoidCallback onPressed;
+  final double height;
+  final double width;
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 100,
-      height: 40,
+      width: width,
+      height: height,
       decoration: BoxDecoration(
         color: color,
         borderRadius: BorderRadius.all(Radius.circular(6)),

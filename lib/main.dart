@@ -3,8 +3,9 @@ import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:rubisco_one/ExecutorMain/ExecutorMain.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:rubisco_one/Misc/utils.dart';
+import 'package:csharp_rpc/csharp_rpc.dart';
 
-void main() {
+void main() async {
   runApp(const MyApp());
   doWhenWindowReady(() {
     const initialSize = Size(800, 400);
@@ -149,8 +150,11 @@ class ExecutorWindow extends StatelessWidget {
 class ButtonSection extends StatelessWidget {
   const ButtonSection({Key? key}) : super(key: key);
 
+
   @override
   Widget build(BuildContext context) {
+    var pathToCsharpExecutableFile = "C:/Users/Eric/source/repos/DartDLL/DartDLL/bin/Release/net7.0/DartDLL.exe";
+
     return Container(
       width: MediaQuery.of(context).size.width - 90,
       height: 40,
@@ -177,8 +181,12 @@ class ButtonSection extends StatelessWidget {
             child: ButtonContainer(
               color: const Color(0xFF00C2FF),
               label: "Inject",
-              onPressed: () {
-                print("Injecting...");
+              onPressed: () async {
+                // create instance of CsharpRpc
+                CsharpRpc csharpRpc = await CsharpRpc(pathToCsharpExecutableFile).start();
+                var currentDateTime = await csharpRpc.invoke(method: "Inject");
+                
+                print(currentDateTime);
               },
             ),
           ),
