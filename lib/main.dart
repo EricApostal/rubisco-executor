@@ -71,7 +71,6 @@ class RubiscoFrame extends StatefulWidget {
 
 class _RubiscoFrameState extends State<RubiscoFrame> {
   var currentPage = 1;
-  final executorWindowKey = GlobalKey();
 
   void setPage(int newPage) {
     setState(() => currentPage = newPage);
@@ -111,7 +110,7 @@ class _RubiscoFrameState extends State<RubiscoFrame> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   if (currentPage == 1) ...[
-                    ExecutorWindow(key: executorWindowKey),
+                    ExecutorWindow(),
                     const Padding(
                       padding: EdgeInsets.only(top: 8, bottom: 4),
                       child: ButtonSection(),
@@ -132,8 +131,6 @@ class _RubiscoFrameState extends State<RubiscoFrame> {
     );
   }
 }
-
-
 
 class WindowButtons extends StatelessWidget {
   const WindowButtons({Key? key}) : super(key: key);
