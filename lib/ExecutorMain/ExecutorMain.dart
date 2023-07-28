@@ -29,6 +29,7 @@ class _ExampleBrowser extends State<ExampleBrowser> {
   final _controller = WebviewController();
   final _textController = TextEditingController();
   bool _isWebviewSuspended = false;
+  String textEditorContent = '';
 
   @override
   void initState() {
@@ -37,13 +38,6 @@ class _ExampleBrowser extends State<ExampleBrowser> {
   }
 
   Future<void> initPlatformState() async {
-    // Optionally initialize the webview environment using
-    // a custom user data directory
-    // and/or a custom browser executable directory
-    // and/or custom chromium command line flags
-    //await WebviewController.initializeEnvironment(
-    //    additionalArguments: '--show-fps-counter');
-
     try {
       await _controller.initialize();
       _controller.url.listen((url) {
@@ -99,8 +93,8 @@ class _ExampleBrowser extends State<ExampleBrowser> {
         floatingActionButton: Padding(
             padding: const EdgeInsets.only(top: 20.0),
             child: Container(
-              width: 55,
-              height: 55,
+              width: 50,
+              height: 50,
               decoration: const BoxDecoration(
                 color: Color(0xFF00FFA3),
                 borderRadius: BorderRadius.all(Radius.circular(14)),
@@ -114,10 +108,8 @@ class _ExampleBrowser extends State<ExampleBrowser> {
                         semanticsLabel: 'Run script')),
               ),
             )),
-        body: Webview(
-          _controller,
-          permissionRequested: _onPermissionRequested,
-        ),
+        body:
+            Webview(_controller, permissionRequested: _onPermissionRequested),
       );
     }
   }
@@ -130,7 +122,8 @@ class _ExampleBrowser extends State<ExampleBrowser> {
   Future<WebviewPermissionDecision> _onPermissionRequested(
       String url, WebviewPermissionKind kind, bool isUserInitiated) async {
     final decision = await showDialog<WebviewPermissionDecision>(
-      context: navigatorKey.currentContext!,
+      context:
+          navigatorKey.currentContext!, // make sure navigatorKey is defined
       builder: (BuildContext context) => AlertDialog(
         title: const Text('WebView permission requested'),
         content: Text('WebView has requested permission \'$kind\''),
@@ -152,6 +145,7 @@ class _ExampleBrowser extends State<ExampleBrowser> {
     return decision ?? WebviewPermissionDecision.none;
   }
 }
+
 
 class ExecutorMain extends StatelessWidget {
   const ExecutorMain({Key? key}) : super(key: key);

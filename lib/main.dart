@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:bitsdojo_window/bitsdojo_window.dart';
-import 'package:rubisco_one/ExecutorMain/ExecutorMain.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:rubisco_one/Misc/utils.dart';
-import 'package:csharp_rpc/csharp_rpc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:rubisco_one/ExecutorMain/ExecutorMain.dart';
 
 void main() async {
   runApp(const MyApp());
@@ -12,7 +10,7 @@ void main() async {
     const initialSize = Size(800, 400);
     const minSize = Size(650, 350);
     appWindow.minSize = minSize;
-    appWindow.size = initialSize; //default size
+    appWindow.size = initialSize; // default size
 
     appWindow.show();
   });
@@ -27,6 +25,8 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Rubisco',
       theme: ThemeData(
+        splashColor: Colors.transparent,
+        highlightColor: Colors.transparent,
         colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF13141A)),
         primaryColor: const Color(0xFF13141A),
         scaffoldBackgroundColor: const Color(0xFF13141A),
@@ -37,32 +37,45 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class WindowButtons extends StatelessWidget {
-  const WindowButtons({Key? key}) : super(key: key);
+class ScriptSearchWidget extends StatelessWidget {
+  const ScriptSearchWidget({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-        SizedBox(
-          height: 45,
-          child: MinimizeWindowButton(colors: buttonColors),
-        ),
-        SizedBox(
-          height: 45,
-          child: MaximizeWindowButton(colors: buttonColors),
-        ),
-        SizedBox(
-          height: 45,
-          child: CloseWindowButton(colors: closeButtonColors),
-        ),
-      ],
+    return Container(
+      width: MediaQuery.of(context).size.width - 89,
+      height: MediaQuery.of(context).size.height - 200,
+      child:
+          const Text("ScriptSearch"), // Replace with your ScriptSearch widget
     );
   }
 }
 
 class MainWindow extends StatelessWidget {
   const MainWindow({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: RubiscoFrame(),
+    );
+  }
+}
+
+class RubiscoFrame extends StatefulWidget {
+  const RubiscoFrame({Key? key}) : super(key: key);
+
+  @override
+  State<RubiscoFrame> createState() => _RubiscoFrameState();
+}
+
+class _RubiscoFrameState extends State<RubiscoFrame> {
+  var currentPage = 1;
+  final executorWindowKey = GlobalKey();
+
+  void setPage(int newPage) {
+    setState(() => currentPage = newPage);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -90,24 +103,58 @@ class MainWindow extends StatelessWidget {
               ],
             ),
           ),
-          const Row(
+          Row(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              Sidebar(),
+              Sidebar(setPage: setPage),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  ExecutorWindow(),
-                  Padding(
-                    padding: EdgeInsets.only(top: 8, bottom: 4),
-                    child: ButtonSection(),
-                  ),
+                  if (currentPage == 1) ...[
+                    ExecutorWindow(key: executorWindowKey),
+                    const Padding(
+                      padding: EdgeInsets.only(top: 8, bottom: 4),
+                      child: ButtonSection(),
+                    ),
+                  ] else if (currentPage == 2) ...[
+                    ScriptSearchWidget(),
+                    const Padding(
+                      padding: EdgeInsets.only(top: 8, bottom: 4),
+                      child: ButtonSection(),
+                    ),
+                  ],
                 ],
               ),
             ],
           ),
         ],
       ),
+    );
+  }
+}
+
+
+
+class WindowButtons extends StatelessWidget {
+  const WindowButtons({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        SizedBox(
+          height: 45,
+          child: MinimizeWindowButton(colors: buttonColors),
+        ),
+        SizedBox(
+          height: 45,
+          child: MaximizeWindowButton(colors: buttonColors),
+        ),
+        SizedBox(
+          height: 45,
+          child: CloseWindowButton(colors: closeButtonColors),
+        ),
+      ],
     );
   }
 }
@@ -122,83 +169,117 @@ final closeButtonColors = WindowButtonColors(
   mouseOver: const Color.fromARGB(255, 220, 54, 54),
 );
 
-class Sidebar extends StatelessWidget {
-  const Sidebar({Key? key}) : super(key: key);
+class Sidebar extends StatefulWidget {
+  final void Function(int) setPage;
+
+  const Sidebar({required this.setPage});
+
+  @override
+  _SidebarState createState() => _SidebarState();
+}
+
+class _SidebarState extends State<Sidebar> {
+  int _selectedPage = 1;
 
   @override
   Widget build(BuildContext context) {
     return Container(
-        width: 80,
-        height: MediaQuery.of(context).size.height - 50,
-        decoration: const BoxDecoration(color: Color(0xFF13141A)),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(top:10),
-              child: TextButton(
-                onPressed: () {},
-                child: Container(
-                    height: 55,
-                    width: 55,
-                    decoration:
-                        BoxDecoration(color: Color.fromARGB(255, 77, 180, 232),
-                        borderRadius: BorderRadius.circular( 12 )
-                        ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: SvgPicture.asset("assets/code_editor.svg",
-                            colorFilter: const ColorFilter.mode(
-                                Color.fromARGB(255, 255, 255, 255), BlendMode.srcIn),
-                            semanticsLabel: 'Run script'),
-                    )
-                        ),
-              ),
-            ), Padding(
-              padding: const EdgeInsets.only(top:10),
-              child: TextButton(
-                onPressed: () {},
-                child: Container(
-                    height: 55,
-                    width: 55,
-                    decoration:
-                        BoxDecoration(color: const Color(0xFF222735),
-                        borderRadius: BorderRadius.circular( 12 )
-                        ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: SvgPicture.asset("assets/cloud.svg",
-                            colorFilter: const ColorFilter.mode(
-                                Color.fromARGB(255, 255, 255, 255), BlendMode.srcIn),
-                            semanticsLabel: 'Run script'),
-                    )
-                        ),
+      width: 80,
+      height: MediaQuery.of(context).size.height - 50,
+      decoration: const BoxDecoration(color: Color(0xFF13141A)),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(top: 10),
+            child: TextButton(
+              onPressed: () {
+                setState(() {
+                  _selectedPage = 1;
+                });
+                widget.setPage(1);
+              },
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 200),
+                curve: Curves.easeInOut,
+                height: 40,
+                width: 40,
+                decoration: BoxDecoration(
+                  color: _selectedPage == 1
+                      ? Color.fromARGB(255, 77, 180, 232)
+                      : Color(0xFF222735),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: SvgPicture.asset(
+                    "assets/code_editor.svg",
+                    colorFilter: const ColorFilter.mode(
+                      Color.fromARGB(255, 255, 255, 255),
+                      BlendMode.srcIn,
+                    ),
+                    semanticsLabel: 'Go to Code Editor',
+                  ),
+                ),
               ),
             ),
-            Expanded(child: Container()),
-            Padding(
-              padding: const EdgeInsets.only(bottom:10, top: 10),
-              child: TextButton(
-                onPressed: () {},
-                child: Container(
-                    height: 55,
-                    width: 55,
-                    decoration:
-                        BoxDecoration(color: const Color(0xFF222735),
-                        borderRadius: BorderRadius.circular( 12 )
-                        ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: SvgPicture.asset("assets/settings.svg",
-                            colorFilter: const ColorFilter.mode(
-                                Color.fromARGB(255, 255, 255, 255), BlendMode.srcIn),
-                            semanticsLabel: 'Run script'),
-                    )
-                        ),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(top: 10),
+            child: TextButton(
+              onPressed: () {
+                setState(() {
+                  _selectedPage = 2;
+                });
+                widget.setPage(2);
+              },
+              child: Container(
+                height: 40,
+                width: 40,
+                decoration: BoxDecoration(
+                  color: _selectedPage == 2
+                      ? Color.fromARGB(255, 77, 180, 232)
+                      : Color(0xFF222735),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: SvgPicture.asset(
+                    "assets/cloud.svg",
+                    colorFilter: const ColorFilter.mode(
+                      Color.fromARGB(255, 255, 255, 255),
+                      BlendMode.srcIn,
+                    ),
+                    semanticsLabel: 'Go to Script Search',
+                  ),
+                ),
               ),
             ),
-          ],
-        ));
+          ),
+          Expanded(child: Container()),
+          Padding(
+            padding: const EdgeInsets.only(bottom: 10, top: 10),
+            child: TextButton(
+              onPressed: () {},
+              child: Container(
+                height: 40,
+                width: 40,
+                decoration: BoxDecoration(
+                    color: const Color(0xFF222735),
+                    borderRadius: BorderRadius.circular(12)),
+                child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: SvgPicture.asset("assets/settings.svg",
+                        colorFilter: const ColorFilter.mode(
+                            Color.fromARGB(255, 255, 255, 255),
+                            BlendMode.srcIn),
+                        semanticsLabel: 'Run script')),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }
 
@@ -210,7 +291,7 @@ class ExecutorWindow extends StatelessWidget {
     return Container(
       width: MediaQuery.of(context).size.width - 89,
       height: MediaQuery.of(context).size.height - 200,
-      child: const ExecutorMain(),
+      child: ExecutorMain(), // Replace with your ExecutorMain widget
     );
   }
 }
@@ -220,23 +301,24 @@ class ButtonSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var pathToCsharpExecutableFile =
-        "C:/Users/Eric/source/repos/DartDLL/DartDLL/bin/Release/net7.0/DartDLL.exe";
-
     return Padding(
       padding: const EdgeInsets.only(left: 32),
       child: Container(
-          width: MediaQuery.of(context).size.width - 90 - 32,
-          height: 130,
-          decoration: const BoxDecoration(
-              borderRadius: BorderRadius.all(Radius.circular(6)),
-              color: Color(0xFF222735)),
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Text("[4:20:69] Rubisco has injected!",
-                style: GoogleFonts.robotoMono(
-                    color: Color(0xFFF7F7F7), fontSize: 14)),
-          )),
+        width: MediaQuery.of(context).size.width - 90 - 32,
+        height: 130,
+        decoration: const BoxDecoration(
+          borderRadius: BorderRadius.all(Radius.circular(6)),
+          color: Color(0xFF222735),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Text(
+            "[4:20:69] Rubisco has injected!",
+            style:
+                GoogleFonts.robotoMono(color: Color(0xFFF7F7F7), fontSize: 14),
+          ),
+        ),
+      ),
     );
   }
 }
