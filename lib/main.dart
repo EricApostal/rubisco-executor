@@ -3,6 +3,7 @@ import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:rubisco_one/ExecutorMain/ExecutorMain.dart';
+import 'package:rubisco_one/ScriptSearch/ScriptSearch.dart';
 
 void main() async {
   runApp(const MyApp());
@@ -37,20 +38,6 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class ScriptSearchWidget extends StatelessWidget {
-  const ScriptSearchWidget({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: MediaQuery.of(context).size.width - 89,
-      height: MediaQuery.of(context).size.height - 200,
-      child:
-          const Text("ScriptSearch"), // Replace with your ScriptSearch widget
-    );
-  }
-}
-
 class MainWindow extends StatelessWidget {
   const MainWindow({Key? key}) : super(key: key);
 
@@ -69,7 +56,7 @@ class RubiscoFrame extends StatefulWidget {
   State<RubiscoFrame> createState() => _RubiscoFrameState();
 }
 
-class _RubiscoFrameState extends State<RubiscoFrame> {
+class _RubiscoFrameState extends State<RubiscoFrame>{
   var currentPage = 1;
 
   void setPage(int newPage) {
@@ -116,11 +103,7 @@ class _RubiscoFrameState extends State<RubiscoFrame> {
                       child: ButtonSection(),
                     ),
                   ] else if (currentPage == 2) ...[
-                    ScriptSearchWidget(),
-                    const Padding(
-                      padding: EdgeInsets.only(top: 8, bottom: 4),
-                      child: ButtonSection(),
-                    ),
+                    ScriptSearchWidget()
                   ],
                 ],
               ),
@@ -280,15 +263,24 @@ class _SidebarState extends State<Sidebar> {
   }
 }
 
-class ExecutorWindow extends StatelessWidget {
-  const ExecutorWindow({Key? key}) : super(key: key);
+class ExecutorWindow extends StatefulWidget {
+  const ExecutorWindow({Key? key});
+
+  State<ExecutorWindow> createState() => _ExecutorWindowState();
+
+}
+
+class _ExecutorWindowState extends State<ExecutorWindow> with AutomaticKeepAliveClientMixin {
+  @override
+  bool get wantKeepAlive => true;
 
   @override
   Widget build(BuildContext context) {
+    super.build(context); // Call super.build(context) here.
     return Container(
-      width: MediaQuery.of(context).size.width - 89,
-      height: MediaQuery.of(context).size.height - 200,
-      child: ExecutorMain(), // Replace with your ExecutorMain widget
+        width: MediaQuery.of(context).size.width - 89,
+        height: MediaQuery.of(context).size.height - 200,
+        child: ExecutorMain(), // Replace with your ExecutorMain widget
     );
   }
 }

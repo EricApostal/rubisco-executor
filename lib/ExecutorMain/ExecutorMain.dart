@@ -216,7 +216,10 @@ class Tabs extends StatefulWidget {
   State<Tabs> createState() => _TabState();
 }
 
-class _TabState extends State<Tabs> {
+class _TabState extends State<Tabs> with AutomaticKeepAliveClientMixin {
+  @override
+  bool get wantKeepAlive => true;
+  
   var _controller = BlossomTabController<int>(tabs: []);
   var _tabs = <BlossomTab<int>>[];
 
@@ -241,6 +244,8 @@ class _TabState extends State<Tabs> {
   var tabIndex = [];
   @override
   Widget build(BuildContext context) {
+    super.build(context);
+    print("tabs are being rebuilt");
     return BlossomTabControllerScope(
       controller: _controller,
       child: Scaffold(
