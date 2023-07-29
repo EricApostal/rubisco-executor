@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
 
@@ -26,7 +27,6 @@ class ExampleBrowser extends StatefulWidget {
 }
 
 class _ExampleBrowser extends State<ExampleBrowser> {
-
   final _controller = WebviewController();
   final _textController = TextEditingController();
   bool _isWebviewSuspended = false;
@@ -254,16 +254,28 @@ class _TabState extends State<Tabs> {
     _tabs = ['Tab 1']
         .map(
           (e) => _getTab(e),
+          // (e) => BlossomTab.fromJson<int>(
+          // Example of how to load from JSON-- Saving / retriving script tabs will still be a touch difficult
+          //   {
+          //     "id": "Tab 17",
+          //     "data": {"value": 8497983251},
+          //     "title": e.toUpperCase(),
+          //     "maxWidth": 200.0,
+          //     "stickyWidth": 50.0
+          //   },
+          //   (map) => map['value'],
+          // ),
         )
         .toList();
     _controller = BlossomTabController<int>(currentTab: 'Tab 1', tabs: _tabs);
     super.initState();
-
   }
 
   var tabIndex = [];
   @override
   Widget build(BuildContext context) {
+    // print( jsonEncode(_controller.toJson()));
+    // print( _controller.tabs[0].data );
     return BlossomTabControllerScope(
       controller: _controller,
       child: Scaffold(
@@ -301,9 +313,7 @@ class _TabState extends State<Tabs> {
                 ],
                 bottomBar: BlossomTabControllerScopeDescendant<int>(
                     builder: (context, controller) {
-
-                  return Container(
-                      );
+                  return Container();
                 }),
                 actions: [
                   Padding(
