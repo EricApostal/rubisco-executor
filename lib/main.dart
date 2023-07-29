@@ -156,7 +156,7 @@ class _RubiscoFrameState extends State<RubiscoFrame> {
                     "RUBISCO",
                     style: GoogleFonts.istokWeb(
                       fontSize: 24,
-                      color: Color(0xFFA1A1A1),
+                      color: const Color(0xFFA1A1A1),
                     ),
                   ),
                 ),
@@ -171,6 +171,7 @@ class _RubiscoFrameState extends State<RubiscoFrame> {
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   Sidebar(setPage: setPage),
+                  // Text("TODO: Text can go here, but\nit goes on other\npages too.\nOther method causes\nrenderflex error"),
                   Expanded(
                     child: SizedBox(
                       height: MediaQuery.of(context).size.height - 58, // Set the desired height here
@@ -185,7 +186,7 @@ class _RubiscoFrameState extends State<RubiscoFrame> {
                               ExecutorWindow(),
                               Padding(
                                 padding: EdgeInsets.only(top: 8, bottom: 4),
-                                child: ButtonSection(),
+                                child: OutputConsole(),
                               ),
                             ],
                           ),
@@ -257,15 +258,15 @@ class ExecutorWindow extends StatelessWidget {
   }
 }
 
-class ButtonSection extends StatelessWidget {
-  const ButtonSection({Key? key}) : super(key: key);
+class OutputConsole extends StatelessWidget {
+  const OutputConsole({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(left: 0),
+      padding: const EdgeInsets.only(right: 10),
       child: Container(
-        width: MediaQuery.of(context).size.width - 90,
+        width: MediaQuery.of(context).size.width,
         height: 130,
         decoration: const BoxDecoration(
           borderRadius: BorderRadius.all(Radius.circular(6)),

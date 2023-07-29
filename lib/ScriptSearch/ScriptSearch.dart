@@ -65,12 +65,12 @@ class ScriptSearch extends StatelessWidget {
                                 width: 80,
                                 height: 80,
                                 decoration: const BoxDecoration(
-                                  color: Color(0xFF0EC5FF),
+                                  color: Color.fromARGB(255, 11, 96, 214),
                                   borderRadius: BorderRadius.all( Radius.circular(12) )
                                 ),
                                 child: const Center(child: Text("Search",
                                 style: TextStyle(
-                                  color: Color(0xFF202027)
+                                  color: Color.fromARGB(255, 240, 240, 240)
                                 ),
                                 )),
                               ),
