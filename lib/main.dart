@@ -4,6 +4,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:rubisco_one/ExecutorMain/ExecutorMain.dart';
 import 'package:rubisco_one/ScriptSearch/ScriptSearch.dart';
+import 'package:rubisco_one/Settings.dart';
 
 void main() async {
   runApp(const MyApp());
@@ -12,7 +13,6 @@ void main() async {
     const minSize = Size(650, 350);
     appWindow.minSize = minSize;
     appWindow.size = initialSize; // default size
-
     appWindow.show();
   });
 }
@@ -43,7 +43,7 @@ class MainWindow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return const Scaffold(
       body: RubiscoFrame(),
     );
   }
@@ -72,99 +72,54 @@ class _SidebarState extends State<Sidebar> {
   Widget build(BuildContext context) {
     return Container(
       width: 80,
-      height: MediaQuery.of(context).size.height - 50,
+      height: MediaQuery.of(context).size.height - 60,
       decoration: const BoxDecoration(color: Color(0xFF13141A)),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: const EdgeInsets.only(top: 10),
-            child: TextButton(
-              onPressed: () {
-                setPage(0); // Set page index to 0 (ExecutorWindow)
-              },
-              child: AnimatedContainer(
-                duration: const Duration(milliseconds: 0),
-                curve: Curves.easeInOut,
-                height: 40,
-                width: 40,
-                decoration: BoxDecoration(
-                  color: _selectedPage == 0
-                      ? Color.fromARGB(255, 77, 180, 232)
-                      : Color(0xFF222735),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: SvgPicture.asset(
-                    "assets/code_editor.svg",
-                    colorFilter:
-                        const ColorFilter.mode(Color.fromARGB(255, 255, 255, 255), BlendMode.srcIn),
-                    semanticsLabel: 'Go to Code Editor',
-                  ),
-                ),
-              ),
+      child: Align(
+        alignment: Alignment.topLeft,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _buildTextButton("assets/code_editor.svg", 'Go to Code Editor', 0),
+            _buildTextButton("assets/cloud.svg", 'Go to Script Search', 1),
+            Expanded(child: Container()),
+            _buildTextButton("assets/settings.svg", 'Run script', 2),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTextButton(String asset, String semanticsLabel, int pageIndex) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 10),
+      child: TextButton(
+        style: const ButtonStyle(
+          splashFactory: NoSplash.splashFactory,),
+        onPressed: () {
+          setPage(pageIndex);
+        },
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeInOut,
+          height: 50,
+          width: 50,
+          decoration: BoxDecoration(
+            color: _selectedPage == pageIndex ? Color.fromARGB(255, 11, 96, 214) : const Color(0xFF222735),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: SvgPicture.asset(
+              asset,
+              colorFilter: const ColorFilter.mode(Color.fromARGB(255, 255, 255, 255), BlendMode.srcIn),
+              semanticsLabel: semanticsLabel,
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.only(top: 10),
-            child: TextButton(
-              onPressed: () {
-                setPage(1); // Set page index to 1 (ScriptSearch)
-              },
-              child: Container(
-                height: 40,
-                width: 40,
-                decoration: BoxDecoration(
-                  color: _selectedPage == 1
-                      ? Color.fromARGB(255, 77, 180, 232)
-                      : Color(0xFF222735),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: SvgPicture.asset(
-                    "assets/cloud.svg",
-                    colorFilter:
-                        const ColorFilter.mode(Color.fromARGB(255, 255, 255, 255), BlendMode.srcIn),
-                    semanticsLabel: 'Go to Script Search',
-                  ),
-                ),
-              ),
-            ),
-          ),
-          Expanded(
-            child: Container(),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(bottom: 10, top: 10),
-            child: TextButton(
-              onPressed: () {},
-              child: Container(
-                height: 40,
-                width: 40,
-                decoration: BoxDecoration(
-                  color: Color(0xFF222735),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: SvgPicture.asset(
-                    "assets/settings.svg",
-                    colorFilter:
-                        const ColorFilter.mode(Color.fromARGB(255, 255, 255, 255), BlendMode.srcIn),
-                    semanticsLabel: 'Run script',
-                  ),
-                ),
-              ),
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }
 }
-
 
 class RubiscoFrame extends StatefulWidget {
   const RubiscoFrame({Key? key}) : super(key: key);
@@ -173,25 +128,19 @@ class RubiscoFrame extends StatefulWidget {
   State<RubiscoFrame> createState() => _RubiscoFrameState();
 }
 
-class _RubiscoFrameState extends State<RubiscoFrame> with AutomaticKeepAliveClientMixin {
+class _RubiscoFrameState extends State<RubiscoFrame> {
   final _pageController = PageController();
-   int _selectedPage = 0; 
+  int selectedPage = 0;
 
   void setPage(int newPage) {
     setState(() {
-      _selectedPage = newPage;
+      selectedPage = newPage;
     });
-    _pageController.jumpToPage(
-      newPage
-    );
+    _pageController.jumpToPage(newPage);
   }
 
   @override
-  bool get wantKeepAlive => true;
-
-  @override
   Widget build(BuildContext context) {
-    super.build(context);
     return Scaffold(
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -216,47 +165,50 @@ class _RubiscoFrameState extends State<RubiscoFrame> with AutomaticKeepAliveClie
               ],
             ),
           ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Sidebar(setPage: setPage),
-              Expanded(
-                child: SizedBox(
-                  height: 500, // Set the desired height here
-                  child: PageView(
-  controller: _pageController,
-  physics: const NeverScrollableScrollPhysics(),
-  children: const [
-    Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        ExecutorWindow(),
-        Padding(
-          padding: EdgeInsets.only(top: 8, bottom: 4),
-          child: ButtonSection(),
-        ),
-      ],
-    ),
-    ScriptSearch(), // Change the order of pages
-  ],
-  onPageChanged: (page) {
-    setState(() {
-      _selectedPage = page;
-    });
-  },
-),
-
-
-                ),
+          Expanded(
+            child: SingleChildScrollView(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Sidebar(setPage: setPage),
+                  Expanded(
+                    child: SizedBox(
+                      height: MediaQuery.of(context).size.height - 58, // Set the desired height here
+                      width: MediaQuery.of(context).size.width,
+                      child: PageView(
+                        controller: _pageController,
+                        physics: const NeverScrollableScrollPhysics(),
+                        children: const [
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              ExecutorWindow(),
+                              Padding(
+                                padding: EdgeInsets.only(top: 8, bottom: 4),
+                                child: ButtonSection(),
+                              ),
+                            ],
+                          ),
+                          ScriptSearch(),
+                          Settings(),
+                        ],
+                        onPageChanged: (page) {
+                          setState(() {
+                            selectedPage = page;
+                          });
+                        },
+                      ),
+                    ),
+                  ),
+                ],
               ),
-            ],
+            ),
           ),
         ],
       ),
     );
   }
 }
-
 
 class WindowButtons extends StatelessWidget {
   const WindowButtons({Key? key}) : super(key: key);
@@ -311,9 +263,9 @@ class ButtonSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(left: 32),
+      padding: const EdgeInsets.only(left: 0),
       child: Container(
-        width: MediaQuery.of(context).size.width - 90 - 32,
+        width: MediaQuery.of(context).size.width - 90,
         height: 130,
         decoration: const BoxDecoration(
           borderRadius: BorderRadius.all(Radius.circular(6)),
@@ -323,8 +275,7 @@ class ButtonSection extends StatelessWidget {
           padding: const EdgeInsets.all(8.0),
           child: Text(
             "[4:20:69] Rubisco has injected!",
-            style:
-                GoogleFonts.robotoMono(color: Color(0xFFF7F7F7), fontSize: 14),
+            style: GoogleFonts.robotoMono(color: Color(0xFFF7F7F7), fontSize: 14),
           ),
         ),
       ),

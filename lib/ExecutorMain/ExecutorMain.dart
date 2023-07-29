@@ -53,7 +53,8 @@ class _ExampleBrowser extends State<ExampleBrowser> {
       await _controller.setBackgroundColor(Colors.transparent);
       await _controller.setPopupWindowPolicy(WebviewPopupWindowPolicy.deny);
       await _controller.loadUrl(
-          'file://C:/Users/proga/Desktop/roblox/Electron/bin/monacoEditor/Monaco.html');
+          "file://" + Directory.current.toString().replaceAll("'", "").replaceAll("Directory: ", "") + '/bin/monaco/Monaco.html');
+          print("file://" + Directory.current.toString().replaceAll("'", "").replaceAll("Directory: ", "") + '/bin/monaco/Monaco.html');
 
       if (!mounted) return;
       setState(() {});
@@ -124,9 +125,8 @@ class _ExampleBrowser extends State<ExampleBrowser> {
 
 @override
   Widget build(BuildContext context) {
-    return AutomaticKeepAlive(
-      child: compositeView(),
-    );
+      return compositeView();
+
   }
 
   @override
@@ -249,7 +249,6 @@ class _TabState extends State<Tabs> {
   var tabIndex = [];
   @override
   Widget build(BuildContext context) {
-    print("tabs are being rebuilt");
     return BlossomTabControllerScope(
       controller: _controller,
       child: Scaffold(
@@ -266,7 +265,7 @@ class _TabState extends State<Tabs> {
                 dividerColor: Color.fromARGB(255, 255, 255, 255),
                 shadowColor: const Color(0xFF13141A),
                 bottomColor: const Color(0xFF222735),
-                margin: const EdgeInsets.only(left: 60, top: 0, right: 10),
+                margin: const EdgeInsets.only(left: 40, top: 0, right: 10),
                 tabBarMargin: 0,
                 tabBuilder: (context, tab, isActive) =>
                     buildTab(context, isActive: isActive, title: tab.id),

@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:dropdown_search/dropdown_search.dart';
 
-
-
 class ScriptSearch extends StatelessWidget {
   const ScriptSearch({Key? key}) : super(key: key);
 
@@ -12,7 +10,7 @@ class ScriptSearch extends StatelessWidget {
     return Container(
         child: Container(
             width: MediaQuery.of(context).size.width - 80,
-            height: MediaQuery.of(context).size.height - 50,
+            height: MediaQuery.of(context).size.height - 60,
             decoration: const BoxDecoration(color: Color(0xFF13141A)),
             child: Column(
               children: [
@@ -20,7 +18,7 @@ class ScriptSearch extends StatelessWidget {
                   padding:
                       const EdgeInsets.only(left: 16, right: 16, bottom: 12),
                   child: Container(
-                      height: 50,
+                      height: 42,
                       width: double.infinity,
                       decoration: const BoxDecoration(
                           color: Color(0xff222735),
@@ -42,12 +40,41 @@ class ScriptSearch extends StatelessWidget {
                               ),
                             ),
                           ),
-                          Container(
-                      height: 50,
-                      width: 300,
-                      decoration: const BoxDecoration(
-                          color: Color.fromARGB(255, 148, 149, 153),
-                          borderRadius: BorderRadius.all(Radius.circular(8))),
+                          const Expanded(
+                            child: Padding(
+                              padding: EdgeInsets.only(bottom: 13),
+                              child: TextField(
+                                cursorColor: Colors.white,
+                                  style: TextStyle(
+                                      color:
+                                          Color(0xFFC8C8C8)),
+                                  decoration: InputDecoration(
+                                    border: InputBorder.none,
+                                  )
+
+                                  //textColo: Color.fromARGB(255, 148, 149, 153),)
+                                  ),
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(top: 4, bottom: 4),
+                            child: TextButton(
+                              style: const ButtonStyle(splashFactory: NoSplash.splashFactory, ),
+                              onPressed: () {},
+                              child: Container(
+                                width: 80,
+                                height: 80,
+                                decoration: const BoxDecoration(
+                                  color: Color(0xFF0EC5FF),
+                                  borderRadius: BorderRadius.all( Radius.circular(12) )
+                                ),
+                                child: const Center(child: Text("Search",
+                                style: TextStyle(
+                                  color: Color(0xFF202027)
+                                ),
+                                )),
+                              ),
+                            ),
                           )
                         ],
                       )),
@@ -60,6 +87,25 @@ class ScriptSearch extends StatelessWidget {
                     height: MediaQuery.of(context).size.height - 124,
                     child: ListView(
                       children: <Widget>[
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 12),
+                          child: Container(
+                              height: 120,
+                              decoration: const BoxDecoration(
+                                  color: Color(0xff222735),
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(8)))),
+                                      
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 12),
+                          child: Container(
+                              height: 120,
+                              decoration: const BoxDecoration(
+                                  color: Color(0xff222735),
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(8)))),
+                        ),
                         Padding(
                           padding: const EdgeInsets.only(bottom: 12),
                           child: Container(
