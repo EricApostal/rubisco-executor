@@ -4,8 +4,8 @@ import 'package:dropdown_search/dropdown_search.dart';
 
 
 
-class ScriptSearchWidget extends StatelessWidget {
-  const ScriptSearchWidget({Key? key}) : super(key: key);
+class ScriptSearch extends StatelessWidget {
+  const ScriptSearch({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

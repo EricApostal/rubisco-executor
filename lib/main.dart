@@ -49,6 +49,123 @@ class MainWindow extends StatelessWidget {
   }
 }
 
+class Sidebar extends StatefulWidget {
+  final void Function(int) setPage;
+
+  const Sidebar({required this.setPage});
+
+  @override
+  _SidebarState createState() => _SidebarState();
+}
+
+class _SidebarState extends State<Sidebar> {
+  int _selectedPage = 0; // Set initial page to 0
+
+  void setPage(int newPage) {
+    setState(() {
+      _selectedPage = newPage;
+    });
+    widget.setPage(newPage); // Call the function with the newPage parameter to navigate
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 80,
+      height: MediaQuery.of(context).size.height - 50,
+      decoration: const BoxDecoration(color: Color(0xFF13141A)),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(top: 10),
+            child: TextButton(
+              onPressed: () {
+                setPage(0); // Set page index to 0 (ExecutorWindow)
+              },
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 0),
+                curve: Curves.easeInOut,
+                height: 40,
+                width: 40,
+                decoration: BoxDecoration(
+                  color: _selectedPage == 0
+                      ? Color.fromARGB(255, 77, 180, 232)
+                      : Color(0xFF222735),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: SvgPicture.asset(
+                    "assets/code_editor.svg",
+                    colorFilter:
+                        const ColorFilter.mode(Color.fromARGB(255, 255, 255, 255), BlendMode.srcIn),
+                    semanticsLabel: 'Go to Code Editor',
+                  ),
+                ),
+              ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(top: 10),
+            child: TextButton(
+              onPressed: () {
+                setPage(1); // Set page index to 1 (ScriptSearch)
+              },
+              child: Container(
+                height: 40,
+                width: 40,
+                decoration: BoxDecoration(
+                  color: _selectedPage == 1
+                      ? Color.fromARGB(255, 77, 180, 232)
+                      : Color(0xFF222735),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: SvgPicture.asset(
+                    "assets/cloud.svg",
+                    colorFilter:
+                        const ColorFilter.mode(Color.fromARGB(255, 255, 255, 255), BlendMode.srcIn),
+                    semanticsLabel: 'Go to Script Search',
+                  ),
+                ),
+              ),
+            ),
+          ),
+          Expanded(
+            child: Container(),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(bottom: 10, top: 10),
+            child: TextButton(
+              onPressed: () {},
+              child: Container(
+                height: 40,
+                width: 40,
+                decoration: BoxDecoration(
+                  color: Color(0xFF222735),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: SvgPicture.asset(
+                    "assets/settings.svg",
+                    colorFilter:
+                        const ColorFilter.mode(Color.fromARGB(255, 255, 255, 255), BlendMode.srcIn),
+                    semanticsLabel: 'Run script',
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+
 class RubiscoFrame extends StatefulWidget {
   const RubiscoFrame({Key? key}) : super(key: key);
 
@@ -56,15 +173,25 @@ class RubiscoFrame extends StatefulWidget {
   State<RubiscoFrame> createState() => _RubiscoFrameState();
 }
 
-class _RubiscoFrameState extends State<RubiscoFrame>{
-  var currentPage = 1;
+class _RubiscoFrameState extends State<RubiscoFrame> with AutomaticKeepAliveClientMixin {
+  final _pageController = PageController();
+   int _selectedPage = 0; 
 
   void setPage(int newPage) {
-    setState(() => currentPage = newPage);
+    setState(() {
+      _selectedPage = newPage;
+    });
+    _pageController.jumpToPage(
+      newPage
+    );
   }
 
   @override
+  bool get wantKeepAlive => true;
+
+  @override
   Widget build(BuildContext context) {
+    super.build(context);
     return Scaffold(
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -93,19 +220,34 @@ class _RubiscoFrameState extends State<RubiscoFrame>{
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               Sidebar(setPage: setPage),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  if (currentPage == 1) ...[
-                    ExecutorWindow(),
-                    const Padding(
-                      padding: EdgeInsets.only(top: 8, bottom: 4),
-                      child: ButtonSection(),
-                    ),
-                  ] else if (currentPage == 2) ...[
-                    ScriptSearchWidget()
-                  ],
-                ],
+              Expanded(
+                child: SizedBox(
+                  height: 500, // Set the desired height here
+                  child: PageView(
+  controller: _pageController,
+  physics: const NeverScrollableScrollPhysics(),
+  children: const [
+    Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        ExecutorWindow(),
+        Padding(
+          padding: EdgeInsets.only(top: 8, bottom: 4),
+          child: ButtonSection(),
+        ),
+      ],
+    ),
+    ScriptSearch(), // Change the order of pages
+  ],
+  onPageChanged: (page) {
+    setState(() {
+      _selectedPage = page;
+    });
+  },
+),
+
+
+                ),
               ),
             ],
           ),
@@ -114,6 +256,7 @@ class _RubiscoFrameState extends State<RubiscoFrame>{
     );
   }
 }
+
 
 class WindowButtons extends StatelessWidget {
   const WindowButtons({Key? key}) : super(key: key);
@@ -149,138 +292,15 @@ final closeButtonColors = WindowButtonColors(
   mouseOver: const Color.fromARGB(255, 220, 54, 54),
 );
 
-class Sidebar extends StatefulWidget {
-  final void Function(int) setPage;
-
-  const Sidebar({required this.setPage});
-
-  @override
-  _SidebarState createState() => _SidebarState();
-}
-
-class _SidebarState extends State<Sidebar> {
-  int _selectedPage = 1;
+class ExecutorWindow extends StatelessWidget {
+  const ExecutorWindow({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 80,
-      height: MediaQuery.of(context).size.height - 50,
-      decoration: const BoxDecoration(color: Color(0xFF13141A)),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: const EdgeInsets.only(top: 10),
-            child: TextButton(
-              onPressed: () {
-                setState(() {
-                  _selectedPage = 1;
-                });
-                widget.setPage(1);
-              },
-              child: AnimatedContainer(
-                duration: const Duration(milliseconds: 200),
-                curve: Curves.easeInOut,
-                height: 40,
-                width: 40,
-                decoration: BoxDecoration(
-                  color: _selectedPage == 1
-                      ? Color.fromARGB(255, 77, 180, 232)
-                      : Color(0xFF222735),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: SvgPicture.asset(
-                    "assets/code_editor.svg",
-                    colorFilter: const ColorFilter.mode(
-                      Color.fromARGB(255, 255, 255, 255),
-                      BlendMode.srcIn,
-                    ),
-                    semanticsLabel: 'Go to Code Editor',
-                  ),
-                ),
-              ),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.only(top: 10),
-            child: TextButton(
-              onPressed: () {
-                setState(() {
-                  _selectedPage = 2;
-                });
-                widget.setPage(2);
-              },
-              child: Container(
-                height: 40,
-                width: 40,
-                decoration: BoxDecoration(
-                  color: _selectedPage == 2
-                      ? Color.fromARGB(255, 77, 180, 232)
-                      : Color(0xFF222735),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: SvgPicture.asset(
-                    "assets/cloud.svg",
-                    colorFilter: const ColorFilter.mode(
-                      Color.fromARGB(255, 255, 255, 255),
-                      BlendMode.srcIn,
-                    ),
-                    semanticsLabel: 'Go to Script Search',
-                  ),
-                ),
-              ),
-            ),
-          ),
-          Expanded(child: Container()),
-          Padding(
-            padding: const EdgeInsets.only(bottom: 10, top: 10),
-            child: TextButton(
-              onPressed: () {},
-              child: Container(
-                height: 40,
-                width: 40,
-                decoration: BoxDecoration(
-                    color: const Color(0xFF222735),
-                    borderRadius: BorderRadius.circular(12)),
-                child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: SvgPicture.asset("assets/settings.svg",
-                        colorFilter: const ColorFilter.mode(
-                            Color.fromARGB(255, 255, 255, 255),
-                            BlendMode.srcIn),
-                        semanticsLabel: 'Run script')),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class ExecutorWindow extends StatefulWidget {
-  const ExecutorWindow({Key? key});
-
-  State<ExecutorWindow> createState() => _ExecutorWindowState();
-
-}
-
-class _ExecutorWindowState extends State<ExecutorWindow> with AutomaticKeepAliveClientMixin {
-  @override
-  bool get wantKeepAlive => true;
-
-  @override
-  Widget build(BuildContext context) {
-    super.build(context); // Call super.build(context) here.
-    return Container(
-        width: MediaQuery.of(context).size.width - 89,
-        height: MediaQuery.of(context).size.height - 200,
-        child: ExecutorMain(), // Replace with your ExecutorMain widget
+      width: MediaQuery.of(context).size.width - 89,
+      height: MediaQuery.of(context).size.height - 200,
+      child: ExecutorMain(), // Replace with your ExecutorMain widget
     );
   }
 }

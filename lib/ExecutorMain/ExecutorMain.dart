@@ -122,10 +122,16 @@ class _ExampleBrowser extends State<ExampleBrowser> {
     }
   }
 
-  @override
+@override
   Widget build(BuildContext context) {
-    return compositeView();
+    return AutomaticKeepAlive(
+      child: compositeView(),
+    );
   }
+
+  @override
+  bool shouldReload(_ExampleBrowser old) => false;
+}
 
   Future<WebviewPermissionDecision> _onPermissionRequested(
       String url, WebviewPermissionKind kind, bool isUserInitiated) async {
@@ -151,7 +157,7 @@ class _ExampleBrowser extends State<ExampleBrowser> {
 
     return decision ?? WebviewPermissionDecision.none;
   }
-}
+
 
 class ExecutorMain extends StatelessWidget {
   const ExecutorMain({Key? key}) : super(key: key);
@@ -216,9 +222,8 @@ class Tabs extends StatefulWidget {
   State<Tabs> createState() => _TabState();
 }
 
-class _TabState extends State<Tabs> with AutomaticKeepAliveClientMixin {
-  @override
-  bool get wantKeepAlive => true;
+class _TabState extends State<Tabs> {
+
   
   var _controller = BlossomTabController<int>(tabs: []);
   var _tabs = <BlossomTab<int>>[];
@@ -244,7 +249,6 @@ class _TabState extends State<Tabs> with AutomaticKeepAliveClientMixin {
   var tabIndex = [];
   @override
   Widget build(BuildContext context) {
-    super.build(context);
     print("tabs are being rebuilt");
     return BlossomTabControllerScope(
       controller: _controller,
