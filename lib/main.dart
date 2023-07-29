@@ -9,8 +9,8 @@ import 'package:rubisco_one/Settings.dart';
 void main() async {
   runApp(const MyApp());
   doWhenWindowReady(() {
-    const initialSize = Size(800, 400);
-    const minSize = Size(650, 350);
+    const initialSize = Size(700, 400);
+    const minSize = Size(550, 350);
     appWindow.minSize = minSize;
     appWindow.size = initialSize; // default size
     appWindow.show();
@@ -71,7 +71,7 @@ class _SidebarState extends State<Sidebar> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 80,
+      width: 70,
       height: MediaQuery.of(context).size.height - 60,
       decoration: const BoxDecoration(color: Color(0xFF13141A)),
       child: Align(
@@ -101,8 +101,8 @@ class _SidebarState extends State<Sidebar> {
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 300),
           curve: Curves.easeInOut,
-          height: 50,
-          width: 50,
+          height: 40,
+          width: 40,
           decoration: BoxDecoration(
             color: _selectedPage == pageIndex ? Color.fromARGB(255, 11, 96, 214) : const Color(0xFF222735),
             borderRadius: BorderRadius.circular(12),

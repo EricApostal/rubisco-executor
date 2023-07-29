@@ -26,9 +26,18 @@ class ExampleBrowser extends StatefulWidget {
 }
 
 class _ExampleBrowser extends State<ExampleBrowser> {
+
   final _controller = WebviewController();
   final _textController = TextEditingController();
   bool _isWebviewSuspended = false;
+
+  @protected
+  @mustCallSuper
+  void dispose() {
+    super.dispose();
+    // print("disposing");
+    _controller.dispose();
+  }
 
   @override
   void initState() {
@@ -52,9 +61,18 @@ class _ExampleBrowser extends State<ExampleBrowser> {
 
       await _controller.setBackgroundColor(Colors.transparent);
       await _controller.setPopupWindowPolicy(WebviewPopupWindowPolicy.deny);
-      await _controller.loadUrl(
-          "file://" + Directory.current.toString().replaceAll("'", "").replaceAll("Directory: ", "") + '/bin/monaco/Monaco.html');
-          print("file://" + Directory.current.toString().replaceAll("'", "").replaceAll("Directory: ", "") + '/bin/monaco/Monaco.html');
+      await _controller.loadUrl("file://" +
+          Directory.current
+              .toString()
+              .replaceAll("'", "")
+              .replaceAll("Directory: ", "") +
+          '/bin/monaco/Monaco.html');
+      // print("file://" +
+      //     Directory.current
+      //         .toString()
+      //         .replaceAll("'", "")
+      //         .replaceAll("Directory: ", "") +
+      //     '/bin/monaco/Monaco.html');
 
       if (!mounted) return;
       setState(() {});
@@ -123,41 +141,39 @@ class _ExampleBrowser extends State<ExampleBrowser> {
     }
   }
 
-@override
+  @override
   Widget build(BuildContext context) {
-      return compositeView();
-
+    return compositeView();
   }
 
   @override
   bool shouldReload(_ExampleBrowser old) => false;
 }
 
-  Future<WebviewPermissionDecision> _onPermissionRequested(
-      String url, WebviewPermissionKind kind, bool isUserInitiated) async {
-    final decision = await showDialog<WebviewPermissionDecision>(
-      context: navigatorKey.currentContext!,
-      builder: (BuildContext context) => AlertDialog(
-        title: const Text('WebView permission requested'),
-        content: Text('WebView has requested permission \'$kind\''),
-        actions: <Widget>[
-          TextButton(
-            onPressed: () =>
-                Navigator.pop(context, WebviewPermissionDecision.deny),
-            child: const Text('Deny'),
-          ),
-          TextButton(
-            onPressed: () =>
-                Navigator.pop(context, WebviewPermissionDecision.allow),
-            child: const Text('Allow'),
-          ),
-        ],
-      ),
-    );
+Future<WebviewPermissionDecision> _onPermissionRequested(
+    String url, WebviewPermissionKind kind, bool isUserInitiated) async {
+  final decision = await showDialog<WebviewPermissionDecision>(
+    context: navigatorKey.currentContext!,
+    builder: (BuildContext context) => AlertDialog(
+      title: const Text('WebView permission requested'),
+      content: Text('WebView has requested permission \'$kind\''),
+      actions: <Widget>[
+        TextButton(
+          onPressed: () =>
+              Navigator.pop(context, WebviewPermissionDecision.deny),
+          child: const Text('Deny'),
+        ),
+        TextButton(
+          onPressed: () =>
+              Navigator.pop(context, WebviewPermissionDecision.allow),
+          child: const Text('Allow'),
+        ),
+      ],
+    ),
+  );
 
-    return decision ?? WebviewPermissionDecision.none;
-  }
-
+  return decision ?? WebviewPermissionDecision.none;
+}
 
 class ExecutorMain extends StatelessWidget {
   const ExecutorMain({Key? key}) : super(key: key);
@@ -223,8 +239,6 @@ class Tabs extends StatefulWidget {
 }
 
 class _TabState extends State<Tabs> {
-
-  
   var _controller = BlossomTabController<int>(tabs: []);
   var _tabs = <BlossomTab<int>>[];
 
@@ -244,6 +258,7 @@ class _TabState extends State<Tabs> {
         .toList();
     _controller = BlossomTabController<int>(currentTab: 'Tab 1', tabs: _tabs);
     super.initState();
+
   }
 
   var tabIndex = [];
@@ -286,10 +301,8 @@ class _TabState extends State<Tabs> {
                 ],
                 bottomBar: BlossomTabControllerScopeDescendant<int>(
                     builder: (context, controller) {
-                  // Future.delayed(Duration.zero)
-                  //     .then((_) => print(jsonEncode(controller.toJson())));
+
                   return Container(
-                      //color: controller.currentTab == 'd' ? Colors.white : null,
                       );
                 }),
                 actions: [

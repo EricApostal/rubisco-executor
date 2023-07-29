@@ -51,6 +51,8 @@ dependencies:
   csharp_rpc: ^0.0.7
   flutter_svg: ^2.0.7
   dropdown_search: ^5.0.6
+  http: ^0.13.6
+  image_network: ^2.5.4+1
 
 
 dev_dependencies:

@@ -305,7 +305,7 @@ packages:
     source: hosted
     version: "2.2.3"
   http:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: http
       sha256: "5895291c13fa8a3bd82e76d5627f69e0d85ca6a30dcac95c4ea19a5d555879c2"
@@ -328,6 +328,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.0.2"
+  image_network:
+    dependency: "direct main"
+    description:
+      name: image_network
+      sha256: "49198112851e48e9f38a44016df4f97a8db3fbfe9ae0c2d1aafa87ba9dcddec8"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.5.4+1"
   io:
     dependency: transitive
     description:
@@ -520,6 +528,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.1.5"
+  pointer_interceptor:
+    dependency: transitive
+    description:
+      name: pointer_interceptor
+      sha256: "6aa680b30d96dccef496933d00208ad25f07e047f644dc98ce03ec6141633a9a"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.9.3+4"
   pool:
     dependency: transitive
     description:
@@ -845,6 +861,38 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.2.0"
+  webview_flutter:
+    dependency: transitive
+    description:
+      name: webview_flutter
+      sha256: "789d52bd789373cc1e100fb634af2127e86c99cf9abde09499743270c5de8d00"
+      url: "https://pub.dev"
+    source: hosted
+    version: "4.2.2"
+  webview_flutter_android:
+    dependency: transitive
+    description:
+      name: webview_flutter_android
+      sha256: d936a09fbfd08cb78f7329e0bbacf6158fbdfe24ffc908b22444c07d295eb193
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.9.2"
+  webview_flutter_platform_interface:
+    dependency: transitive
+    description:
+      name: webview_flutter_platform_interface
+      sha256: "564ef378cafc1a0e29f1d76ce175ef517a0a6115875dff7b43fccbef2b0aeb30"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.4.0"
+  webview_flutter_wkwebview:
+    dependency: transitive
+    description:
+      name: webview_flutter_wkwebview
+      sha256: "5fa098f28b606f699e8ca52d9e4e11edbbfef65189f5f77ae92703ba5408fd25"
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.7.2"
   webview_windows:
     dependency: "direct main"
     description:
@@ -853,6 +901,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.3.0"
+  webviewimage:
+    dependency: transitive
+    description:
+      name: webviewimage
+      sha256: f6da2a7bfc3e67f330e8551c13c10a16aa3100a0d46e44c5484978a63ca5d62d
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.0.4"
   win32:
     dependency: transitive
     description:
