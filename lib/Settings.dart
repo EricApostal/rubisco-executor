@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:dropdown_search/dropdown_search.dart';
+import 'package:rubisco_one/globals.dart';
 import 'package:animated_toggle_switch/animated_toggle_switch.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:window_manager/window_manager.dart';
 
 class SettingsSidebar extends StatefulWidget {
   final void Function(int) setPage;
@@ -27,7 +29,7 @@ class _SettingsSidebarState extends State<SettingsSidebar> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 150,
+      width: 120,
       height: MediaQuery.of(context).size.height - 63,
       // decoration: const BoxDecoration(color: Color(0xFF13141A)),
       child: Align(
@@ -47,7 +49,8 @@ class _SettingsSidebarState extends State<SettingsSidebar> {
     );
   }
 
-  Widget _buildTextButton(String buttonText, String semanticsLabel, int pageIndex) {
+  Widget _buildTextButton(
+      String buttonText, String semanticsLabel, int pageIndex) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 6, left: 3, right: 3),
       child: Align(
@@ -68,17 +71,138 @@ class _SettingsSidebarState extends State<SettingsSidebar> {
                 setPage(pageIndex);
               },
               style: ButtonStyle(splashFactory: NoSplash.splashFactory),
-              child: Padding(
-                padding: const EdgeInsets.all(0),
-                child: Text(buttonText,
-                style: GoogleFonts.lato(
-                  color: Colors.white
-                ),
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  buttonText,
+                  textAlign: TextAlign.start,
+                  style: GoogleFonts.lato(color: Colors.white),
                 ),
               ),
             )),
       ),
     );
+  }
+}
+
+class SettingsCard extends StatefulWidget {
+  SettingsCard(
+      {super.key,
+      required this.title,
+      required this.tooltip,
+      required this.initialState,
+      required this.callback});
+  final String title;
+  final String tooltip;
+  bool initialState;
+  Function callback;
+
+  @override
+  State<SettingsCard> createState() => _SettingsCardsState();
+}
+
+class _SettingsCardsState extends State<SettingsCard> {
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8, left: 8, right: 8),
+      child: Container(
+          height: 70,
+          decoration: const BoxDecoration(
+              color: Color(0xff13141A),
+              borderRadius: BorderRadius.all(Radius.circular(6))),
+          child: Padding(
+            padding: const EdgeInsets.only(top: 4, left: 8),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      widget.title,
+                      softWrap: false,
+                      overflow: TextOverflow.fade,
+                      textAlign: TextAlign.start,
+                      style:
+                          GoogleFonts.lato(color: Colors.white, fontSize: 18),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 8),
+                      child: Text(
+                        widget.tooltip,
+                        softWrap: false,
+                        overflow: TextOverflow.fade,
+                        textAlign: TextAlign.start,
+                        style: GoogleFonts.lato(
+                            color: Color(0xffB8B3B3), fontSize: 16),
+                      ),
+                    ),
+                  ],
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(right: 8.0),
+                  child: SizedBox(
+                    width: 60,
+                    child: AnimatedToggleSwitch<bool>.dual(
+                      current: widget.initialState,
+                      first: false,
+                      second: true,
+                      dif: 10,
+                      borderColor: Colors.transparent,
+                      borderWidth: 5.0,
+                      height: 30,
+                      boxShadow: const [
+                        BoxShadow(
+                          color: Color.fromARGB(66, 255, 255, 255),
+                          spreadRadius: 1,
+                          blurRadius: 2,
+                          offset: Offset(0, 0),
+                        ),
+                      ],
+                      onChanged: (b) {
+                        setState(() => widget.initialState = b);
+                        widget.callback(
+                            b); // I have no idea why this needs to be inverted
+                      },
+                      colorBuilder: (b) => b
+                          ? const Color.fromARGB(255, 123, 255, 127)
+                          : const Color.fromARGB(255, 244, 54, 114),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          )),
+    );
+  }
+}
+
+class SettingsPage extends StatelessWidget {
+  const SettingsPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+        decoration: const BoxDecoration(
+            color: Color(0xFF222735),
+            borderRadius: BorderRadius.all(Radius.circular(8))),
+        child: ListView(
+          children: [
+            const SizedBox(
+              height: 8,
+            ),
+            SettingsCard(
+                title: 'Topmost Window',
+                tooltip: 'Keeps Rubisco on top of all other applications.',
+                callback: (newState) {
+                  topMost = newState;
+                  print(topMost);
+                  windowManager.setAlwaysOnTop(topMost);
+                },
+                initialState: topMost),
+          ],
+        ));
   }
 }
 
@@ -97,41 +221,41 @@ class _SettingsFrameState extends State<SettingsFrame> {
     setState(() {
       selectedPage = newPage;
     });
-    print(newPage);
     _pageController.jumpToPage(newPage);
   }
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          SettingsSidebar(setPage: setPage),
-          Expanded(
+    return Container(
+      decoration: BoxDecoration(color: Color(0xFF13141A)),
+      child: SingleChildScrollView(
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            SettingsSidebar(setPage: setPage),
+            Container(
+              width: 10,
+            ),
+            Expanded(
               child: SizedBox(
-                width: 100,
-                height: 200,
-                child: PageView(
-                  controller: _pageController,
-                  physics: const NeverScrollableScrollPhysics(),
-                  children: [
-                    Text("sfghsdhtsrthsrhrhhth",
-                    style: TextStyle(
-                      color: Colors.white
-                    ),),
-                    Text("sfghsdhtsrthsrhrhhth")
-                  ],
-                  onPageChanged: (page) {
-                    setState(() {
-                      selectedPage = page;
-                    });
-                  },
+                height: MediaQuery.of(context).size.height - 65,
+                child: Padding(
+                  padding: EdgeInsets.only(right: 10),
+                  child: PageView(
+                    controller: _pageController,
+                    physics: const NeverScrollableScrollPhysics(),
+                    children: [SettingsPage(), Text("sfghsdhtsrthsrhrhhth")],
+                    onPageChanged: (page) {
+                      setState(() {
+                        selectedPage = page;
+                      });
+                    },
+                  ),
                 ),
               ),
-            
-          ),
-        ],
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -148,30 +272,7 @@ class Settings extends StatelessWidget {
           width: MediaQuery.of(context).size.width - 80,
           height: MediaQuery.of(context).size.height - 60,
           decoration: const BoxDecoration(color: Color(0xFF13141A)),
-          child: Row(
-            children: [
-              Container(
-                  width: 150,
-                  decoration: const BoxDecoration(
-                      color: Color(0xff222735),
-                      borderRadius: BorderRadius.all(Radius.circular(6))),
-                  child: Padding(
-                    padding: const EdgeInsets.only(top: 0),
-                    child: SettingsFrame()
-                  )),
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.only(left: 8.0, right: 8),
-                  child: Container(
-                    width: 150,
-                    decoration: const BoxDecoration(
-                        color: Color(0xff222735),
-                        borderRadius: BorderRadius.all(Radius.circular(6))),
-                  ),
-                ),
-              )
-            ],
-          )),
+          child: SettingsFrame()),
     );
   }
 }

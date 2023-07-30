@@ -5,9 +5,9 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:rubisco_one/ExecutorMain/ExecutorMain.dart';
 import 'package:rubisco_one/ScriptSearch/ScriptSearch.dart';
 import 'package:rubisco_one/Settings.dart';
+import 'package:rubisco_one/Misc/datastore.dart';
 import 'package:window_manager/window_manager.dart';
 import 'package:flutter_acrylic/flutter_acrylic.dart';
-import 'package:fullscreen_window/fullscreen_window.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -38,6 +38,10 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print( getData("globals").then((value) {
+      print(value);
+    }));
+
     return ClipRRect(
       borderRadius: BorderRadius.circular( 12 ),
       child: MaterialApp(
@@ -175,8 +179,9 @@ class _RubiscoFrameState extends State<RubiscoFrame> {
             color: const Color(0xFF13141A),
             child: Row(
               children: [
-                Padding(
-                  padding: const EdgeInsets.only(left: 12),
+                
+                Expanded(child: MoveWindow(child: Padding(
+                  padding: const EdgeInsets.only(left: 12, top: 8),
                   child: Text(
                     "RUBISCO",
                     style: GoogleFonts.istokWeb(
@@ -184,8 +189,7 @@ class _RubiscoFrameState extends State<RubiscoFrame> {
                       color: const Color(0xFFA1A1A1),
                     ),
                   ),
-                ),
-                Expanded(child: MoveWindow()),
+                ),)),
                 const WindowButtons(),
               ],
             ),
