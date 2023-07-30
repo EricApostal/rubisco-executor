@@ -61,92 +61,104 @@ class SearchItem extends StatelessWidget {
               padding: const EdgeInsets.only(top: 8.0),
               child: Align(
                 alignment: Alignment.topLeft,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Align(
-                      alignment: Alignment.bottomLeft,
-                      child: Text(
-                        scriptJson["title"],
-                        textAlign: TextAlign.start,
-                        style:
-                            const TextStyle(color: Colors.white, fontSize: 18),
-                      ),
-                    ),
-                    Align(
-                      alignment: Alignment.bottomLeft,
-                      child: Text(
-                        scriptJson["game"]["name"],
-                        textAlign: TextAlign.start,
-                        style: const TextStyle(
-                            color: Color(0xFF969696), fontSize: 16),
-                      ),
-                    ),
-                    Expanded(child: Container()),
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 8.0),
-                      child: Container(
-                        width: MediaQuery.of(context).size.width - 228,
-                        child: Padding(
-                          padding: const EdgeInsets.only(right: 8),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(""),
-                              // Text(scriptJson["views"].toString() + " Views",
-                              //     style: const TextStyle(
-                              //         color: Color(0xFF969696), fontSize: 16)),
-                              Row(
-                                children: [
-                                  Container(
-                                    width: 150,
-                                    height: 40,
-                                    decoration: const BoxDecoration(
-                                        color: Color(0xff43DDFF),
-                                        borderRadius: BorderRadius.all(
-                                            Radius.circular(12))),
-                                    child: TextButton(
-                                      onPressed: () async {
-                                        await Clipboard.setData(
-                                            ClipboardData(text: scriptJson["script"]));
-                                        // copied successfully
-                                      },
-                                      child: const Center(
-                                          child: Text("Copy to Clipboard",
-                                              style: TextStyle(
-                                                color: Color(0xFF202027),
-                                              ))),
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.only(left: 8.0),
-                                    child: Container(
-                                      width: 80,
-                                      height: 40,
-                                      decoration: const BoxDecoration(
-                                          color: Color(0xFF43FF83),
-                                          borderRadius: BorderRadius.all(
-                                              Radius.circular(12))),
-                                      child: TextButton(
-                                        onPressed: () {
-                                          print(scriptJson["script"]);
-                                        },
-                                        child: const Center(
-                                            child: Text("Run",
-                                                style: TextStyle(
-                                                  color: Color(0xFF202027),
-                                                ))),
-                                      ),
-                                    ),
-                                  )
-                                ],
-                              ),
-                            ],
-                          ),
+                child: Container(
+                  width: MediaQuery.of(context).size.width-230,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Align(
+                        alignment: Alignment.bottomLeft,
+                        child: Text(
+                          scriptJson["title"],
+                          overflow: TextOverflow.fade,
+                          softWrap: false,
+                          textAlign: TextAlign.start,
+                          style:
+                              const TextStyle(color: Colors.white, fontSize: 18),
                         ),
                       ),
-                    )
-                  ],
+                      Align(
+                        alignment: Alignment.bottomLeft,
+                        child: Text(
+                          scriptJson["game"]["name"],
+                          softWrap: false,
+                          overflow: TextOverflow.fade,
+                          textAlign: TextAlign.start,
+                          style: const TextStyle(
+                              color: Color(0xFF969696), fontSize: 16),
+                        ),
+                      ),
+                      Expanded(child: Container()),
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 8.0),
+                        child: Container(
+                          width: MediaQuery.of(context).size.width - 228,
+                          child: Padding(
+                            padding: const EdgeInsets.only(right: 0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(""),
+                                // Text(scriptJson["views"].toString() + " Views",
+                                //     style: const TextStyle(
+                                //         color: Color(0xFF969696), fontSize: 16)),
+                                Container(
+                                  height: 40,
+                                  width: MediaQuery.of(context).size.width-230,
+                                  child: ListView(
+                                    scrollDirection: Axis.horizontal,
+                                    children: [
+                                      Container(
+                                        width: 150,
+                                        height: 40,
+                                        decoration: const BoxDecoration(
+                                            color: Color(0xff43DDFF),
+                                            borderRadius: BorderRadius.all(
+                                                Radius.circular(12))),
+                                        child: TextButton(
+                                          onPressed: () async {
+                                            await Clipboard.setData(
+                                                ClipboardData(text: scriptJson["script"]));
+                                            // copied successfully
+                                          },
+                                          child: const Center(
+                                              child: Text("Copy to Clipboard",
+                                                  style: TextStyle(
+                                                    color: Color(0xFF202027),
+                                                  ))),
+                                        ),
+                                      ),
+                                      Padding(
+                                        padding: const EdgeInsets.only(left: 8.0),
+                                        child: Container(
+                                          width: 80,
+                                          height: 40,
+                                          decoration: const BoxDecoration(
+                                              color: Color(0xFF43FF83),
+                                              borderRadius: BorderRadius.all(
+                                                  Radius.circular(12))),
+                                          child: TextButton(
+                                            onPressed: () {
+                                              print(scriptJson["script"]);
+                                            },
+                                            child: const Center(
+                                                child: Text("Run",
+                                                    style: TextStyle(
+                                                      color: Color(0xFF202027),
+                                                    ))),
+                                          ),
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -205,7 +217,7 @@ class _ScriptSearchState extends State<ScriptSearch> {
                           Expanded(
                             // Search box
                             child: Padding(
-                              padding: const EdgeInsets.only(bottom: 13),
+                              padding: const EdgeInsets.only(bottom: 13, right: 9),
                               child: TextField(
                                   onChanged: (value) {
                                     setState(() {
@@ -227,7 +239,7 @@ class _ScriptSearchState extends State<ScriptSearch> {
                           Padding(
                             padding: const EdgeInsets.only(top: 4, bottom: 4),
                             child: Padding(
-                              padding: const EdgeInsets.only(right: 6),
+                              padding: const EdgeInsets.only(right: 4),
                               child: Container(
                                 width: 80,
                                 height: 40,

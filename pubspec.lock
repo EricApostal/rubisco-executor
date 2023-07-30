@@ -17,6 +17,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "6.0.0"
+  animated_toggle_switch:
+    dependency: "direct main"
+    description:
+      name: animated_toggle_switch
+      sha256: d2c7a477dc2799645089838a9bfebcbfd7f829ea07909cd9dbdae2e857939746
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.7.0"
   args:
     dependency: transitive
     description:
@@ -280,6 +288,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.2.0"
+  fullscreen_window:
+    dependency: "direct main"
+    description:
+      name: fullscreen_window
+      sha256: fe3014f91bff16a82d142ba9d834980b8a84b4bb03347a92588d389ad92bd1d3
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.4"
   glob:
     dependency: transitive
     description:

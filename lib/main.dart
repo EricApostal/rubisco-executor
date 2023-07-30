@@ -7,6 +7,7 @@ import 'package:rubisco_one/ScriptSearch/ScriptSearch.dart';
 import 'package:rubisco_one/Settings.dart';
 import 'package:window_manager/window_manager.dart';
 import 'package:flutter_acrylic/flutter_acrylic.dart';
+import 'package:fullscreen_window/fullscreen_window.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -22,11 +23,10 @@ void main() async {
     windowManager.show();
   });
 
-
   runApp(const MyApp());
   doWhenWindowReady(() {
     const initialSize = Size(700, 400);
-    const minSize = Size(550, 350);
+    const minSize = Size(400, 250);
     appWindow.minSize = minSize;
     appWindow.size = initialSize; // default size
     appWindow.show();
@@ -39,7 +39,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ClipRRect(
-      borderRadius: BorderRadius.circular(12),
+      borderRadius: BorderRadius.circular( 12 ),
       child: MaterialApp(
         color: Colors.transparent,
         debugShowCheckedModeBanner: false,
@@ -85,14 +85,15 @@ class _SidebarState extends State<Sidebar> {
     setState(() {
       _selectedPage = newPage;
     });
-    widget.setPage(newPage); // Call the function with the newPage parameter to navigate
+    widget.setPage(
+        newPage); // Call the function with the newPage parameter to navigate
   }
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 70,
-      height: MediaQuery.of(context).size.height - 60,
+      width: 50,
+      height: MediaQuery.of(context).size.height - 49,
       decoration: const BoxDecoration(color: Color(0xFF13141A)),
       child: Align(
         alignment: Alignment.topLeft,
@@ -111,30 +112,34 @@ class _SidebarState extends State<Sidebar> {
 
   Widget _buildTextButton(String asset, String semanticsLabel, int pageIndex) {
     return Padding(
-      padding: const EdgeInsets.only(top: 10),
-      child: TextButton(
-        style: const ButtonStyle(
-          splashFactory: NoSplash.splashFactory,),
-        onPressed: () {
-          setPage(pageIndex);
-        },
+      padding: const EdgeInsets.only(bottom: 6),
+      child: Align(
+        alignment: Alignment.centerRight,
         child: AnimatedContainer(
-          duration: const Duration(milliseconds: 300),
-          curve: Curves.easeInOut,
-          height: 40,
-          width: 40,
-          decoration: BoxDecoration(
-            color: _selectedPage == pageIndex ? Color.fromARGB(255, 11, 96, 214) : const Color(0xFF222735),
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: SvgPicture.asset(
-              asset,
-              colorFilter: const ColorFilter.mode(Color.fromARGB(255, 255, 255, 255), BlendMode.srcIn),
-              semanticsLabel: semanticsLabel,
-            ),
-          ),
+              duration: const Duration(milliseconds: 300),
+              curve: Curves.easeInOut,
+              height: 45,
+              width: 45,
+              decoration: BoxDecoration(
+                color: _selectedPage == pageIndex
+                    ? Color.fromARGB(255, 11, 96, 214)
+                    : const Color(0xFF222735),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: TextButton(
+            onPressed: () {
+              setPage(pageIndex);
+            },
+            child: Padding(
+                padding: const EdgeInsets.all(0),
+                child: SvgPicture.asset(
+                  asset,
+                  colorFilter: const ColorFilter.mode(
+                      Color.fromARGB(255, 255, 255, 255), BlendMode.srcIn),
+                  semanticsLabel: semanticsLabel,
+                ),
+              ),
+            )
         ),
       ),
     );
@@ -191,24 +196,28 @@ class _RubiscoFrameState extends State<RubiscoFrame> {
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   Sidebar(setPage: setPage),
-                  // Text("TODO: Text can go here, but\nit goes on other\npages too.\nOther method causes\nrenderflex error"),
                   Expanded(
                     child: SizedBox(
-                      height: MediaQuery.of(context).size.height - 58, // Set the desired height here
+                      height: MediaQuery.of(context).size.height - 58,
                       width: MediaQuery.of(context).size.width,
                       child: PageView(
                         controller: _pageController,
                         physics: const NeverScrollableScrollPhysics(),
-                        children: const [
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              ExecutorWindow(),
-                              Padding(
-                                padding: EdgeInsets.only(top: 8, bottom: 4),
-                                child: OutputConsole(),
-                              ),
-                            ],
+                        children: [
+                          Container(
+                            width: MediaQuery.of(context).size.width - 89,
+                            height: MediaQuery.of(context).size.height - 200,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                ExecutorWindow(),
+                                if (false) // (MediaQuery.of(context).size.height > 300)
+                                  Padding(
+                                    padding: EdgeInsets.only(top: 8, bottom: 4),
+                                    child: OutputConsole(),
+                                  ),
+                              ],
+                            ),
                           ),
                           ScriptSearch(),
                           Settings(),
@@ -270,9 +279,7 @@ class ExecutorWindow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: MediaQuery.of(context).size.width - 89,
-      height: MediaQuery.of(context).size.height - 200,
+    return Expanded(
       child: ExecutorMain(),
     );
   }
@@ -287,7 +294,7 @@ class OutputConsole extends StatelessWidget {
       padding: const EdgeInsets.only(right: 10),
       child: Container(
         width: MediaQuery.of(context).size.width,
-        height: 130,
+        height: 0, // height: 100,
         decoration: const BoxDecoration(
           borderRadius: BorderRadius.all(Radius.circular(6)),
           color: Color(0xFF222735),
@@ -296,7 +303,8 @@ class OutputConsole extends StatelessWidget {
           padding: const EdgeInsets.all(8.0),
           child: Text(
             "[4:20:69] Rubisco has injected!",
-            style: GoogleFonts.robotoMono(color: Color(0xFFF7F7F7), fontSize: 14),
+            style:
+                GoogleFonts.robotoMono(color: Color(0xFFF7F7F7), fontSize: 14),
           ),
         ),
       ),
