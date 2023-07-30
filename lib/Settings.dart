@@ -5,6 +5,8 @@ import 'package:rubisco_one/globals.dart';
 import 'package:animated_toggle_switch/animated_toggle_switch.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:window_manager/window_manager.dart';
+import 'package:rubisco_one/Misc/datastore.dart';
+
 
 class SettingsSidebar extends StatefulWidget {
   final void Function(int) setPage;
@@ -35,11 +37,11 @@ class _SettingsSidebarState extends State<SettingsSidebar> {
       child: Align(
         alignment: Alignment.topLeft,
         child: Padding(
-          padding: const EdgeInsets.only(top: 4),
+          padding: const EdgeInsets.only(top: 2),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _buildTextButton("Look", 'Go to Code Editor', 0),
+              _buildTextButton("Appearance", 'Go to Code Editor', 0),
               _buildTextButton("Behavior", 'Go to Script Search', 1),
               // _buildTextButton("assets/settings.svg", 'Run script', 2),
             ],
@@ -162,8 +164,8 @@ class _SettingsCardsState extends State<SettingsCard> {
                       ],
                       onChanged: (b) {
                         setState(() => widget.initialState = b);
-                        widget.callback(
-                            b); // I have no idea why this needs to be inverted
+                        // print(b);
+                        widget.callback(b);
                       },
                       colorBuilder: (b) => b
                           ? const Color.fromARGB(255, 123, 255, 127)
@@ -179,7 +181,9 @@ class _SettingsCardsState extends State<SettingsCard> {
 }
 
 class SettingsPage extends StatelessWidget {
-  const SettingsPage({super.key});
+  const SettingsPage({super.key, required this.updateOpacity});
+
+  final Function updateOpacity;
 
   @override
   Widget build(BuildContext context) {
@@ -196,18 +200,29 @@ class SettingsPage extends StatelessWidget {
                 title: 'Topmost Window',
                 tooltip: 'Keeps Rubisco on top of all other applications.',
                 callback: (newState) {
-                  topMost = newState;
-                  print(topMost);
-                  windowManager.setAlwaysOnTop(topMost);
+                  saveData(g);
+                  g['topMost'] = newState;
+                  windowManager.setAlwaysOnTop( g['topMost'] ?? true );
                 },
-                initialState: topMost),
+                initialState: g['topMost'] ?? false ),
+                SettingsCard(
+                title: 'Unfocused Transparency',
+                tooltip: 'Makes Rubisco transparent when you click off.',
+                callback: (newState) {
+                  saveData(g);
+                  g['transparent'] = newState;
+                  updateOpacity();
+                },
+                initialState: g['transparent'] ?? false ),
+                
           ],
         ));
   }
 }
 
 class SettingsFrame extends StatefulWidget {
-  const SettingsFrame({Key? key}) : super(key: key);
+  const SettingsFrame({Key? key, required this.updateOpacity}) : super(key: key);
+  final Function updateOpacity;
 
   @override
   State<SettingsFrame> createState() => _SettingsFrameState();
@@ -244,7 +259,7 @@ class _SettingsFrameState extends State<SettingsFrame> {
                   child: PageView(
                     controller: _pageController,
                     physics: const NeverScrollableScrollPhysics(),
-                    children: [SettingsPage(), Text("sfghsdhtsrthsrhrhhth")],
+                    children: [SettingsPage(updateOpacity: widget.updateOpacity), Text("sfghsdhtsrthsrhrhhth")],
                     onPageChanged: (page) {
                       setState(() {
                         selectedPage = page;
@@ -262,7 +277,9 @@ class _SettingsFrameState extends State<SettingsFrame> {
 }
 
 class Settings extends StatelessWidget {
-  const Settings({Key? key}) : super(key: key);
+  const Settings({Key? key, required this.updateOpacity}) : super(key: key);
+
+  final Function updateOpacity;
 
   @override
   Widget build(BuildContext context) {
@@ -272,7 +289,7 @@ class Settings extends StatelessWidget {
           width: MediaQuery.of(context).size.width - 80,
           height: MediaQuery.of(context).size.height - 60,
           decoration: const BoxDecoration(color: Color(0xFF13141A)),
-          child: SettingsFrame()),
+          child: SettingsFrame(updateOpacity: updateOpacity)),
     );
   }
 }

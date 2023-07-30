@@ -7,14 +7,12 @@ import 'package:rubisco_one/ScriptSearch/ScriptSearch.dart';
 import 'package:rubisco_one/Settings.dart';
 import 'package:rubisco_one/Misc/datastore.dart';
 import 'package:window_manager/window_manager.dart';
-import 'package:flutter_acrylic/flutter_acrylic.dart';
+import 'package:rubisco_one/globals.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   windowManager.ensureInitialized();
-  Window.initialize();
 
-  Window.setEffect(effect: WindowEffect.transparent);
 
   windowManager.waitUntilReadyToShow().then((_) async {
     // await windowManager.setTitleBarStyle(TitleBarStyle.hidden);
@@ -29,46 +27,64 @@ void main() async {
     const minSize = Size(400, 250);
     appWindow.minSize = minSize;
     appWindow.size = initialSize; // default size
+
     appWindow.show();
   });
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    print( getData("globals").then((value) {
-      print(value);
-    }));
+  State<MyApp> createState() => _MyAppState();
+}
 
-    return ClipRRect(
-      borderRadius: BorderRadius.circular( 12 ),
-      child: MaterialApp(
-        color: Colors.transparent,
-        debugShowCheckedModeBanner: false,
-        title: 'Rubisco',
-        theme: ThemeData(
-          splashColor: Colors.transparent,
-          highlightColor: Colors.transparent,
-          colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF13141A)),
-          primaryColor: const Color(0xFF13141A),
-          scaffoldBackgroundColor: const Color(0xFF13141A),
-          useMaterial3: true,
+class _MyAppState extends State<MyApp> {
+  void updateOpacity() {
+    setState(() {
+      
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+
+    getData().then((value) {
+      print(value);
+    });
+
+      return Opacity(
+        opacity: 1,// (g["transparent"] ?? false) ? .1: 1,
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular( 12 ),
+          child: MaterialApp(
+            color: Colors.transparent,
+            debugShowCheckedModeBanner: false,
+            title: 'Rubisco',
+            theme: ThemeData(
+              splashColor: Colors.transparent,
+              highlightColor: Colors.transparent,
+              colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF13141A)),
+              primaryColor: const Color(0xFF13141A),
+              scaffoldBackgroundColor: const Color(0xFF13141A),
+              useMaterial3: true,
+            ),
+            home: MainWindow(updateOpacity: updateOpacity),
+          ),
         ),
-        home: const MainWindow(),
-      ),
-    );
+      );
   }
 }
 
 class MainWindow extends StatelessWidget {
-  const MainWindow({Key? key}) : super(key: key);
+  const MainWindow({Key? key, required this.updateOpacity}) : super(key: key);
+
+  final Function updateOpacity;
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
-      body: RubiscoFrame(),
+    return Scaffold(
+      body: RubiscoFrame(updateOpacity: updateOpacity),
     );
   }
 }
@@ -151,7 +167,9 @@ class _SidebarState extends State<Sidebar> {
 }
 
 class RubiscoFrame extends StatefulWidget {
-  const RubiscoFrame({Key? key}) : super(key: key);
+  RubiscoFrame({Key? key, required this.updateOpacity}) : super(key: key);
+
+  final Function updateOpacity;
 
   @override
   State<RubiscoFrame> createState() => _RubiscoFrameState();
@@ -224,7 +242,7 @@ class _RubiscoFrameState extends State<RubiscoFrame> {
                             ),
                           ),
                           ScriptSearch(),
-                          Settings(),
+                          Settings(updateOpacity: widget.updateOpacity),
                         ],
                         onPageChanged: (page) {
                           setState(() {

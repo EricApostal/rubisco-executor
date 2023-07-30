@@ -1,17 +1,18 @@
-import 'package:localstore/localstore.dart';
+import 'package:localstorage/localstorage.dart';
+import 'package:rubisco_one/globals.dart';
 
-final db = Localstore.instance;
+final LocalStorage storage = LocalStorage("RubiscoData.json");
 
-void saveData(String dbName, Map<String, dynamic> allData) {
-    // gets new id
-  final id = db.collection(dbName).doc().id;
-
-  // save the item
-  print(allData);
-  db.collection(dbName).doc(id).set(allData);
+void saveData(Map<String, dynamic> value) {
+  storage.setItem("RubiscoData.json", value);
 }
 
-Future<Map<String, dynamic>?> getData(String dbName) async {
-  final id = db.collection(dbName).doc().id;
-  return db.collection(dbName).doc(id).get();
+Future<Map<String, dynamic>?> getData() async {
+  await storage.ready;
+  if (storage.getItem("RubiscoData.json") == null) {
+    print("is null");
+    saveData(g);
+  }
+  Map<String, dynamic> data = storage.getItem("RubiscoData.json");
+  return data;
 }

@@ -1,3 +1,6 @@
 library my_prj.globals;
 
-bool topMost = false;
+var g = {
+  'topMost': false,
+  'transparent': false,
+};
