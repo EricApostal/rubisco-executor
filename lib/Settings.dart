@@ -6,7 +6,7 @@ import 'package:animated_toggle_switch/animated_toggle_switch.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:window_manager/window_manager.dart';
 import 'package:rubisco_one/Misc/datastore.dart';
-
+import 'package:flutter_svg/flutter_svg.dart';
 
 class SettingsSidebar extends StatefulWidget {
   final void Function(int) setPage;
@@ -41,8 +41,10 @@ class _SettingsSidebarState extends State<SettingsSidebar> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _buildTextButton("Appearance", 'Go to Code Editor', 0),
-              _buildTextButton("Behavior", 'Go to Script Search', 1),
+              _buildTextButton("Appearance", "assets/appearance.svg",
+                  'Go to Code Editor', 0),
+              _buildTextButton("Behavior", "assets/appearance.svg",
+                  'Go to Script Search', 1),
               // _buildTextButton("assets/settings.svg", 'Run script', 2),
             ],
           ),
@@ -52,9 +54,9 @@ class _SettingsSidebarState extends State<SettingsSidebar> {
   }
 
   Widget _buildTextButton(
-      String buttonText, String semanticsLabel, int pageIndex) {
+      String buttonText, String svgPath, String semanticsLabel, int pageIndex) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 6, left: 3, right: 3),
+      padding: const EdgeInsets.only(bottom: 6, left: 0, right: 0),
       child: Align(
         alignment: Alignment.centerRight,
         child: AnimatedContainer(
@@ -75,10 +77,29 @@ class _SettingsSidebarState extends State<SettingsSidebar> {
               style: ButtonStyle(splashFactory: NoSplash.splashFactory),
               child: Align(
                 alignment: Alignment.centerLeft,
-                child: Text(
-                  buttonText,
-                  textAlign: TextAlign.start,
-                  style: GoogleFonts.lato(color: Colors.white),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    SizedBox(
+                      width: 15,
+                      height: 15,
+                      child: SvgPicture.asset(
+                        svgPath,
+                        colorFilter: const ColorFilter.mode(
+                            Color.fromARGB(255, 229, 229, 229),
+                            BlendMode.srcIn),
+                        semanticsLabel: buttonText,
+                      ),
+                    ),
+                    SizedBox(
+                      width: 4,
+                    ),
+                    Text(
+                      buttonText,
+                      textAlign: TextAlign.start,
+                      style: GoogleFonts.lato(color: Colors.white),
+                    ),
+                  ],
                 ),
               ),
             )),
@@ -109,16 +130,18 @@ class _SettingsCardsState extends State<SettingsCard> {
     return Padding(
       padding: const EdgeInsets.only(bottom: 8, left: 8, right: 8),
       child: Container(
-          height: 70,
-          decoration: const BoxDecoration(
-              color: Color(0xff13141A),
-              borderRadius: BorderRadius.all(Radius.circular(6))),
-          child: Padding(
-            padding: const EdgeInsets.only(top: 4, left: 8),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Column(
+        height: 70,
+        decoration: const BoxDecoration(
+          color: Color(0xff222735),
+          borderRadius: BorderRadius.all(Radius.circular(6)),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.only(top: 6, left: 8),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Flexible(
+                child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
@@ -130,7 +153,7 @@ class _SettingsCardsState extends State<SettingsCard> {
                           GoogleFonts.lato(color: Colors.white, fontSize: 18),
                     ),
                     Padding(
-                      padding: const EdgeInsets.only(top: 8),
+                      padding: const EdgeInsets.only(top: 6),
                       child: Text(
                         widget.tooltip,
                         softWrap: false,
@@ -142,40 +165,41 @@ class _SettingsCardsState extends State<SettingsCard> {
                     ),
                   ],
                 ),
-                Padding(
-                  padding: const EdgeInsets.only(right: 8.0),
-                  child: SizedBox(
-                    width: 60,
-                    child: AnimatedToggleSwitch<bool>.dual(
-                      current: widget.initialState,
-                      first: false,
-                      second: true,
-                      dif: 10,
-                      borderColor: Colors.transparent,
-                      borderWidth: 5.0,
-                      height: 30,
-                      boxShadow: const [
-                        BoxShadow(
+              ),
+              Padding(
+                padding: const EdgeInsets.only(right: 8.0),
+                child: SizedBox(
+                  width: 60,
+                  child: AnimatedToggleSwitch<bool>.dual(
+                    current: widget.initialState,
+                    first: false,
+                    second: true,
+                    dif: 10,
+                    borderColor: Colors.transparent,
+                    borderWidth: 5.0,
+                    height: 30,
+                    boxShadow: const [
+                      BoxShadow(
                           color: Color.fromARGB(66, 255, 255, 255),
                           spreadRadius: 1,
                           blurRadius: 2,
-                          offset: Offset(0, 0),
-                        ),
-                      ],
-                      onChanged: (b) {
-                        setState(() => widget.initialState = b);
-                        // print(b);
-                        widget.callback(b);
-                      },
-                      colorBuilder: (b) => b
-                          ? const Color.fromARGB(255, 123, 255, 127)
-                          : const Color.fromARGB(255, 244, 54, 114),
-                    ),
+                          offset: Offset(0, 0))
+                    ],
+                    onChanged: (b) {
+                      setState(() => widget.initialState = b);
+                      // print(b);
+                      widget.callback(b);
+                    },
+                    colorBuilder: (b) => b
+                        ? const Color.fromARGB(255, 123, 255, 127)
+                        : const Color.fromARGB(255, 244, 54, 114),
                   ),
                 ),
-              ],
-            ),
-          )),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }
@@ -189,7 +213,7 @@ class SettingsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
         decoration: const BoxDecoration(
-            color: Color(0xFF222735),
+            color: Color(0xff13141A),
             borderRadius: BorderRadius.all(Radius.circular(8))),
         child: ListView(
           children: [
@@ -197,31 +221,31 @@ class SettingsPage extends StatelessWidget {
               height: 8,
             ),
             SettingsCard(
-                title: 'Topmost Window',
+                title: 'Top Most',
                 tooltip: 'Keeps Rubisco on top of all other applications.',
                 callback: (newState) {
                   saveData(g);
                   g['topMost'] = newState;
-                  windowManager.setAlwaysOnTop( g['topMost'] ?? true );
+                  windowManager.setAlwaysOnTop(g['topMost'] ?? true);
                 },
-                initialState: g['topMost'] ?? false ),
-                SettingsCard(
-                title: 'Unfocused Transparency',
-                tooltip: 'Makes Rubisco transparent when you click off.',
+                initialState: g['topMost'] ?? false),
+            SettingsCard(
+                title: 'Transparent Window',
+                tooltip: 'Makes Rubisco transparent.',
                 callback: (newState) {
                   saveData(g);
                   g['transparent'] = newState;
                   updateOpacity();
                 },
-                initialState: g['transparent'] ?? false ),
-                
+                initialState: g['transparent'] ?? false),
           ],
         ));
   }
 }
 
 class SettingsFrame extends StatefulWidget {
-  const SettingsFrame({Key? key, required this.updateOpacity}) : super(key: key);
+  const SettingsFrame({Key? key, required this.updateOpacity})
+      : super(key: key);
   final Function updateOpacity;
 
   @override
@@ -259,7 +283,10 @@ class _SettingsFrameState extends State<SettingsFrame> {
                   child: PageView(
                     controller: _pageController,
                     physics: const NeverScrollableScrollPhysics(),
-                    children: [SettingsPage(updateOpacity: widget.updateOpacity), Text("sfghsdhtsrthsrhrhhth")],
+                    children: [
+                      SettingsPage(updateOpacity: widget.updateOpacity),
+                      Text("sfghsdhtsrthsrhrhhth")
+                    ],
                     onPageChanged: (page) {
                       setState(() {
                         selectedPage = page;

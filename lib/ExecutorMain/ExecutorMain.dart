@@ -128,7 +128,7 @@ class _ExampleBrowser extends State<ExampleBrowser> {
                 onPressed: () {
                   _controller.executeScript("editor.getValue()").then((value) {
                     print(value);
-              });
+                  });
                 },
                 child: Center(
                     child: SvgPicture.asset("assets/play_arrow.svg",
@@ -327,9 +327,8 @@ class _TabState extends State<Tabs> {
                         final z = _controller.tabs.map((e) => e.id).toList()
                           ..sort();
                         var c = z.isEmpty ? 'Tab 0' : z.last;
-                        final lastCharacter =
-                            String.fromCharCode(c.codeUnitAt(c.length - 1) + 1);
-                        c = c.substring(0, c.length - 1) + lastCharacter;
+                        final numericPart = int.parse(c.split(' ').last);
+                        c = 'Tab ${numericPart + 1}';
                         _controller.addTab(_getTab(c));
                       },
                     ),

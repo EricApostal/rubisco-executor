@@ -8,11 +8,14 @@ import 'package:rubisco_one/Settings.dart';
 import 'package:rubisco_one/Misc/datastore.dart';
 import 'package:window_manager/window_manager.dart';
 import 'package:rubisco_one/globals.dart';
+import 'package:flutter_acrylic/flutter_acrylic.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   windowManager.ensureInitialized();
+  Window.initialize();
 
+  Window.setEffect(effect: WindowEffect.transparent);
 
   windowManager.waitUntilReadyToShow().then((_) async {
     // await windowManager.setTitleBarStyle(TitleBarStyle.hidden);
@@ -27,7 +30,6 @@ void main() async {
     const minSize = Size(400, 250);
     appWindow.minSize = minSize;
     appWindow.size = initialSize; // default size
-
     appWindow.show();
   });
 }
@@ -39,40 +41,69 @@ class MyApp extends StatefulWidget {
   State<MyApp> createState() => _MyAppState();
 }
 
-class _MyAppState extends State<MyApp> {
+class _MyAppState extends State<MyApp> with WindowListener {
+  bool windowFocused = true;
   void updateOpacity() {
     setState(() {
-      
+      /*
+        In order to update is I still need to set the state to update the widget
+        This is just a callback sent to settings to force an update
+      */
     });
   }
 
+  // @override
+  // void initState() {
+  //   windowManager.addListener(this);
+  //   super.initState();
+  // }
+
+  // @override
+  // void onWindowFocus() {
+  //   windowFocused = true;
+  //   updateOpacity();
+  // }
+
+  // @override
+  // void onWindowBlur() {
+  //   windowFocused = false;
+  //   updateOpacity();
+  // }
+
   @override
   Widget build(BuildContext context) {
-
     getData().then((value) {
       print(value);
+      g = value ?? g;
+
+      // Start initial states
+      windowManager.setAlwaysOnTop(g['topMost'] ?? false);
     });
 
-      return Opacity(
-        opacity: 1,// (g["transparent"] ?? false) ? .1: 1,
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular( 12 ),
-          child: MaterialApp(
-            color: Colors.transparent,
-            debugShowCheckedModeBanner: false,
-            title: 'Rubisco',
-            theme: ThemeData(
-              splashColor: Colors.transparent,
-              highlightColor: Colors.transparent,
-              colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF13141A)),
-              primaryColor: const Color(0xFF13141A),
-              scaffoldBackgroundColor: const Color(0xFF13141A),
-              useMaterial3: true,
-            ),
-            home: MainWindow(updateOpacity: updateOpacity),
+    return Opacity(
+      // opacity: ((g["transparent"] ?? false) & !windowFocused) ? .6 : 1,
+
+      // Can't use the windowFocused thing since it updates the entire state, thus you can't click the text but / stuff breaks
+      opacity: (g["transparent"] ?? false) ? .6 : 1,
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(12),
+        child: MaterialApp(
+          color: Colors.transparent,
+          debugShowCheckedModeBanner: false,
+          title: 'Rubisco',
+          theme: ThemeData(
+            splashColor: Colors.transparent,
+            highlightColor: Colors.transparent,
+            colorScheme:
+                ColorScheme.fromSeed(seedColor: const Color(0xFF13141A)),
+            primaryColor: const Color(0xFF13141A),
+            scaffoldBackgroundColor: const Color(0xFF13141A),
+            useMaterial3: true,
           ),
+          home: MainWindow(updateOpacity: updateOpacity),
         ),
-      );
+      ),
+    );
   }
 }
 
@@ -136,21 +167,21 @@ class _SidebarState extends State<Sidebar> {
       child: Align(
         alignment: Alignment.centerRight,
         child: AnimatedContainer(
-              duration: const Duration(milliseconds: 300),
-              curve: Curves.easeInOut,
-              height: 45,
-              width: 45,
-              decoration: BoxDecoration(
-                color: _selectedPage == pageIndex
-                    ? const Color.fromARGB(255, 11, 96, 214)
-                    : const Color(0xFF222735),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: TextButton(
-            onPressed: () {
-              setPage(pageIndex);
-            },
-            child: Padding(
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeInOut,
+            height: 45,
+            width: 45,
+            decoration: BoxDecoration(
+              color: _selectedPage == pageIndex
+                  ? const Color.fromARGB(255, 11, 96, 214)
+                  : const Color(0xFF222735),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: TextButton(
+              onPressed: () {
+                setPage(pageIndex);
+              },
+              child: Padding(
                 padding: const EdgeInsets.all(0),
                 child: SvgPicture.asset(
                   asset,
@@ -159,8 +190,7 @@ class _SidebarState extends State<Sidebar> {
                   semanticsLabel: semanticsLabel,
                 ),
               ),
-            )
-        ),
+            )),
       ),
     );
   }
@@ -197,17 +227,19 @@ class _RubiscoFrameState extends State<RubiscoFrame> {
             color: const Color(0xFF13141A),
             child: Row(
               children: [
-                
-                Expanded(child: MoveWindow(child: Padding(
-                  padding: const EdgeInsets.only(left: 12, top: 8),
-                  child: Text(
-                    "RUBISCO",
-                    style: GoogleFonts.istokWeb(
-                      fontSize: 24,
-                      color: const Color(0xFFA1A1A1),
+                Expanded(
+                    child: MoveWindow(
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 12, top: 8),
+                    child: Text(
+                      "RUBISCO",
+                      style: GoogleFonts.istokWeb(
+                        fontSize: 24,
+                        color: const Color(0xFFA1A1A1),
+                      ),
                     ),
                   ),
-                ),)),
+                )),
                 const WindowButtons(),
               ],
             ),

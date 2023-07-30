@@ -1,6 +1,6 @@
 library my_prj.globals;
 
-var g = {
+Map<String, dynamic> g = {
   'topMost': false,
   'transparent': false,
 };

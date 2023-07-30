@@ -62,7 +62,7 @@ class SearchItem extends StatelessWidget {
               child: Align(
                 alignment: Alignment.topLeft,
                 child: Container(
-                  width: MediaQuery.of(context).size.width-230,
+                  width: MediaQuery.of(context).size.width - 230,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -73,8 +73,8 @@ class SearchItem extends StatelessWidget {
                           overflow: TextOverflow.fade,
                           softWrap: false,
                           textAlign: TextAlign.start,
-                          style:
-                              const TextStyle(color: Colors.white, fontSize: 18),
+                          style: const TextStyle(
+                              color: Colors.white, fontSize: 18),
                         ),
                       ),
                       Align(
@@ -98,18 +98,19 @@ class SearchItem extends StatelessWidget {
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Text(""),
+                                // Text(""),
                                 // Text(scriptJson["views"].toString() + " Views",
                                 //     style: const TextStyle(
                                 //         color: Color(0xFF969696), fontSize: 16)),
                                 Container(
                                   height: 40,
-                                  width: MediaQuery.of(context).size.width-230,
+                                  width:
+                                      MediaQuery.of(context).size.width - 230,
                                   child: ListView(
                                     scrollDirection: Axis.horizontal,
                                     children: [
                                       Container(
-                                        width: 150,
+                                        width: 50,
                                         height: 40,
                                         decoration: const BoxDecoration(
                                             color: Color(0xff43DDFF),
@@ -118,20 +119,27 @@ class SearchItem extends StatelessWidget {
                                         child: TextButton(
                                           onPressed: () async {
                                             await Clipboard.setData(
-                                                ClipboardData(text: scriptJson["script"]));
+                                                ClipboardData(
+                                                    text:
+                                                        scriptJson["script"]));
                                             // copied successfully
                                           },
-                                          child: const Center(
-                                              child: Text("Copy to Clipboard",
-                                                  style: TextStyle(
-                                                    color: Color(0xFF202027),
-                                                  ))),
+                                          child: Center(
+                                              child: SvgPicture.asset(
+                                                "assets/paste.svg",
+                                                colorFilter:
+                                                    const ColorFilter.mode(
+                                                        Color(0xff13141A),
+                                                        BlendMode.srcIn),
+                                                semanticsLabel: "Run",
+                                              )),
                                         ),
                                       ),
                                       Padding(
-                                        padding: const EdgeInsets.only(left: 8.0),
+                                        padding:
+                                            const EdgeInsets.only(left: 8.0),
                                         child: Container(
-                                          width: 80,
+                                          width: 50,
                                           height: 40,
                                           decoration: const BoxDecoration(
                                               color: Color(0xFF43FF83),
@@ -141,11 +149,16 @@ class SearchItem extends StatelessWidget {
                                             onPressed: () {
                                               print(scriptJson["script"]);
                                             },
-                                            child: const Center(
-                                                child: Text("Run",
-                                                    style: TextStyle(
-                                                      color: Color(0xFF202027),
-                                                    ))),
+                                            child: Center(
+                                              child: SvgPicture.asset(
+                                                "assets/play_arrow.svg",
+                                                colorFilter:
+                                                    const ColorFilter.mode(
+                                                        Color(0xff13141A),
+                                                        BlendMode.srcIn),
+                                                semanticsLabel: "Run",
+                                              ),
+                                            ),
                                           ),
                                         ),
                                       )
@@ -182,124 +195,120 @@ class _ScriptSearchState extends State<ScriptSearch> {
   @override
   Widget build(BuildContext context) {
     return Container(
-            width: MediaQuery.of(context).size.width - 80,
-            height: MediaQuery.of(context).size.height - 60,
-            decoration: const BoxDecoration(color: Color(0xFF13141A)),
-            child: Column(
-              children: [
-                Padding(
-                  padding:
-                      const EdgeInsets.only(left: 16, right: 16, bottom: 12),
-                  child: Container(
-                      height: 42,
-                      width: double.infinity,
-                      decoration: const BoxDecoration(
-                          color: Color(0xff222735),
-                          borderRadius: BorderRadius.all(Radius.circular(8))),
-                      child: Row(
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.all(6),
-                            child: SizedBox(
-                              width: 40,
-                              height: 40,
-                              child: SvgPicture.asset(
-                                "assets/search.svg",
-                                colorFilter: const ColorFilter.mode(
-                                  Color(0xFF41D1FE),
-                                  BlendMode.srcIn,
-                                ),
-                                semanticsLabel: 'Search',
-                              ),
+        width: MediaQuery.of(context).size.width - 80,
+        height: MediaQuery.of(context).size.height - 60,
+        decoration: const BoxDecoration(color: Color(0xFF13141A)),
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(left: 16, right: 16, bottom: 12),
+              child: Container(
+                  height: 42,
+                  width: double.infinity,
+                  decoration: const BoxDecoration(
+                      color: Color(0xff222735),
+                      borderRadius: BorderRadius.all(Radius.circular(8))),
+                  child: Row(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(6),
+                        child: SizedBox(
+                          width: 40,
+                          height: 40,
+                          child: SvgPicture.asset(
+                            "assets/search.svg",
+                            colorFilter: const ColorFilter.mode(
+                              Color(0xFF41D1FE),
+                              BlendMode.srcIn,
                             ),
+                            semanticsLabel: 'Search',
                           ),
-                          Expanded(
-                            // Search box
-                            child: Padding(
-                              padding: const EdgeInsets.only(bottom: 13, right: 9),
-                              child: TextField(
-                                  onChanged: (value) {
-                                    setState(() {
-                                      searchTerm = value;
-                                    });
-                                  },
-                                  cursorColor: Colors.white,
-                                  style: const TextStyle(
-                                      color:
-                                          Color.fromARGB(255, 255, 255, 255)),
-                                  decoration: const InputDecoration(
-                                    border: InputBorder.none,
-                                  )
+                        ),
+                      ),
+                      Expanded(
+                        // Search box
+                        child: Padding(
+                          padding: const EdgeInsets.only(bottom: 13, right: 9),
+                          child: TextField(
+                              onChanged: (value) {
+                                setState(() {
+                                  searchTerm = value;
+                                });
+                              },
+                              cursorColor: Colors.white,
+                              style: const TextStyle(
+                                  color: Color.fromARGB(255, 255, 255, 255)),
+                              decoration: const InputDecoration(
+                                border: InputBorder.none,
+                              )
 
-                                  //textColo: Color.fromARGB(255, 148, 149, 153),)
-                                  ),
+                              //textColo: Color.fromARGB(255, 148, 149, 153),)
+                              ),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 4, bottom: 4),
+                        child: Padding(
+                          padding: const EdgeInsets.only(right: 4),
+                          child: Container(
+                            width: 80,
+                            height: 40,
+                            decoration: const BoxDecoration(
+                                color: Color.fromARGB(255, 11, 96, 214),
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(8))),
+                            child: TextButton(
+                              onPressed: () {},
+                              child: const Center(
+                                  child: Text("Search",
+                                      style: TextStyle(
+                                        color:
+                                            Color.fromARGB(255, 255, 255, 255),
+                                      ))),
                             ),
                           ),
-                          Padding(
-                            padding: const EdgeInsets.only(top: 4, bottom: 4),
-                            child: Padding(
-                              padding: const EdgeInsets.only(right: 4),
-                              child: Container(
-                                width: 80,
-                                height: 40,
-                                decoration: const BoxDecoration(
-                                    color: Color.fromARGB(255, 11, 96, 214),
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(8))),
-                                child: TextButton(
-                                  onPressed: () {},
-                                  child: const Center(
-                                      child: Text("Search",
-                                          style: TextStyle(
-                                            color: Color.fromARGB(
-                                                255, 255, 255, 255),
-                                          ))),
-                                ),
-                              ),
-                            ),
-                          )
-                        ],
-                      )),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(left: 8, right: 8),
-                  child: Container(
-                    width: MediaQuery.of(context).size.width - 80,
-                    height: MediaQuery.of(context).size.height - 116,
-                    child: FutureBuilder(
-                      future: http.get(Uri.https(
-                          'scriptblox.com',
-                          'api/script/search',
-                          {'q': searchTerm, 'mode': 'free'})),
-                      builder: (context, snapshot) {
-                        // if (snapshot.connectionState ==
-                        //     ConnectionState.waiting) {
-                        //   return Center(child: CircularProgressIndicator());
-                        // }
-                        var snapdata = snapshot.data;
-                        if (snapdata == null) {
-                          // print("DATA IS NULL, VERY BAD, PROGRAM WILL NOT WORK VERY WELL");
-                          return Center(child: CircularProgressIndicator());
-                        }
-                        // print( snapdata.body);
-                        dynamic data = json.decode(snapdata.body);
-                        List allScripts = [];
-                        data["result"]["scripts"].forEach((scriptData) {
-                          allScripts.add(scriptData);
+                        ),
+                      )
+                    ],
+                  )),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(left: 8, right: 8),
+              child: Container(
+                width: MediaQuery.of(context).size.width - 80,
+                height: MediaQuery.of(context).size.height - 116,
+                child: FutureBuilder(
+                  future: http.get(Uri.https('scriptblox.com',
+                      'api/script/search', {'q': searchTerm, 'mode': 'free'})),
+                  builder: (context, snapshot) {
+                    // if (snapshot.connectionState ==
+                    //     ConnectionState.waiting) {
+                    //   return Center(child: CircularProgressIndicator());
+                    // }
+                    var snapdata = snapshot.data;
+                    if (snapdata == null) {
+                      // print("DATA IS NULL, VERY BAD, PROGRAM WILL NOT WORK VERY WELL");
+                      return Center(child: CircularProgressIndicator());
+                    }
+                    // print( snapdata.body);
+                    dynamic data = json.decode(snapdata.body);
+                    List allScripts = [];
+                    data["result"]["scripts"].forEach((scriptData) {
+                      allScripts.add(scriptData);
+                    });
+
+                    return ListView.builder(
+                        padding: const EdgeInsets.only(left: 2, right: 2),
+                        itemCount: allScripts.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          // print(allScripts[index]["game"]["name"]);
+                          return SearchItem(scriptJson: allScripts[index]);
                         });
-
-                        return ListView.builder(
-                            padding: const EdgeInsets.only(left: 2, right: 2),
-                            itemCount: allScripts.length,
-                            itemBuilder: (BuildContext context, int index) {
-                              // print(allScripts[index]["game"]["name"]);
-                              return SearchItem(scriptJson: allScripts[index]);
-                            });
-                      },
-                    ),
-                  ),
-                )
-              ],
-            ));
+                  },
+                ),
+              ),
+            )
+          ],
+        ));
   }
 }
