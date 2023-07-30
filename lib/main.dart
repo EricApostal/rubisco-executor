@@ -93,7 +93,7 @@ class _SidebarState extends State<Sidebar> {
   Widget build(BuildContext context) {
     return Container(
       width: 50,
-      height: MediaQuery.of(context).size.height - 49,
+      height: MediaQuery.of(context).size.height - 50,
       decoration: const BoxDecoration(color: Color(0xFF13141A)),
       child: Align(
         alignment: Alignment.topLeft,
@@ -122,7 +122,7 @@ class _SidebarState extends State<Sidebar> {
               width: 45,
               decoration: BoxDecoration(
                 color: _selectedPage == pageIndex
-                    ? Color.fromARGB(255, 11, 96, 214)
+                    ? const Color.fromARGB(255, 11, 96, 214)
                     : const Color(0xFF222735),
                 borderRadius: BorderRadius.circular(12),
               ),
@@ -204,10 +204,10 @@ class _RubiscoFrameState extends State<RubiscoFrame> {
                         controller: _pageController,
                         physics: const NeverScrollableScrollPhysics(),
                         children: [
-                          Container(
+                          SizedBox(
                             width: MediaQuery.of(context).size.width - 89,
                             height: MediaQuery.of(context).size.height - 200,
-                            child: Column(
+                            child: const Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 ExecutorWindow(),
