@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_network/image_network.dart';
+import 'package:flutter/services.dart';
 
 class SearchItem extends StatelessWidget {
   SearchItem({super.key, required this.scriptJson});
@@ -105,7 +106,11 @@ class SearchItem extends StatelessWidget {
                                         borderRadius: BorderRadius.all(
                                             Radius.circular(12))),
                                     child: TextButton(
-                                      onPressed: () {},
+                                      onPressed: () async {
+                                        await Clipboard.setData(
+                                            ClipboardData(text: scriptJson["script"]));
+                                        // copied successfully
+                                      },
                                       child: const Center(
                                           child: Text("Copy to Clipboard",
                                               style: TextStyle(
@@ -123,7 +128,9 @@ class SearchItem extends StatelessWidget {
                                           borderRadius: BorderRadius.all(
                                               Radius.circular(12))),
                                       child: TextButton(
-                                        onPressed: () {},
+                                        onPressed: () {
+                                          print(scriptJson["script"]);
+                                        },
                                         child: const Center(
                                             child: Text("Run",
                                                 style: TextStyle(
@@ -219,33 +226,32 @@ class _ScriptSearchState extends State<ScriptSearch> {
                           ),
                           Padding(
                             padding: const EdgeInsets.only(top: 4, bottom: 4),
-                              child: Padding(
-                                padding: const EdgeInsets.only(right: 8.0),
-                                child: Container(
-                                      width: 80,
-                                      height: 40,
-                                      decoration: const BoxDecoration(
-                                          color: Color.fromARGB(255, 11, 96, 214),
-                                          borderRadius: BorderRadius.all(
-                                              Radius.circular(12))),
-                                      child: TextButton(
-                                        onPressed: () {},
-                                        child: const Center(
-                                            child: Text("Search",
-                                                style: TextStyle(
-                                                  color: Color.fromARGB(255, 255, 255, 255),
-                                                ))),
-                                      ),
-                                    ),
+                            child: Padding(
+                              padding: const EdgeInsets.only(right: 6),
+                              child: Container(
+                                width: 80,
+                                height: 40,
+                                decoration: const BoxDecoration(
+                                    color: Color.fromARGB(255, 11, 96, 214),
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(8))),
+                                child: TextButton(
+                                  onPressed: () {},
+                                  child: const Center(
+                                      child: Text("Search",
+                                          style: TextStyle(
+                                            color: Color.fromARGB(
+                                                255, 255, 255, 255),
+                                          ))),
+                                ),
                               ),
-                 
+                            ),
                           )
                         ],
                       )),
                 ),
                 Padding(
-                  padding:
-                      const EdgeInsets.only(left: 8, right: 8, bottom: 12),
+                  padding: const EdgeInsets.only(left: 8, right: 8, bottom: 12),
                   child: Container(
                     width: MediaQuery.of(context).size.width - 80,
                     height: MediaQuery.of(context).size.height - 124,

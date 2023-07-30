@@ -5,8 +5,24 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:rubisco_one/ExecutorMain/ExecutorMain.dart';
 import 'package:rubisco_one/ScriptSearch/ScriptSearch.dart';
 import 'package:rubisco_one/Settings.dart';
+import 'package:window_manager/window_manager.dart';
+import 'package:flutter_acrylic/flutter_acrylic.dart';
 
 void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  windowManager.ensureInitialized();
+  Window.initialize();
+
+  Window.setEffect(effect: WindowEffect.transparent);
+
+  windowManager.waitUntilReadyToShow().then((_) async {
+    // await windowManager.setTitleBarStyle(TitleBarStyle.hidden);
+    await windowManager.setAsFrameless();
+    await windowManager.setHasShadow(false);
+    windowManager.show();
+  });
+
+
   runApp(const MyApp());
   doWhenWindowReady(() {
     const initialSize = Size(700, 400);
@@ -22,18 +38,22 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Rubisco',
-      theme: ThemeData(
-        splashColor: Colors.transparent,
-        highlightColor: Colors.transparent,
-        colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF13141A)),
-        primaryColor: const Color(0xFF13141A),
-        scaffoldBackgroundColor: const Color(0xFF13141A),
-        useMaterial3: true,
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(12),
+      child: MaterialApp(
+        color: Colors.transparent,
+        debugShowCheckedModeBanner: false,
+        title: 'Rubisco',
+        theme: ThemeData(
+          splashColor: Colors.transparent,
+          highlightColor: Colors.transparent,
+          colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF13141A)),
+          primaryColor: const Color(0xFF13141A),
+          scaffoldBackgroundColor: const Color(0xFF13141A),
+          useMaterial3: true,
+        ),
+        home: const MainWindow(),
       ),
-      home: const MainWindow(),
     );
   }
 }
@@ -253,7 +273,7 @@ class ExecutorWindow extends StatelessWidget {
     return Container(
       width: MediaQuery.of(context).size.width - 89,
       height: MediaQuery.of(context).size.height - 200,
-      child: ExecutorMain(), // Replace with your ExecutorMain widget
+      child: ExecutorMain(),
     );
   }
 }

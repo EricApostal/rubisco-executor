@@ -125,7 +125,11 @@ class _ExampleBrowser extends State<ExampleBrowser> {
                 borderRadius: BorderRadius.all(Radius.circular(14)),
               ),
               child: TextButton(
-                onPressed: () {},
+                onPressed: () {
+                  _controller.executeScript("editor.getValue()").then((value) {
+                    print(value);
+              });
+                },
                 child: Center(
                     child: SvgPicture.asset("assets/play_arrow.svg",
                         colorFilter: const ColorFilter.mode(
