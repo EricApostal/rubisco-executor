@@ -16,7 +16,7 @@ class SearchItem extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
       child: Container(
-        height: 120,
+        height: 130,
         decoration: const BoxDecoration(
           color: Color(0xff222735),
           borderRadius: BorderRadius.all(
@@ -182,7 +182,6 @@ class _ScriptSearchState extends State<ScriptSearch> {
   @override
   Widget build(BuildContext context) {
     return Container(
-        child: Container(
             width: MediaQuery.of(context).size.width - 80,
             height: MediaQuery.of(context).size.height - 60,
             decoration: const BoxDecoration(color: Color(0xFF13141A)),
@@ -263,10 +262,10 @@ class _ScriptSearchState extends State<ScriptSearch> {
                       )),
                 ),
                 Padding(
-                  padding: const EdgeInsets.only(left: 8, right: 8, bottom: 12),
+                  padding: const EdgeInsets.only(left: 8, right: 8),
                   child: Container(
                     width: MediaQuery.of(context).size.width - 80,
-                    height: MediaQuery.of(context).size.height - 124,
+                    height: MediaQuery.of(context).size.height - 116,
                     child: FutureBuilder(
                       future: http.get(Uri.https(
                           'scriptblox.com',
@@ -290,7 +289,7 @@ class _ScriptSearchState extends State<ScriptSearch> {
                         });
 
                         return ListView.builder(
-                            padding: const EdgeInsets.all(8),
+                            padding: const EdgeInsets.only(left: 2, right: 2),
                             itemCount: allScripts.length,
                             itemBuilder: (BuildContext context, int index) {
                               // print(allScripts[index]["game"]["name"]);
@@ -301,6 +300,6 @@ class _ScriptSearchState extends State<ScriptSearch> {
                   ),
                 )
               ],
-            )));
+            ));
   }
 }
