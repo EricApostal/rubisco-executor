@@ -9,8 +9,11 @@ import 'package:rubisco_one/Misc/datastore.dart';
 import 'package:window_manager/window_manager.dart';
 import 'package:rubisco_one/globals.dart';
 import 'package:flutter_acrylic/flutter_acrylic.dart';
+import 'package:csharp_rpc/csharp_rpc.dart';
 
 void main() async {
+  initRPC();
+
   WidgetsFlutterBinding.ensureInitialized();
   windowManager.ensureInitialized();
   Window.initialize();
@@ -27,7 +30,7 @@ void main() async {
   runApp(const MyApp());
   doWhenWindowReady(() {
     const initialSize = Size(700, 400);
-    const minSize = Size(400, 250);
+    const minSize = Size(450, 300);
     appWindow.minSize = minSize;
     appWindow.size = initialSize; // default size
     appWindow.show();
@@ -73,7 +76,6 @@ class _MyAppState extends State<MyApp> with WindowListener {
   @override
   Widget build(BuildContext context) {
     getData().then((value) {
-      print(value);
       g = value ?? g;
 
       // Start initial states

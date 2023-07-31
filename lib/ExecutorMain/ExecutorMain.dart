@@ -11,6 +11,16 @@ import 'package:path/path.dart' as p;
 import 'package:google_fonts/google_fonts.dart';
 import 'package:rubisco_one/Misc/utils.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:csharp_rpc/csharp_rpc.dart';
+import 'package:rubisco_one/globals.dart';
+
+late CsharpRpc csharpRpc;
+
+void initRPC() async {
+    var fluxusRPCPath = "C:/Users/proga/source/repos/Fluxus RPC/Fluxus RPC/bin/x86/Release/net7.0/Fluxus RPC.exe";
+    csharpRpc = await CsharpRpc(fluxusRPCPath).start();
+    states['csharpRpc'] = csharpRpc;
+}
 
 String getAssetFileUrl(String asset) {
   final assetsDirectory = p.join(
@@ -22,6 +32,7 @@ String getAssetFileUrl(String asset) {
 final navigatorKey = GlobalKey<NavigatorState>();
 
 class ExampleBrowser extends StatefulWidget {
+
   @override
   State<ExampleBrowser> createState() => _ExampleBrowser();
 }
@@ -114,9 +125,9 @@ class _ExampleBrowser extends State<ExampleBrowser> {
       );
     } else {
       return Scaffold(
-        floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+        // floatingActionButtonLocation: FloatingActionButtonLocation.,
         floatingActionButton: Padding(
-            padding: const EdgeInsets.only(top: 20.0),
+            padding: const EdgeInsets.only(bottom: 5, right: 5),
             child: Container(
               width: 50,
               height: 50,
@@ -125,9 +136,19 @@ class _ExampleBrowser extends State<ExampleBrowser> {
                 borderRadius: BorderRadius.all(Radius.circular(14)),
               ),
               child: TextButton(
-                onPressed: () {
-                  _controller.executeScript("editor.getValue()").then((value) {
-                    print(value);
+                onPressed: () async {
+                  _controller
+                      .executeScript("editor.getValue()")
+                      .then((value) async {
+                    if (!await csharpRpc.invoke(method: "IsAttached")) {
+                      var resp = await csharpRpc.invoke(method: "Attach");
+                      while (!await csharpRpc.invoke(method: "IsAttached")) {
+                        await Future.delayed(Duration(milliseconds: 100));
+                      }
+                      csharpRpc.invoke(method: "RunScript", params: [value]);
+                    } else {
+                      csharpRpc.invoke(method: "RunScript", params: [value]);
+                    }
                   });
                 },
                 child: Center(
