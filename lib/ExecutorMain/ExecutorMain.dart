@@ -17,9 +17,10 @@ import 'package:rubisco_one/globals.dart';
 late CsharpRpc csharpRpc;
 
 void initRPC() async {
-    var fluxusRPCPath = "C:/Users/proga/source/repos/Fluxus RPC/Fluxus RPC/bin/x86/Release/net7.0/Fluxus RPC.exe";
-    csharpRpc = await CsharpRpc(fluxusRPCPath).start();
-    states['csharpRpc'] = csharpRpc;
+  var fluxusRPCPath =
+      "C:/Users/proga/source/repos/Fluxus RPC/Fluxus RPC/bin/x86/Release/net7.0/Fluxus RPC.exe";
+  csharpRpc = await CsharpRpc(fluxusRPCPath).start();
+  states['csharpRpc'] = csharpRpc;
 }
 
 String getAssetFileUrl(String asset) {
@@ -32,7 +33,6 @@ String getAssetFileUrl(String asset) {
 final navigatorKey = GlobalKey<NavigatorState>();
 
 class ExampleBrowser extends StatefulWidget {
-
   @override
   State<ExampleBrowser> createState() => _ExampleBrowser();
 }
@@ -124,44 +124,8 @@ class _ExampleBrowser extends State<ExampleBrowser> {
         ),
       );
     } else {
-      return Scaffold(
-        // floatingActionButtonLocation: FloatingActionButtonLocation.,
-        floatingActionButton: Padding(
-            padding: const EdgeInsets.only(bottom: 5, right: 5),
-            child: Container(
-              width: 50,
-              height: 50,
-              decoration: const BoxDecoration(
-                color: Color(0xFF00FFA3),
-                borderRadius: BorderRadius.all(Radius.circular(14)),
-              ),
-              child: TextButton(
-                onPressed: () async {
-                  _controller
-                      .executeScript("editor.getValue()")
-                      .then((value) async {
-                    if (!await csharpRpc.invoke(method: "IsAttached")) {
-                      var resp = await csharpRpc.invoke(method: "Attach");
-                      while (!await csharpRpc.invoke(method: "IsAttached")) {
-                        await Future.delayed(Duration(milliseconds: 100));
-                      }
-                      csharpRpc.invoke(method: "RunScript", params: [value]);
-                    } else {
-                      csharpRpc.invoke(method: "RunScript", params: [value]);
-                    }
-                  });
-                },
-                child: Center(
-                    child: SvgPicture.asset("assets/play_arrow.svg",
-                        colorFilter: const ColorFilter.mode(
-                            Color(0xFF13141A), BlendMode.srcIn),
-                        semanticsLabel: 'Run script')),
-              ),
-            )),
-        body: Webview(
-          _controller,
-          permissionRequested: _onPermissionRequested,
-        ),
+      return RunButton(
+        webviewController: _controller,
       );
     }
   }
@@ -173,6 +137,117 @@ class _ExampleBrowser extends State<ExampleBrowser> {
 
   @override
   bool shouldReload(_ExampleBrowser old) => false;
+}
+
+class RunButton extends StatefulWidget {
+  const RunButton({super.key, required this.webviewController});
+
+  final webviewController;
+
+  @override
+  State<RunButton> createState() => _RunButtonState();
+}
+
+void injectionListener(Function updateInjected) async {
+  final bool lastState = await csharpRpc.invoke(method: "IsAttached");
+  while (true) {
+    bool currentState = await csharpRpc.invoke(method: "IsAttached");
+    if (lastState != currentState) {
+      updateInjected(currentState);
+    }
+    await Future.delayed(Duration(milliseconds: 100));
+  }
+}
+
+class _RunButtonState extends State<RunButton> {
+  var currentColor = const Color.fromARGB(255, 11, 96, 214);
+  var currentIcon = "assets/play_arrow.svg";
+  var currentIconColor = Colors.white;
+
+  void setInjected(int statusCode) {
+    /*
+    1 = Not injected
+    2 = Pending
+    3 = Injected
+    */
+    setState(() {
+      if (statusCode == 1) {
+        print("Idle.");
+        currentColor = const Color.fromARGB(255, 11, 96, 214);
+        currentIconColor = Colors.white;
+      }
+      if (statusCode == 2) {
+        print("Attaching...");
+        currentColor = Color.fromARGB(255, 255, 255, 101);
+      }
+      if (statusCode == 3) {
+        print("Attached!");
+        currentColor = const Color(0xff00FFA3);
+        currentIconColor = const Color(0xff13141A);
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      // floatingActionButtonLocation: FloatingActionButtonLocation.,
+      floatingActionButton: Padding(
+          padding: const EdgeInsets.only(bottom: 5, right: 5),
+          child: Container(
+            width: 50,
+            height: 50,
+            decoration: BoxDecoration(
+              color: currentColor,
+              borderRadius: BorderRadius.all(Radius.circular(14)),
+            ),
+            child: TextButton(
+              onPressed: () async {
+                widget.webviewController
+                    .executeScript("editor.getValue()")
+                    .then((value) async {
+                  if (!await csharpRpc.invoke(method: "IsAttached")) {
+                    setState(() {
+                      setInjected(2);
+                    });
+                    await csharpRpc.invoke(method: "Attach");
+                    while (!await csharpRpc.invoke(method: "IsAttached")) {
+                      await Future.delayed(Duration(milliseconds: 100));
+                    }
+                    setState(() {
+                      csharpRpc.invoke(method: "IsAttached").then((isAttached) {
+                        sleep(Duration(seconds: 1));
+                        if (isAttached) {
+                          injectionListener(
+                            setInjected
+                          );
+                          setInjected(3);
+                          print(isAttached);
+                        } else {
+                          setInjected(1);
+                          print("Attach failed!");
+                        }
+                      });
+                    });
+                    // csharpRpc.invoke(method: "RunScript", params: [value]);
+                  } else {
+                    csharpRpc.invoke(method: "RunScript", params: [value]);
+                  }
+                });
+              },
+              child: Center(
+                  child: SvgPicture.asset(currentIcon,
+                      colorFilter:
+                          ColorFilter.mode(currentIconColor, BlendMode.srcIn),
+                      semanticsLabel: 'Run script')),
+            ),
+          )),
+      body: Webview(
+        widget.webviewController,
+        permissionRequested: _onPermissionRequested,
+      ),
+    );
+  }
 }
 
 Future<WebviewPermissionDecision> _onPermissionRequested(

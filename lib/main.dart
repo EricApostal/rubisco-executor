@@ -263,13 +263,13 @@ class _RubiscoFrameState extends State<RubiscoFrame> {
                           SizedBox(
                             width: MediaQuery.of(context).size.width - 89,
                             height: MediaQuery.of(context).size.height - 200,
-                            child: const Column(
+                            child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 ExecutorWindow(),
-                                if (false) // (MediaQuery.of(context).size.height > 300)
+                                if (MediaQuery.of(context).size.height > 350)
                                   Padding(
-                                    padding: EdgeInsets.only(top: 8, bottom: 4),
+                                    padding: EdgeInsets.only(top: 8, bottom: 4, left: 16),
                                     child: OutputConsole(),
                                   ),
                               ],
@@ -350,7 +350,7 @@ class OutputConsole extends StatelessWidget {
       padding: const EdgeInsets.only(right: 10),
       child: Container(
         width: MediaQuery.of(context).size.width,
-        height: 0, // height: 100,
+        height: 100, // height: 100,
         decoration: const BoxDecoration(
           borderRadius: BorderRadius.all(Radius.circular(6)),
           color: Color(0xFF222735),

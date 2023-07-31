@@ -7,5 +7,6 @@ Map<String, dynamic> g = {
 
 Map<String, dynamic> states = {
   'isInjected': false,
-  'csharpRpc': null
+  'csharpRpc': null,
+  'editorText': '' // if self is selected, on change set editorText to textbox text
 };
