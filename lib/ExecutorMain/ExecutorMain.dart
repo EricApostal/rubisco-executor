@@ -15,6 +15,7 @@ import 'package:csharp_rpc/csharp_rpc.dart';
 import 'package:rubisco_one/globals.dart';
 
 late CsharpRpc csharpRpc;
+var webviewInitialized = false;
 
 void initRPC() async {
   var fluxusRPCPath =
@@ -54,23 +55,23 @@ class _ExampleBrowser extends State<ExampleBrowser> {
     _controller.dispose();
   }
 
-  void onTabSelected(BlossomTabController controller) {
-    // TODO: Doesn't work for the initial startup of tab 1!
-  
-    print(controller.currentTab !+ " selected!");
-    _controller.executeScript("editor.getValue()").then((script) async {
+  void onTabSelected(BlossomTabController controller) async {
+    while (!webviewInitialized) {
+      await Future.delayed(Duration(milliseconds: 50));
+    }
+    _controller.executeScript("editor.getValue()").then((script) {
       // Sets function reference to global state on tab focus
       states["editorCallback"] = () {
         csharpRpc.invoke(method: "RunScript", params: [script]);
       };
-      // print(states["editorCallback"]);
     });
   }
 
   @override
   void initState() {
-    super.initState();
     initPlatformState();
+    super.initState();
+    
     // widget.initListener();
   }
 
@@ -86,6 +87,7 @@ class _ExampleBrowser extends State<ExampleBrowser> {
       await _controller.initialize();
       _controller.url.listen((url) {
         _textController.text = url;
+        webviewInitialized = true;
       });
 
       await _controller.setBackgroundColor(Colors.transparent);
@@ -96,13 +98,6 @@ class _ExampleBrowser extends State<ExampleBrowser> {
               .replaceAll("'", "")
               .replaceAll("Directory: ", "") +
           '/bin/monaco/Monaco.html');
-      // print("file://" +
-      //     Directory.current
-      //         .toString()
-      //         .replaceAll("'", "")
-      //         .replaceAll("Directory: ", "") +
-      //     '/bin/monaco/Monaco.html');
-
       if (!mounted) return;
       setState(() {});
     } on PlatformException catch (e) {
@@ -279,19 +274,27 @@ class _TabState extends State<Tabs> {
 
   final exampleBrowserKeys = <String, GlobalKey<_ExampleBrowser>>{};
 
-    void callListener(BlossomTabController tabController) {
-      print("Listener function called!");
-      print(tabController.currentTab);
-      // Calls tab selected listener for script exec callback state
-      final currentTab = tabController.currentTab;
-      print("CurrentTab = $currentTab");
-      print(exampleBrowserKeys[currentTab]);
+  void callListener(BlossomTabController tabController) {
+    // Calls tab selected listener for script exec callback state
+    final currentTab = tabController.currentTab;
+
+    if (exampleBrowserKeys[_controller.currentTab]?.currentState != null) {
+
       if (currentTab != null) {
         exampleBrowserKeys[currentTab]
             ?.currentState
             ?.onTabSelected(tabController);
       }
+    } else {
+      Future.delayed(Duration(milliseconds: 100), () {
+        if (currentTab != null) {
+          exampleBrowserKeys[currentTab]
+              ?.currentState
+              ?.onTabSelected(tabController);
+        }
+      });
     }
+  }
 
   @override
   void initState() {
@@ -304,15 +307,13 @@ class _TabState extends State<Tabs> {
       currentTab: 'Tab 1',
       tabs: _tabs,
     );
+    // This will need to be more adaptible when I
     exampleBrowserKeys['Tab 1'] = GlobalKey<_ExampleBrowser>();
 
-    callListener(_controller);
-    // This may call when it isn't supposed to...
-    print("tab init state");
-
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      callListener(_controller);
+    });
     _controller.pageController.addListener(() {
-      print("listener added");
-      print(_controller.currentTab);
       callListener(_controller);
     });
     super.initState();
@@ -321,8 +322,6 @@ class _TabState extends State<Tabs> {
   var tabIndex = [];
   @override
   Widget build(BuildContext context) {
-    // print( jsonEncode(_controller.toJson()));
-    // print( _controller.tabs[0].data );
     return BlossomTabControllerScope(
       controller: _controller,
       child: Scaffold(
