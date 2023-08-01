@@ -33,6 +33,11 @@ String getAssetFileUrl(String asset) {
 final navigatorKey = GlobalKey<NavigatorState>();
 
 class ExampleBrowser extends StatefulWidget {
+  const ExampleBrowser({Key? key, required this.tabController})
+      : super(key: key);
+
+  final tabController;
+
   @override
   State<ExampleBrowser> createState() => _ExampleBrowser();
 }
@@ -46,14 +51,27 @@ class _ExampleBrowser extends State<ExampleBrowser> {
   @mustCallSuper
   void dispose() {
     super.dispose();
-    // print("disposing");
     _controller.dispose();
+  }
+
+  void executeScriptCallback(String script) {
+    // Callback provided to global state for script exec
+    csharpRpc.invoke(method: "RunScript", params: [script]);
+  }
+
+  void onTabSelected(var controller) {
+    _controller.executeScript("editor.getValue()").then((value) async {
+      // Sets function reference to global state on tab focus
+      states["editorCallback"] = executeScriptCallback;
+      print(states["editorCallback"]);
+    });
   }
 
   @override
   void initState() {
     super.initState();
     initPlatformState();
+    // widget.initListener();
   }
 
   Future<void> initPlatformState() async {
@@ -148,100 +166,10 @@ class RunButton extends StatefulWidget {
   State<RunButton> createState() => _RunButtonState();
 }
 
-void injectionListener(Function updateInjected) async {
-  final bool lastState = await csharpRpc.invoke(method: "IsAttached");
-  while (true) {
-    bool currentState = await csharpRpc.invoke(method: "IsAttached");
-    if (lastState != currentState) {
-      updateInjected(currentState);
-    }
-    await Future.delayed(Duration(milliseconds: 100));
-  }
-}
-
 class _RunButtonState extends State<RunButton> {
-  var currentColor = const Color.fromARGB(255, 11, 96, 214);
-  var currentIcon = "assets/play_arrow.svg";
-  var currentIconColor = Colors.white;
-
-  void setInjected(int statusCode) {
-    /*
-    1 = Not injected
-    2 = Pending
-    3 = Injected
-    */
-    setState(() {
-      if (statusCode == 1) {
-        print("Idle.");
-        currentColor = const Color.fromARGB(255, 11, 96, 214);
-        currentIconColor = Colors.white;
-      }
-      if (statusCode == 2) {
-        print("Attaching...");
-        currentColor = Color.fromARGB(255, 255, 255, 101);
-      }
-      if (statusCode == 3) {
-        print("Attached!");
-        currentColor = const Color(0xff00FFA3);
-        currentIconColor = const Color(0xff13141A);
-      }
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // floatingActionButtonLocation: FloatingActionButtonLocation.,
-      floatingActionButton: Padding(
-          padding: const EdgeInsets.only(bottom: 5, right: 5),
-          child: Container(
-            width: 50,
-            height: 50,
-            decoration: BoxDecoration(
-              color: currentColor,
-              borderRadius: BorderRadius.all(Radius.circular(14)),
-            ),
-            child: TextButton(
-              onPressed: () async {
-                widget.webviewController
-                    .executeScript("editor.getValue()")
-                    .then((value) async {
-                  if (!await csharpRpc.invoke(method: "IsAttached")) {
-                    setState(() {
-                      setInjected(2);
-                    });
-                    await csharpRpc.invoke(method: "Attach");
-                    while (!await csharpRpc.invoke(method: "IsAttached")) {
-                      await Future.delayed(Duration(milliseconds: 100));
-                    }
-                    setState(() {
-                      csharpRpc.invoke(method: "IsAttached").then((isAttached) {
-                        sleep(Duration(seconds: 1));
-                        if (isAttached) {
-                          injectionListener(
-                            setInjected
-                          );
-                          setInjected(3);
-                          print(isAttached);
-                        } else {
-                          setInjected(1);
-                          print("Attach failed!");
-                        }
-                      });
-                    });
-                    // csharpRpc.invoke(method: "RunScript", params: [value]);
-                  } else {
-                    csharpRpc.invoke(method: "RunScript", params: [value]);
-                  }
-                });
-              },
-              child: Center(
-                  child: SvgPicture.asset(currentIcon,
-                      colorFilter:
-                          ColorFilter.mode(currentIconColor, BlendMode.srcIn),
-                      semanticsLabel: 'Run script')),
-            ),
-          )),
       body: Webview(
         widget.webviewController,
         permissionRequested: _onPermissionRequested,
@@ -349,25 +277,33 @@ class _TabState extends State<Tabs> {
         // isSticky: e == 'd',
       );
 
+  final exampleBrowserKeys = <String, GlobalKey<_ExampleBrowser>>{};
   @override
   void initState() {
     _tabs = ['Tab 1']
         .map(
           (e) => _getTab(e),
-          // (e) => BlossomTab.fromJson<int>(
-          // Example of how to load from JSON-- Saving / retriving script tabs will still be a touch difficult
-          //   {
-          //     "id": "Tab 17",
-          //     "data": {"value": 8497983251},
-          //     "title": e.toUpperCase(),
-          //     "maxWidth": 200.0,
-          //     "stickyWidth": 50.0
-          //   },
-          //   (map) => map['value'],
-          // ),
         )
         .toList();
-    _controller = BlossomTabController<int>(currentTab: 'Tab 1', tabs: _tabs);
+    _controller = BlossomTabController<int>(
+      currentTab: 'Tab 1',
+      tabs: _tabs,
+    );
+
+    _controller.pageController.addListener(() {
+      if (_controller.pageController.page ==
+          _controller.pageController.page!.round()) {
+        final currentTab = _controller.currentTab;
+        if (currentTab != null) {
+          exampleBrowserKeys[currentTab]
+              ?.currentState
+              ?.onTabSelected(_controller);
+          // print(
+          //     'Current state: ${exampleBrowserKeys[currentTab]?.currentState}');
+        }
+      }
+    });
+
     super.initState();
   }
 
@@ -435,10 +371,19 @@ class _TabState extends State<Tabs> {
           ),
         ),
         body: BlossomTabView<int>(
-            builder: (tab) => Padding(
-                  padding: const EdgeInsets.only(top: 8.0),
-                  child: ExampleBrowser(),
-                )),
+          builder: (tab) {
+            // print('Building ExampleBrowser for tab: ${tab.id}');
+            exampleBrowserKeys.putIfAbsent(
+                tab.id, () => GlobalKey<_ExampleBrowser>());
+            return Padding(
+              padding: const EdgeInsets.only(top: 8.0),
+              child: ExampleBrowser(
+                key: exampleBrowserKeys[tab.id],
+                tabController: _controller,
+              ),
+            );
+          },
+        ),
       ),
     );
   }

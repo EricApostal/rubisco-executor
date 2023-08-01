@@ -8,5 +8,7 @@ Map<String, dynamic> g = {
 Map<String, dynamic> states = {
   'isInjected': false,
   'csharpRpc': null,
-  'editorText': '' // if self is selected, on change set editorText to textbox text
+  'editorCallback': (){
+    print("You tried to run a script but no editor set a callback!");
+  } // on self selected, 
 };
