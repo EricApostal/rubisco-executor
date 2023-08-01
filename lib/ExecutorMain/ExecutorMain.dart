@@ -54,16 +54,16 @@ class _ExampleBrowser extends State<ExampleBrowser> {
     _controller.dispose();
   }
 
-  void executeScriptCallback(String script) {
-    // Callback provided to global state for script exec
-    csharpRpc.invoke(method: "RunScript", params: [script]);
-  }
-
-  void onTabSelected(var controller) {
-    _controller.executeScript("editor.getValue()").then((value) async {
+  void onTabSelected(BlossomTabController controller) {
+    // TODO: Doesn't work for the initial startup of tab 1!
+  
+    print(controller.currentTab !+ " selected!");
+    _controller.executeScript("editor.getValue()").then((script) async {
       // Sets function reference to global state on tab focus
-      states["editorCallback"] = executeScriptCallback;
-      print(states["editorCallback"]);
+      states["editorCallback"] = () {
+        csharpRpc.invoke(method: "RunScript", params: [script]);
+      };
+      // print(states["editorCallback"]);
     });
   }
 
@@ -278,6 +278,21 @@ class _TabState extends State<Tabs> {
       );
 
   final exampleBrowserKeys = <String, GlobalKey<_ExampleBrowser>>{};
+
+    void callListener(BlossomTabController tabController) {
+      print("Listener function called!");
+      print(tabController.currentTab);
+      // Calls tab selected listener for script exec callback state
+      final currentTab = tabController.currentTab;
+      print("CurrentTab = $currentTab");
+      print(exampleBrowserKeys[currentTab]);
+      if (currentTab != null) {
+        exampleBrowserKeys[currentTab]
+            ?.currentState
+            ?.onTabSelected(tabController);
+      }
+    }
+
   @override
   void initState() {
     _tabs = ['Tab 1']
@@ -289,21 +304,17 @@ class _TabState extends State<Tabs> {
       currentTab: 'Tab 1',
       tabs: _tabs,
     );
+    exampleBrowserKeys['Tab 1'] = GlobalKey<_ExampleBrowser>();
+
+    callListener(_controller);
+    // This may call when it isn't supposed to...
+    print("tab init state");
 
     _controller.pageController.addListener(() {
-      if (_controller.pageController.page ==
-          _controller.pageController.page!.round()) {
-        final currentTab = _controller.currentTab;
-        if (currentTab != null) {
-          exampleBrowserKeys[currentTab]
-              ?.currentState
-              ?.onTabSelected(_controller);
-          // print(
-          //     'Current state: ${exampleBrowserKeys[currentTab]?.currentState}');
-        }
-      }
+      print("listener added");
+      print(_controller.currentTab);
+      callListener(_controller);
     });
-
     super.initState();
   }
 
@@ -372,7 +383,6 @@ class _TabState extends State<Tabs> {
         ),
         body: BlossomTabView<int>(
           builder: (tab) {
-            // print('Building ExampleBrowser for tab: ${tab.id}');
             exampleBrowserKeys.putIfAbsent(
                 tab.id, () => GlobalKey<_ExampleBrowser>());
             return Padding(

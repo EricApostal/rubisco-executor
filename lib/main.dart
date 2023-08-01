@@ -269,7 +269,8 @@ class _RubiscoFrameState extends State<RubiscoFrame> {
                                 ExecutorWindow(),
                                 if (MediaQuery.of(context).size.height > 350)
                                   Padding(
-                                    padding: EdgeInsets.only(top: 8, bottom: 4, left: 16),
+                                    padding: EdgeInsets.only(
+                                        top: 8, bottom: 4, left: 16),
                                     child: OutputConsole(),
                                   ),
                               ],
@@ -336,7 +337,31 @@ class ExecutorWindow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Expanded(
-      child: ExecutorMain(),
+      child: Stack(children: [
+        const ExecutorMain(),
+        Positioned(
+          right: 20,
+          bottom: 20,
+          child: Container(
+            width: 50,
+            height: 50,
+            decoration: const BoxDecoration(
+                color: Color.fromARGB(255, 54, 255, 141),
+                borderRadius: BorderRadius.all(Radius.circular(14)),
+              ),
+              child: TextButton(
+                onPressed: () async {
+                  states["editorCallback"]();
+                },
+                child: Center(
+                    child: SvgPicture.asset("assets/play_arrow.svg",
+                        colorFilter:
+                            ColorFilter.mode(Colors.black, BlendMode.srcIn),
+                        semanticsLabel: 'Run script')),
+              ),
+          ),
+        ),
+      ]),
     );
   }
 }
@@ -359,8 +384,8 @@ class OutputConsole extends StatelessWidget {
           padding: const EdgeInsets.all(8.0),
           child: Text(
             "[4:20:69] Rubisco has injected!",
-            style:
-                GoogleFonts.robotoMono(color: Color(0xFFF7F7F7), fontSize: 14),
+            style: GoogleFonts.robotoMono(
+                color: const Color(0xFFF7F7F7), fontSize: 14),
           ),
         ),
       ),
