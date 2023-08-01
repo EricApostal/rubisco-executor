@@ -59,19 +59,35 @@ class _ExampleBrowser extends State<ExampleBrowser> {
     while (!webviewInitialized) {
       await Future.delayed(Duration(milliseconds: 50));
     }
-    _controller.executeScript("editor.getValue()").then((script) {
-      // Sets function reference to global state on tab focus
-      states["editorCallback"] = () {
-        csharpRpc.invoke(method: "RunScript", params: [script]);
-      };
-    });
+
+    String jsonUtf8Escape(String input) {
+      var runes = input.runes;
+      var buffer = StringBuffer();
+
+      for (var rune in runes) {
+        if (rune < 0x80) {
+          buffer.writeCharCode(rune);
+        } else {
+          buffer.write('\\u{${rune.toRadixString(16)}}');
+        }
+      }
+
+      return buffer.toString();
+    }
+
+    states["editorCallback"] = () {
+      _controller.executeScript("editor.getValue()").then((script) {
+        print(jsonUtf8Escape(script));
+        csharpRpc.invoke(method: "RunScript", params: [jsonUtf8Escape(script)]);
+      });
+    };
   }
 
   @override
   void initState() {
     initPlatformState();
     super.initState();
-    
+
     // widget.initListener();
   }
 
@@ -279,7 +295,6 @@ class _TabState extends State<Tabs> {
     final currentTab = tabController.currentTab;
 
     if (exampleBrowserKeys[_controller.currentTab]?.currentState != null) {
-
       if (currentTab != null) {
         exampleBrowserKeys[currentTab]
             ?.currentState

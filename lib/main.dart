@@ -346,19 +346,26 @@ class ExecutorWindow extends StatelessWidget {
             width: 50,
             height: 50,
             decoration: const BoxDecoration(
-                color: Color.fromARGB(255, 54, 255, 141),
-                borderRadius: BorderRadius.all(Radius.circular(14)),
-              ),
-              child: TextButton(
-                onPressed: () async {
+              color: Color.fromARGB(255, 54, 255, 141),
+              borderRadius: BorderRadius.all(Radius.circular(14)),
+            ),
+            child: TextButton(
+              onPressed: () async {
+                csharpRpc.invoke(method: "IsAttached").then((isAttached) {
+                  if (!isAttached) {
+                    print("not attached so doing now");
+                    csharpRpc.invoke(method: "Attach");
+                  }
+                  print("running script");
                   states["editorCallback"]();
-                },
-                child: Center(
-                    child: SvgPicture.asset("assets/play_arrow.svg",
-                        colorFilter:
-                            ColorFilter.mode(Colors.black, BlendMode.srcIn),
-                        semanticsLabel: 'Run script')),
-              ),
+                });
+              },
+              child: Center(
+                  child: SvgPicture.asset("assets/play_arrow.svg",
+                      colorFilter:
+                          ColorFilter.mode(Colors.black, BlendMode.srcIn),
+                      semanticsLabel: 'Run script')),
+            ),
           ),
         ),
       ]),
