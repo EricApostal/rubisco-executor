@@ -340,20 +340,48 @@ class RunButton extends StatefulWidget {
 
 class _RunButtonState extends State<RunButton> {
   var currentColor = const Color.fromARGB(255, 11, 96, 214);
+  var iconColor = Colors.white;
+  var isAttached = false;
+  var assetPath = "assets/attach.svg";
 
   void updateButtonState(int newState) {
     setState(() {
       // Idle: 1, Injecting: 2, Ready: 3
       if (newState == 1) {
         currentColor = const Color.fromARGB(255, 11, 96, 214);
+        iconColor = Colors.white;
+        isAttached = false;
+        assetPath = "assets/attach.svg";
       }
       if (newState == 2) {
         currentColor = const Color.fromARGB(255, 235, 255, 54);
+        iconColor = Colors.black;
+        assetPath = "assets/wait.svg";
       }
       if (newState == 3) {
+        isAttached = true;
         currentColor = const Color.fromARGB(255, 54, 255, 141);
+        iconColor = Colors.black;
+        assetPath = "assets/play_arrow.svg";
       }
     });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    stateChangeListen();
+  }
+
+  void stateChangeListen() async {
+    while (true) {
+      var isAttachedRealtime = await csharpRpc.invoke(method: "IsAttached");
+      if (isAttachedRealtime != isAttached) {
+        isAttached = isAttachedRealtime;
+        updateButtonState(isAttachedRealtime ? 3 : 1);
+      }
+      await Future.delayed(const Duration(milliseconds: 50));
+    }
   }
 
   @override
@@ -376,25 +404,42 @@ class _RunButtonState extends State<RunButton> {
                 updateButtonState(1);
                 csharpRpc.invoke(method: "Attach");
                 while (!await csharpRpc.invoke(method: "IsAttached")) {
-                    updateButtonState(2);
-                    await Future.delayed(const Duration(milliseconds: 50));
+                  updateButtonState(2);
+                  await Future.delayed(const Duration(milliseconds: 50));
                 }
                 updateButtonState(3);
+                isAttached = true;
               } else {
-                updateButtonState(3); 
+                updateButtonState(3);
+                isAttached = true;
               }
+              stateChangeListen();
               states["editorCallback"]();
             });
           },
           child: Center(
-              child: SvgPicture.asset("assets/play_arrow.svg",
-                  colorFilter: const ColorFilter.mode(Colors.black, BlendMode.srcIn),
-                  semanticsLabel: 'Run script')),
+            child: AnimatedSwitcher(
+              duration: const Duration(milliseconds: 100),
+              transitionBuilder: (child, animation) {
+                return ScaleTransition(
+                  scale: animation,
+                  child: child,
+                );
+              },
+              child: SvgPicture.asset(
+                assetPath,
+                key: ValueKey<String>(assetPath),
+                colorFilter: ColorFilter.mode(iconColor, BlendMode.srcIn),
+                semanticsLabel: 'Run script',
+              ),
+            ),
+          ),
         ),
       ),
     );
   }
 }
+
 
 class ExecutorWindow extends StatelessWidget {
   const ExecutorWindow({Key? key}) : super(key: key);
