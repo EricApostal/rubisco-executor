@@ -153,6 +153,9 @@ class _SidebarState extends State<Sidebar> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            const SizedBox(
+              height: 5,
+            ),
             _buildTextButton("assets/code_editor.svg", 'Go to Code Editor', 0),
             _buildTextButton("assets/cloud.svg", 'Go to Script Search', 1),
             Expanded(child: Container()),
@@ -439,7 +442,6 @@ class _RunButtonState extends State<RunButton> {
     );
   }
 }
-
 
 class ExecutorWindow extends StatelessWidget {
   const ExecutorWindow({Key? key}) : super(key: key);

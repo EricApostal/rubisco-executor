@@ -130,13 +130,13 @@ class _SettingsCardsState extends State<SettingsCard> {
     return Padding(
       padding: const EdgeInsets.only(bottom: 8, left: 8, right: 8),
       child: Container(
-        height: 70,
+        height: 60,
         decoration: const BoxDecoration(
           color: Color(0xff222735),
           borderRadius: BorderRadius.all(Radius.circular(6)),
         ),
         child: Padding(
-          padding: const EdgeInsets.only(top: 6, left: 8),
+          padding: const EdgeInsets.only(top: 4, left: 8),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -153,14 +153,14 @@ class _SettingsCardsState extends State<SettingsCard> {
                           GoogleFonts.lato(color: Colors.white, fontSize: 18),
                     ),
                     Padding(
-                      padding: const EdgeInsets.only(top: 6),
+                      padding: const EdgeInsets.only(top: 4),
                       child: Text(
                         widget.tooltip,
                         softWrap: false,
                         overflow: TextOverflow.fade,
                         textAlign: TextAlign.start,
                         style: GoogleFonts.lato(
-                            color: Color(0xffB8B3B3), fontSize: 16),
+                            color: Color(0xffB8B3B3), fontSize: 14),
                       ),
                     ),
                   ],
@@ -169,7 +169,7 @@ class _SettingsCardsState extends State<SettingsCard> {
               Padding(
                 padding: const EdgeInsets.only(right: 8.0),
                 child: SizedBox(
-                  width: 60,
+                  width: 50,
                   child: AnimatedToggleSwitch<bool>.dual(
                     current: widget.initialState,
                     first: false,
@@ -177,7 +177,7 @@ class _SettingsCardsState extends State<SettingsCard> {
                     dif: 10,
                     borderColor: Colors.transparent,
                     borderWidth: 5.0,
-                    height: 30,
+                    height: 25,
                     boxShadow: const [
                       BoxShadow(
                           color: Color.fromARGB(66, 255, 255, 255),
