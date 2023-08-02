@@ -146,7 +146,7 @@ class _SidebarState extends State<Sidebar> {
   Widget build(BuildContext context) {
     return Container(
       width: 50,
-      height: MediaQuery.of(context).size.height - 50,
+      height: MediaQuery.of(context).size.height - 40,
       decoration: const BoxDecoration(color: Color(0xFF13141A)),
       child: Align(
         alignment: Alignment.topLeft,
@@ -225,19 +225,19 @@ class _RubiscoFrameState extends State<RubiscoFrame> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
-            height: 50,
+            height: 40,
             color: const Color(0xFF13141A),
             child: Row(
               children: [
                 Expanded(
                     child: MoveWindow(
                   child: Padding(
-                    padding: const EdgeInsets.only(left: 12, top: 8),
+                    padding: const EdgeInsets.only(left: 8, top: 5),
                     child: Text(
                       "RUBISCO",
                       style: GoogleFonts.istokWeb(
                         fontSize: 24,
-                        color: const Color(0xFFA1A1A1),
+                        color: Color.fromARGB(255, 218, 218, 218),
                       ),
                     ),
                   ),
@@ -254,7 +254,7 @@ class _RubiscoFrameState extends State<RubiscoFrame> {
                   Sidebar(setPage: setPage),
                   Expanded(
                     child: SizedBox(
-                      height: MediaQuery.of(context).size.height - 58,
+                      height: MediaQuery.of(context).size.height - 50,
                       width: MediaQuery.of(context).size.width,
                       child: PageView(
                         controller: _pageController,
@@ -267,12 +267,12 @@ class _RubiscoFrameState extends State<RubiscoFrame> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 ExecutorWindow(),
-                                if (MediaQuery.of(context).size.height > 350)
-                                  Padding(
-                                    padding: EdgeInsets.only(
-                                        top: 8, bottom: 4, left: 16),
-                                    child: OutputConsole(),
-                                  ),
+                                // if (MediaQuery.of(context).size.height > 350)
+                                //   Padding(
+                                //     padding: EdgeInsets.only(
+                                //         top: 8, bottom: 4, left: 16),
+                                //     child: OutputConsole(),
+                                //   ),
                               ],
                             ),
                           ),
@@ -331,44 +331,78 @@ final closeButtonColors = WindowButtonColors(
   mouseOver: const Color.fromARGB(255, 220, 54, 54),
 );
 
+class RunButton extends StatefulWidget {
+  const RunButton({super.key});
+
+  @override
+  State<RunButton> createState() => _RunButtonState();
+}
+
+class _RunButtonState extends State<RunButton> {
+  var currentColor = const Color.fromARGB(255, 11, 96, 214);
+
+  void updateButtonState(int newState) {
+    setState(() {
+      // Idle: 1, Injecting: 2, Ready: 3
+      if (newState == 1) {
+        currentColor = const Color.fromARGB(255, 11, 96, 214);
+      }
+      if (newState == 2) {
+        currentColor = const Color.fromARGB(255, 235, 255, 54);
+      }
+      if (newState == 3) {
+        currentColor = const Color.fromARGB(255, 54, 255, 141);
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Positioned(
+      right: 20,
+      bottom: 20,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        width: 50,
+        height: 50,
+        decoration: BoxDecoration(
+          color: currentColor,
+          borderRadius: const BorderRadius.all(Radius.circular(14)),
+        ),
+        child: TextButton(
+          onPressed: () async {
+            csharpRpc.invoke(method: "IsAttached").then((isAttached) async {
+              if (!isAttached) {
+                updateButtonState(1);
+                csharpRpc.invoke(method: "Attach");
+                while (!await csharpRpc.invoke(method: "IsAttached")) {
+                    updateButtonState(2);
+                    await Future.delayed(const Duration(milliseconds: 50));
+                }
+                updateButtonState(3);
+              } else {
+                updateButtonState(3); 
+              }
+              states["editorCallback"]();
+            });
+          },
+          child: Center(
+              child: SvgPicture.asset("assets/play_arrow.svg",
+                  colorFilter: const ColorFilter.mode(Colors.black, BlendMode.srcIn),
+                  semanticsLabel: 'Run script')),
+        ),
+      ),
+    );
+  }
+}
+
 class ExecutorWindow extends StatelessWidget {
   const ExecutorWindow({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Expanded(
-      child: Stack(children: [
-        const ExecutorMain(),
-        Positioned(
-          right: 20,
-          bottom: 20,
-          child: Container(
-            width: 50,
-            height: 50,
-            decoration: const BoxDecoration(
-              color: Color.fromARGB(255, 54, 255, 141),
-              borderRadius: BorderRadius.all(Radius.circular(14)),
-            ),
-            child: TextButton(
-              onPressed: () async {
-                csharpRpc.invoke(method: "IsAttached").then((isAttached) {
-                  if (!isAttached) {
-                    print("not attached so doing now");
-                    csharpRpc.invoke(method: "Attach");
-                  }
-                  print("running script");
-                  states["editorCallback"]();
-                });
-              },
-              child: Center(
-                  child: SvgPicture.asset("assets/play_arrow.svg",
-                      colorFilter:
-                          ColorFilter.mode(Colors.black, BlendMode.srcIn),
-                      semanticsLabel: 'Run script')),
-            ),
-          ),
-        ),
-      ]),
+      child: Stack(children: [const ExecutorMain(), RunButton()]),
     );
   }
 }

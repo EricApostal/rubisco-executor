@@ -77,7 +77,6 @@ class _ExampleBrowser extends State<ExampleBrowser> {
 
     states["editorCallback"] = () {
       _controller.executeScript("editor.getValue()").then((script) {
-        print(jsonUtf8Escape(script));
         csharpRpc.invoke(method: "RunScript", params: [jsonUtf8Escape(script)]);
       });
     };
@@ -249,7 +248,7 @@ Widget buildTab(
       ),
   ];
   return Padding(
-    padding: const EdgeInsets.symmetric(horizontal: 4.0),
+    padding: const EdgeInsets.all(4),
     child: useRow
         ? Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -341,11 +340,11 @@ class _TabState extends State<Tabs> {
       controller: _controller,
       child: Scaffold(
         appBar: PreferredSize(
-          preferredSize: const Size.fromHeight(38),
+          preferredSize: const Size.fromHeight(35),
           child: Stack(
             children: [
               BlossomTabBar<int>(
-                height: 38,
+                height: 35,
                 bottomBarHeight: 0,
                 selectedColor: const Color(0xFF222735),
                 dragColor: const Color(0xFF222735),
@@ -353,7 +352,7 @@ class _TabState extends State<Tabs> {
                 dividerColor: Color.fromARGB(255, 255, 255, 255),
                 shadowColor: const Color(0xFF13141A),
                 bottomColor: const Color(0xFF222735),
-                margin: const EdgeInsets.only(left: 40, top: 0, right: 10),
+                margin: const EdgeInsets.only(left: 20, top: 0, right: 10),
                 tabBarMargin: 0,
                 tabBuilder: (context, tab, isActive) =>
                     buildTab(context, isActive: isActive, title: tab.id),
