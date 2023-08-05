@@ -233,8 +233,8 @@ class CustomTab extends StatelessWidget {
         Text(
           title,
           style: TextStyle(
-            color: isActive ? Colors.white : Colors.grey,
-            fontSize: 16,
+            color: isActive ? Colors.white : Color.fromARGB(255, 189, 189, 189),
+            fontSize: 15,
           ),
         ),
         const Expanded(child: SizedBox()),
@@ -330,11 +330,11 @@ class _TabState extends State<Tabs> {
       controller: _controller,
       child: Scaffold(
         appBar: PreferredSize(
-          preferredSize: const Size.fromHeight(35),
+          preferredSize: const Size.fromHeight(38),
           child: Stack(
             children: [
               BlossomTabBar<int>(
-                height: 35,
+                height: 38,
                 bottomBarHeight: 0,
                 selectedColor: const Color(0xFF222735),
                 dragColor: const Color(0xFF222735),
