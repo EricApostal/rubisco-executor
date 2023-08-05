@@ -6,7 +6,7 @@ import 'package:http/http.dart' as http;
 import 'package:image_network/image_network.dart';
 import 'package:flutter/services.dart';
 import 'package:csharp_rpc/csharp_rpc.dart';
-import 'package:rubisco_one/globals.dart';
+import 'package:Rubisco/globals.dart';
 
 class SearchItem extends StatelessWidget {
   SearchItem({super.key, required this.scriptJson});
@@ -128,13 +128,12 @@ class SearchItem extends StatelessWidget {
                                           },
                                           child: Center(
                                               child: SvgPicture.asset(
-                                                "assets/paste.svg",
-                                                colorFilter:
-                                                    const ColorFilter.mode(
-                                                        Color(0xff13141A),
-                                                        BlendMode.srcIn),
-                                                semanticsLabel: "Run",
-                                              )),
+                                            "assets/paste.svg",
+                                            colorFilter: const ColorFilter.mode(
+                                                Color(0xff13141A),
+                                                BlendMode.srcIn),
+                                            semanticsLabel: "Run",
+                                          )),
                                         ),
                                       ),
                                       Padding(
@@ -149,8 +148,11 @@ class SearchItem extends StatelessWidget {
                                                   Radius.circular(12))),
                                           child: TextButton(
                                             onPressed: () {
-
-                                              states['csharpRpc'].invoke(method: "RunScript", params: [scriptJson["script"]]);
+                                              states['csharpRpc'].invoke(
+                                                  method: "RunScript",
+                                                  params: [
+                                                    scriptJson["script"]
+                                                  ]);
                                             },
                                             child: Center(
                                               child: SvgPicture.asset(

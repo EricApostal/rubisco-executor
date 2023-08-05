@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:rubisco_one/ExecutorMain/ExecutorMain.dart';
-import 'package:rubisco_one/ScriptSearch/ScriptSearch.dart';
-import 'package:rubisco_one/Settings.dart';
-import 'package:rubisco_one/Misc/datastore.dart';
+import 'package:Rubisco/ExecutorMain/ExecutorMain.dart';
+import 'package:Rubisco/ScriptSearch/ScriptSearch.dart';
+import 'package:Rubisco/Settings.dart';
+import 'package:Rubisco/Misc/datastore.dart';
 import 'package:window_manager/window_manager.dart';
-import 'package:rubisco_one/globals.dart';
+import 'package:Rubisco/globals.dart';
 import 'package:flutter_acrylic/flutter_acrylic.dart';
 import 'package:csharp_rpc/csharp_rpc.dart';
 
@@ -22,15 +22,15 @@ void main() async {
 
   windowManager.waitUntilReadyToShow().then((_) async {
     // await windowManager.setTitleBarStyle(TitleBarStyle.hidden);
-    await windowManager.setAsFrameless();
-    await windowManager.setHasShadow(false);
+    // await windowManager.setAsFrameless();
+    // await windowManager.setHasShadow(false);
     windowManager.show();
   });
 
   runApp(const MyApp());
   doWhenWindowReady(() {
     const initialSize = Size(700, 400);
-    const minSize = Size(450, 300);
+    const minSize = Size(500, 300);
     appWindow.minSize = minSize;
     appWindow.size = initialSize; // default size
     appWindow.show();
@@ -55,24 +55,6 @@ class _MyAppState extends State<MyApp> with WindowListener {
     });
   }
 
-  // @override
-  // void initState() {
-  //   windowManager.addListener(this);
-  //   super.initState();
-  // }
-
-  // @override
-  // void onWindowFocus() {
-  //   windowFocused = true;
-  //   updateOpacity();
-  // }
-
-  // @override
-  // void onWindowBlur() {
-  //   windowFocused = false;
-  //   updateOpacity();
-  // }
-
   @override
   Widget build(BuildContext context) {
     getData().then((value) {
@@ -88,7 +70,8 @@ class _MyAppState extends State<MyApp> with WindowListener {
       // Can't use the windowFocused thing since it updates the entire state, thus you can't click the text but / stuff breaks
       opacity: (g["transparent"] ?? false) ? .6 : 1,
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(12),
+        // borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(0),
         child: MaterialApp(
           color: Colors.transparent,
           debugShowCheckedModeBanner: false,
@@ -235,7 +218,7 @@ class _RubiscoFrameState extends State<RubiscoFrame> {
                 Expanded(
                     child: MoveWindow(
                   child: Padding(
-                    padding: const EdgeInsets.only(left: 8, top: 5),
+                    padding: const EdgeInsets.only(left: 10, top: 5),
                     child: Text(
                       "RUBISCO",
                       style: GoogleFonts.istokWeb(
@@ -266,7 +249,7 @@ class _RubiscoFrameState extends State<RubiscoFrame> {
                           SizedBox(
                             width: MediaQuery.of(context).size.width - 89,
                             height: MediaQuery.of(context).size.height - 200,
-                            child: Column(
+                            child: const Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 ExecutorWindow(),

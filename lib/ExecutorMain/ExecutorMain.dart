@@ -9,10 +9,10 @@ import 'package:flutter/services.dart';
 import 'dart:async';
 import 'package:path/path.dart' as p;
 import 'package:google_fonts/google_fonts.dart';
-import 'package:rubisco_one/Misc/utils.dart';
+import 'package:Rubisco/Misc/utils.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:csharp_rpc/csharp_rpc.dart';
-import 'package:rubisco_one/globals.dart';
+import 'package:Rubisco/globals.dart';
 
 late CsharpRpc csharpRpc;
 var webviewInitialized = false;
@@ -86,18 +86,9 @@ class _ExampleBrowser extends State<ExampleBrowser> {
   void initState() {
     initPlatformState();
     super.initState();
-
-    // widget.initListener();
   }
 
   Future<void> initPlatformState() async {
-    // Optionally initialize the webview environment using
-    // a custom user data directory
-    // and/or a custom browser executable directory
-    // and/or custom chromium command line flags
-    //await WebviewController.initializeEnvironment(
-    //    additionalArguments: '--show-fps-counter');
-
     try {
       await _controller.initialize();
       _controller.url.listen((url) {
@@ -105,14 +96,15 @@ class _ExampleBrowser extends State<ExampleBrowser> {
         webviewInitialized = true;
       });
 
+      String url =
+          "${Directory.current.path}\\bin\\Release\\bin\\monaco\\Monaco.html";
+      if (!await File(url).exists()) {
+        url = "${Directory.current.path}\\bin\\monaco\\Monaco.html";
+      }
+
       await _controller.setBackgroundColor(Colors.transparent);
       await _controller.setPopupWindowPolicy(WebviewPopupWindowPolicy.deny);
-      await _controller.loadUrl("file://" +
-          Directory.current
-              .toString()
-              .replaceAll("'", "")
-              .replaceAll("Directory: ", "") +
-          '/bin/monaco/Monaco.html');
+      await _controller.loadUrl(url);
       if (!mounted) return;
       setState(() {});
     } on PlatformException catch (e) {
@@ -222,51 +214,45 @@ class ExecutorMain extends StatelessWidget {
   }
 }
 
-Widget buildTab(
-  BuildContext context, {
-  required bool isActive,
-  bool useRow = true,
-  Widget? icon,
-  Widget? activeIcon,
-  String? title,
-}) {
-  var children = [
-    (isActive ? activeIcon ?? icon : icon) ??
-        const SizedBox(
-          width: 10,
-        ),
-    if (title != null)
-      Flexible(
-        child: Text(
+class CustomTab extends StatelessWidget {
+  final bool isActive;
+  final String title;
+  final VoidCallback onClose;
+
+  const CustomTab({
+    required this.isActive,
+    required this.title,
+    required this.onClose,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        const SizedBox(width: 12),
+        Text(
           title,
-          softWrap: false,
-          overflow: TextOverflow.fade,
-          style: const TextStyle(
-            color: Colors.white, // Set the text color to white
+          style: TextStyle(
+            color: isActive ? Colors.white : Colors.grey,
+            fontSize: 16,
           ),
         ),
-      ),
-  ];
-  return Padding(
-    padding: const EdgeInsets.all(4),
-    child: useRow
-        ? Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Row(children: children),
-            ],
-          )
-        : Row(
-            mainAxisSize: MainAxisSize.max,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: children,
+        const Expanded(child: SizedBox()),
+        if (isActive)
+          Padding(
+            padding: const EdgeInsets.only(right: 8.0),
+            child: GestureDetector(
+              onTap: onClose,
+              child: const Icon(
+                Icons.close,
+                color: Colors.white,
+                size: 16,
               ),
-            ],
+            ),
           ),
-  );
+      ],
+    );
+  }
 }
 
 class Tabs extends StatefulWidget {
@@ -284,13 +270,11 @@ class _TabState extends State<Tabs> {
         id: e,
         data: int.parse(e.codeUnits.join()),
         title: e.toUpperCase(),
-        // isSticky: e == 'd',
       );
 
   final exampleBrowserKeys = <String, GlobalKey<_ExampleBrowser>>{};
 
   void callListener(BlossomTabController tabController) {
-    // Calls tab selected listener for script exec callback state
     final currentTab = tabController.currentTab;
 
     if (exampleBrowserKeys[_controller.currentTab]?.currentState != null) {
@@ -321,10 +305,9 @@ class _TabState extends State<Tabs> {
       currentTab: 'Tab 1',
       tabs: _tabs,
     );
-    // This will need to be more adaptible when I
     exampleBrowserKeys['Tab 1'] = GlobalKey<_ExampleBrowser>();
 
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    WidgetsBinding.instance!.addPostFrameCallback((_) {
       callListener(_controller);
     });
     _controller.pageController.addListener(() {
@@ -333,7 +316,14 @@ class _TabState extends State<Tabs> {
     super.initState();
   }
 
-  var tabIndex = [];
+  Widget buildTab(BuildContext context, BlossomTab<int> tab, bool isActive) {
+    return CustomTab(
+      isActive: isActive,
+      title: tab.id,
+      onClose: () => _controller.removeTabById(tab.id),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlossomTabControllerScope(
@@ -355,19 +345,15 @@ class _TabState extends State<Tabs> {
                 margin: const EdgeInsets.only(left: 20, top: 0, right: 10),
                 tabBarMargin: 0,
                 tabBuilder: (context, tab, isActive) =>
-                    buildTab(context, isActive: isActive, title: tab.id),
+                    buildTab(context, tab, isActive),
                 tabActions: (context, tab) => [
-                  Listener(
-                    onPointerDown: (_) {
+                  GestureDetector(
+                    // Use GestureDetector here
+                    onTap: () {
                       _controller.removeTabById(tab.id);
                     },
                     child: const Padding(
                       padding: EdgeInsets.all(4.0),
-                      child: Icon(
-                        Icons.close,
-                        size: 14,
-                        color: Colors.white,
-                      ),
                     ),
                   ),
                 ],
@@ -380,8 +366,12 @@ class _TabState extends State<Tabs> {
                     padding: const EdgeInsets.only(left: 6.0),
                     child: NewTabBtn(
                       onTap: () {
-                        final z = _controller.tabs.map((e) => e.id).toList()
-                          ..sort();
+                        final z = _controller.tabs.map((e) => e.id).toList();
+                        z.sort((a, b) {
+                          final numericPartA = int.parse(a.split(' ').last);
+                          final numericPartB = int.parse(b.split(' ').last);
+                          return numericPartA.compareTo(numericPartB);
+                        });
                         var c = z.isEmpty ? 'Tab 0' : z.last;
                         final numericPart = int.parse(c.split(' ').last);
                         c = 'Tab ${numericPart + 1}';

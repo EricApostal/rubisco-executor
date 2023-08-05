@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:dropdown_search/dropdown_search.dart';
-import 'package:rubisco_one/globals.dart';
+import 'package:Rubisco/globals.dart';
 import 'package:animated_toggle_switch/animated_toggle_switch.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:window_manager/window_manager.dart';
-import 'package:rubisco_one/Misc/datastore.dart';
+import 'package:Rubisco/Misc/datastore.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class SettingsSidebar extends StatefulWidget {
