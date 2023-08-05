@@ -2,14 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:window_manager/window_manager.dart';
+import 'package:flutter_acrylic/flutter_acrylic.dart';
+
 import 'package:Rubisco/ExecutorMain/ExecutorMain.dart';
 import 'package:Rubisco/ScriptSearch/ScriptSearch.dart';
 import 'package:Rubisco/Settings.dart';
 import 'package:Rubisco/Misc/datastore.dart';
-import 'package:window_manager/window_manager.dart';
 import 'package:Rubisco/globals.dart';
-import 'package:flutter_acrylic/flutter_acrylic.dart';
-import 'package:csharp_rpc/csharp_rpc.dart';
+import 'package:Rubisco/KeySystem/KeySystem.dart';
 
 void main() async {
   initRPC();
@@ -141,8 +142,9 @@ class _SidebarState extends State<Sidebar> {
             ),
             _buildTextButton("assets/code_editor.svg", 'Go to Code Editor', 0),
             _buildTextButton("assets/cloud.svg", 'Go to Script Search', 1),
+            _buildTextButton("assets/key.svg", 'Key System', 2),
             Expanded(child: Container()),
-            _buildTextButton("assets/settings.svg", 'Run script', 2),
+            _buildTextButton("assets/settings.svg", 'Settings', 3),
           ],
         ),
       ),
@@ -262,7 +264,8 @@ class _RubiscoFrameState extends State<RubiscoFrame> {
                               ],
                             ),
                           ),
-                          ScriptSearch(),
+                          const ScriptSearch(),
+                          const KeySystem(),
                           Settings(updateOpacity: widget.updateOpacity),
                         ],
                         onPageChanged: (page) {
@@ -431,8 +434,8 @@ class ExecutorWindow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-      child: Stack(children: [const ExecutorMain(), RunButton()]),
+    return const Expanded(
+      child: Stack(children: [ExecutorMain(), RunButton()]),
     );
   }
 }

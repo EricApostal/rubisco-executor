@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
 
@@ -8,9 +7,6 @@ import 'package:webview_windows/webview_windows.dart';
 import 'package:flutter/services.dart';
 import 'dart:async';
 import 'package:path/path.dart' as p;
-import 'package:google_fonts/google_fonts.dart';
-import 'package:Rubisco/Misc/utils.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:csharp_rpc/csharp_rpc.dart';
 import 'package:Rubisco/globals.dart';
 
@@ -37,7 +33,7 @@ class ExampleBrowser extends StatefulWidget {
   const ExampleBrowser({Key? key, required this.tabController})
       : super(key: key);
 
-  final tabController;
+  final BlossomTabController tabController;
 
   @override
   State<ExampleBrowser> createState() => _ExampleBrowser();
@@ -46,7 +42,6 @@ class ExampleBrowser extends StatefulWidget {
 class _ExampleBrowser extends State<ExampleBrowser> {
   final _controller = WebviewController();
   final _textController = TextEditingController();
-  bool _isWebviewSuspended = false;
 
   @protected
   @mustCallSuper
@@ -57,7 +52,7 @@ class _ExampleBrowser extends State<ExampleBrowser> {
 
   void onTabSelected(BlossomTabController controller) async {
     while (!webviewInitialized) {
-      await Future.delayed(Duration(milliseconds: 50));
+      await Future.delayed(const Duration(milliseconds: 50));
     }
 
     String jsonUtf8Escape(String input) {
@@ -112,7 +107,7 @@ class _ExampleBrowser extends State<ExampleBrowser> {
         showDialog(
             context: context,
             builder: (_) => AlertDialog(
-                  title: Text('Error'),
+                  title: const Text('Error'),
                   content: Column(
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -123,7 +118,7 @@ class _ExampleBrowser extends State<ExampleBrowser> {
                   ),
                   actions: [
                     TextButton(
-                      child: Text('Continue'),
+                      child: const Text('Continue'),
                       onPressed: () {
                         Navigator.of(context).pop();
                       },
@@ -154,15 +149,12 @@ class _ExampleBrowser extends State<ExampleBrowser> {
   Widget build(BuildContext context) {
     return compositeView();
   }
-
-  @override
-  bool shouldReload(_ExampleBrowser old) => false;
 }
 
 class RunButton extends StatefulWidget {
   const RunButton({super.key, required this.webviewController});
 
-  final webviewController;
+  final WebviewController webviewController;
 
   @override
   State<RunButton> createState() => _RunButtonState();
@@ -210,7 +202,7 @@ class ExecutorMain extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Tabs();
+    return const Tabs();
   }
 }
 
@@ -233,7 +225,9 @@ class CustomTab extends StatelessWidget {
         Text(
           title,
           style: TextStyle(
-            color: isActive ? Colors.white : Color.fromARGB(255, 189, 189, 189),
+            color: isActive
+                ? Colors.white
+                : const Color.fromARGB(255, 189, 189, 189),
             fontSize: 15,
           ),
         ),
