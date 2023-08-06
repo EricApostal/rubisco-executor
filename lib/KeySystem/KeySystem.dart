@@ -44,7 +44,7 @@ class _KeySystemBrowser extends State<KeySystemBrowser> {
           'document.getElementsByClassName("errorContainer").length > 0;')) {
         await _controller.setZoomFactor(1000);
         await _controller.setZoomFactor(.1);
-        await _controller.setZoomFactor(.8);
+        await _controller.setZoomFactor(.7);
       }
       await Future.delayed(const Duration(milliseconds: 10));
     }
@@ -53,7 +53,8 @@ class _KeySystemBrowser extends State<KeySystemBrowser> {
   void listenForCodeBox() async {
     while (true) {
       var isDone = await _controller.executeScript(
-          'document.getElementsByClassName("scriptname").length > 0;');
+              'document.getElementsByClassName("scriptname").length > 0;') ??
+          false; // annoying asf null error
       if (isDone) {
         print("went through key pass!");
         states['currentKeyPasses'] += 1;
@@ -195,8 +196,8 @@ class _KeySystemState extends State<KeySystem> {
         g['keyExpires'] = DateTime.now()
             .add(
               const Duration(
-                hours: 24,
-              ),
+                  // hours: 24,
+                  seconds: 10),
             )
             .toUtc()
             .millisecondsSinceEpoch;
@@ -263,6 +264,9 @@ class _KeySystemState extends State<KeySystem> {
                           print(DateTime.fromMillisecondsSinceEpoch(
                               g['keyExpires']));
                           print("Timer finished");
+                          setState(() {
+                            hasValidKey = false;
+                          });
                         },
                       ),
                     ],
