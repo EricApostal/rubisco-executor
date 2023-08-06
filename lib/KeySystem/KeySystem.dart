@@ -195,9 +195,8 @@ class _KeySystemState extends State<KeySystem> {
         print("setting key expire!");
         g['keyExpires'] = DateTime.now()
             .add(
-              const Duration(
-                  // hours: 24,
-                  seconds: 10),
+              const Duration(hours: 24),
+              // seconds: 10),
             )
             .toUtc()
             .millisecondsSinceEpoch;
