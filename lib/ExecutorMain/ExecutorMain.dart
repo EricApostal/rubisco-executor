@@ -14,10 +14,10 @@ late CsharpRpc csharpRpc;
 var webviewInitialized = false;
 
 void initRPC() async {
-  var fluxusRPCPath =
-      "C:/Users/proga/source/repos/Fluxus RPC/Fluxus RPC/bin/x86/Release/net7.0/Fluxus RPC.exe";
-  csharpRpc = await CsharpRpc(fluxusRPCPath).start();
-  states['csharpRpc'] = csharpRpc;
+  // var fluxusRPCPath =
+  //     "C:/Users/proga/source/repos/Fluxus RPC/Fluxus RPC/bin/x86/Release/net7.0/Fluxus RPC.exe";
+  // csharpRpc = await CsharpRpc(fluxusRPCPath).start();
+  // states['csharpRpc'] = csharpRpc;
 }
 
 String getAssetFileUrl(String asset) {
