@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:Rubisco/Misc/datastore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:webview_windows/webview_windows.dart';
@@ -164,21 +165,33 @@ class KeySystem extends StatefulWidget {
 }
 
 class _KeySystemState extends State<KeySystem> {
-  bool needsKey = states['currentKeyPasses'] < states['requiredKeyPasses'];
+  bool hasValidKey =
+      (DateTime.now().toUtc().millisecondsSinceEpoch <= g['keyExpires']);
 
   void updateKey() {
     /*
       Called every time the user passes through a key system checkpoint
       Because of this, we can safely set the unix time from this func
+
+      (Except for init state but that shouldn't matter)
     */
 
     setState(() {
-      print("updated key state!");
-      needsKey = states['currentKeyPasses'] < states['requiredKeyPasses'];
-      print("Needs key?");
-      print(needsKey);
+      hasValidKey = (states['currentKeyPasses'] >=
+              states['requiredKeyPasses']) |
+          (DateTime.now().toUtc().millisecondsSinceEpoch <= g['keyExpires']);
 
-      if (!needsKey) {
+      print(states['currentKeyPasses'] >= states['requiredKeyPasses']);
+      print((DateTime.now().toUtc().millisecondsSinceEpoch > g['keyExpires']));
+
+      print("Key Expires? ${g['keyExpires']}");
+      print("hasValidKey? ${hasValidKey}");
+      print(
+          "Time until key? ${(g['keyExpires'] - DateTime.now().toUtc().millisecondsSinceEpoch) / 1000 / 60 / 60}");
+
+      if (states['currentKeyPasses'] >= states['requiredKeyPasses']) {
+        states['currentKeyPasses'] = 0;
+        print("setting key expire!");
         g['keyExpires'] = DateTime.now()
             .add(
               const Duration(
@@ -187,15 +200,32 @@ class _KeySystemState extends State<KeySystem> {
             )
             .toUtc()
             .millisecondsSinceEpoch;
+        print("set key expire!");
+        saveData(g);
       }
     });
+  }
+
+  void initKey() {
+    // We want to set valid key stuff on init, but not the unix timestamp
+
+    setState(() {
+      hasValidKey =
+          (DateTime.now().toUtc().millisecondsSinceEpoch <= g['keyExpires']);
+      states['currentKeyPasses'] = 0;
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(16),
-      child: (needsKey)
+      child: (!hasValidKey)
           ? ClipRRect(
               borderRadius: BorderRadius.circular(8),
               child: KeySystemBrowser(updateKeyCallback: updateKey))
