@@ -247,7 +247,7 @@ class CustomTab extends StatelessWidget {
       ],
     );
   }
-}
+} 
 
 class Tabs extends StatefulWidget {
   const Tabs({Key? key}) : super(key: key);

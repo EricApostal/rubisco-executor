@@ -15,6 +15,8 @@ import 'package:Rubisco/globals.dart';
 import 'package:Rubisco/KeySystem/KeySystem.dart';
 
 void main() async {
+  var asd = "Logang is fucking stupid.";
+  print(asd);
   initRPC();
 
   WidgetsFlutterBinding.ensureInitialized();

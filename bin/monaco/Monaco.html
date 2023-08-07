@@ -60,12 +60,12 @@
 					base: 'vs-dark',
 					inherit: true,
 					rules: [
-						{ token: 'global', foreground: '84d6f7', fontStyle: "bold" },
-						{ token: 'keyword', foreground: 'f86d7c', fontStyle: "bold" },
-						{ token: 'comment', foreground: '388234' },
+						{ token: 'global', foreground: '43F4FF', fontStyle: "bold" },
+						{ token: 'keyword', foreground: 'ff5370', fontStyle: "bold" },
+						{ token: 'comment', foreground: '546e7a' },
 						{ token: 'number', foreground: 'ffc600' },
-						{ token: 'string', foreground: 'adf195' },
-						{ token: 'custom', foreground: '66ffcc', fontStle: "bold" }
+						{ token: 'string', foreground: 'c3e88d' },
+						{ token: 'custom', foreground: 'ffcb6b', fontStle: "bold" }
 					],
 					colors: {
 						'editor.background': '#13141A'
@@ -274,11 +274,11 @@
 					for (const Key of ["Drawing", "debug", "Instance", "Color3", "Vector3", "Vector2", "BrickColor", "math", "table", "string", "coroutine", "Humanoid", "ClickDetector", "LocalScript", "Model", "ModuleScript", "Mouse", "Part", "Player", "Script", "Tool", "RunService", "UserInputService", "Workspace"])
 						AddIntellisense(Key, "Class", Key, Key);
 
-					for (const Key of ["print", "warn", "wait", "info", "printidentity", "assert", "collectgarbage", "error", "getfenv", "getmetatable", "setmetatable", "ipairs", "loadfile", "loadstring", "newproxy", "next", "pairs", "pcall", "spawn", "rawequal", "rawget", "rawset", "select", "tonumber", "tostring", "type", "unpack", "xpcall", "delay", "stats", ":Remove()", ":BreakJoints()", ":GetChildren()", ":FindFirstChild()", ":FireServer()", ":InvokeServer()", ":ClearAllChildren()", ":Clone()", ":Destroy()", ":FindFirstAncestor()", ":FindFirstAncestorOfClass()", ":FindFirstAncestorWhichIsA()", ":FindFirstChildOfClass()", ":FindFirstChildWhichIsA()", ":GetDebugId()", ":GetDescendants()", ":GetFullName()", ":IsA()", ":GetPropertyChangedSignal()", ":IsAncestorOf()", ":IsDescendantOf()", ":WaitForChild()", ":Connect()", ":AncestryChanged()", ":Changed()", ":ChildAdded()", ":ChildRemoved()", ":DescendantAdded()", ":DescendantRemoving()", ":GetService()", ":GetObjects()", ":HttpGet()", ":Wait()"])
+					for (const Key of ["print", "warn", "wait", "Websocket.OnClose", "Websocket.connect", "WebSocket:Close", "WebSocket.OnMessage", "autoexec", "setthreadcontext", "isluau", "getexecutorname", "getallthreads", "identifyexecutor", "info", "gethwid", "saveinstance", "getnamecallmethod", "setnamecallmethod", "setfflag", "setclipboard", "dumpstring", "islclosure", "mousemoveabs", "checkcaller", "mousemoverel", "mousescroll", "mouse2release", "mouse2press", "mouse2click", "mouse1release", "mouse1press", "mouse1click", "getsenv", "getrawmetatable", "setrawmetatable", "isrbxactive", "keyrelease", "keypress", "setreadonly", "isreadonly", "getscriptclosure", "getscriptclosure", "getscripthash", "printidentity", "assert", "collectgarbage", "error", "getfenv", "getmetatable", "setmetatable", "ipairs", "loadfile", "loadstring", "newproxy", "next", "pairs", "pcall", "spawn", "rawequal", "rawget", "rawset", "select", "tonumber", "tostring", "type", "unpack", "xpcall", "delay", "stats", "getscriptclosure", ":Remove()", ":BreakJoints()", ":GetChildren()", ":FindFirstChild()", ":FireServer()", ":InvokeServer()", ":ClearAllChildren()", ":Clone()", ":Destroy()", ":FindFirstAncestor()", ":FindFirstAncestorOfClass()", ":FindFirstAncestorWhichIsA()", ":FindFirstChildOfClass()", ":FindFirstChildWhichIsA()", ":GetDebugId()", ":GetDescendants()", ":GetFullName()", ":IsA()", ":GetPropertyChangedSignal()", ":IsAncestorOf()", ":IsDescendantOf()", ":WaitForChild()", ":Connect()", ":AncestryChanged()", ":Changed()", ":ChildAdded()", ":ChildRemoved()", ":DescendantAdded()", ":DescendantRemoving()", ":GetService()", ":GetObjects()", ":HttpGet()", ":Wait()"])
 						AddIntellisense(Key, "Function", Key, Key.includes(":") ? Key.substring(1, Key.length) : Key);
 
 					for (const Key of ["Visible", "Color", "Transparency", "Thickness", "From", "To", "Text", "Size", "Center", "Outline", "OutlineColor", "Position", "TextBounds", "Font", "Data", "Rounding", "NumSides", "Radius", "Filled", "PointA", "PointB", "PointC", "PointD"])
-						AddIntellisense(Key, "Property", "Property for Drawing Library", Key);
+						AddIntellisense(Key, "Property", "Drawing Library");
 
 				}
 				load();

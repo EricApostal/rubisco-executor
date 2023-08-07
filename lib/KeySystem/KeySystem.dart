@@ -177,16 +177,8 @@ class _KeySystemState extends State<KeySystem> {
   }
 
   int decryptKey(String key) {
-    print("DECRYPTING Key: ");
-    print(key);
-    print("decrypted key: ");
-    print(  dummyCastle.decryptSymmWith(key).getResult() );
-
     String decrypted = dummyCastle.decryptSymmWith(key).getResult();
     String decodedResult = dummyCastle.decodeWith(decrypted).toStringDecoded();
-
-    print("decoded: ");
-    print(decodedResult);
 
     return int.parse(decodedResult);
   }
@@ -206,19 +198,9 @@ class _KeySystemState extends State<KeySystem> {
               states['requiredKeyPasses']) |
           (DateTime.now().toUtc().millisecondsSinceEpoch <= decryptKey(g['keyExpires']) );
 
-      print(states['currentKeyPasses'] >= states['requiredKeyPasses']);
-      print((DateTime.now().toUtc().millisecondsSinceEpoch > decryptKey(g['keyExpires']) ));
-
-      print("Key Expires? ${g['keyExpires']}");
-      print("hasValidKey? ${hasValidKey}");
-      print(
-          "Time until key? ${( decryptKey(g['keyExpires']) - DateTime.now().toUtc().millisecondsSinceEpoch) / 1000 / 60 / 60}");
-
       if (states['currentKeyPasses'] >= states['requiredKeyPasses']) {
         states['currentKeyPasses'] = 0;
-        print("setting key expire!");
         g['keyExpires'] = encryptKey(DateTime.now().add(const Duration(hours: 24)).toUtc().millisecondsSinceEpoch);
-        print("set key expire!");
         saveData(g);
       }
     });
