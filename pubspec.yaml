@@ -63,6 +63,8 @@ dependencies:
   fluent_ui: ^4.7.1
   flutter_launcher_icons: "^0.13.1"
   flutter_timer_countdown: ^1.0.5
+  win32_registry: ^1.0.2
+  dummycastle: ^1.2.0
 
 # To apply the icon stuffs, run
 # flutter pub run flutter_launcher_icons -f pubspec.yaml

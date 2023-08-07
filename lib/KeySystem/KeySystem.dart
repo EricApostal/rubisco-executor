@@ -1,12 +1,15 @@
 import 'dart:ui';
 
 import 'package:Rubisco/Misc/datastore.dart';
+import 'package:Rubisco/globals.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+
 import 'package:webview_windows/webview_windows.dart';
-import 'package:Rubisco/globals.dart';
 import 'package:flutter_timer_countdown/flutter_timer_countdown.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:dummycastle/pl/polinc/dummycastle/dummycastle.dart';
 
 final navigatorKey = GlobalKey<NavigatorState>();
 bool webviewInitialized = false;
@@ -166,9 +169,30 @@ class KeySystem extends StatefulWidget {
 }
 
 class _KeySystemState extends State<KeySystem> {
-  bool hasValidKey =
-      (DateTime.now().toUtc().millisecondsSinceEpoch <= g['keyExpires']);
+  DummyCastle dummyCastle = DummyCastle();
+  String password= r"VA2Z-yA6qrtDc4{}D<)T)a/`JE)&^C[.6[74?ph&VWZ$Z_,MPxr+Dx$4'Z}C~I1";
 
+  String encryptKey(int key) {
+    return dummyCastle.encryptSymmWith(key.toString()).getResult();
+  }
+
+  int decryptKey(String key) {
+    print("DECRYPTING Key: ");
+    print(key);
+    print("decrypted key: ");
+    print(  dummyCastle.decryptSymmWith(key).getResult() );
+
+    String decrypted = dummyCastle.decryptSymmWith(key).getResult();
+    String decodedResult = dummyCastle.decodeWith(decrypted).toStringDecoded();
+
+    print("decoded: ");
+    print(decodedResult);
+
+    return int.parse(decodedResult);
+  }
+
+  bool hasValidKey = false;
+      
   void updateKey() {
     /*
       Called every time the user passes through a key system checkpoint
@@ -180,26 +204,20 @@ class _KeySystemState extends State<KeySystem> {
     setState(() {
       hasValidKey = (states['currentKeyPasses'] >=
               states['requiredKeyPasses']) |
-          (DateTime.now().toUtc().millisecondsSinceEpoch <= g['keyExpires']);
+          (DateTime.now().toUtc().millisecondsSinceEpoch <= decryptKey(g['keyExpires']) );
 
       print(states['currentKeyPasses'] >= states['requiredKeyPasses']);
-      print((DateTime.now().toUtc().millisecondsSinceEpoch > g['keyExpires']));
+      print((DateTime.now().toUtc().millisecondsSinceEpoch > decryptKey(g['keyExpires']) ));
 
       print("Key Expires? ${g['keyExpires']}");
       print("hasValidKey? ${hasValidKey}");
       print(
-          "Time until key? ${(g['keyExpires'] - DateTime.now().toUtc().millisecondsSinceEpoch) / 1000 / 60 / 60}");
+          "Time until key? ${( decryptKey(g['keyExpires']) - DateTime.now().toUtc().millisecondsSinceEpoch) / 1000 / 60 / 60}");
 
       if (states['currentKeyPasses'] >= states['requiredKeyPasses']) {
         states['currentKeyPasses'] = 0;
         print("setting key expire!");
-        g['keyExpires'] = DateTime.now()
-            .add(
-              const Duration(hours: 24),
-              // seconds: 10),
-            )
-            .toUtc()
-            .millisecondsSinceEpoch;
+        g['keyExpires'] = encryptKey(DateTime.now().add(const Duration(hours: 24)).toUtc().millisecondsSinceEpoch);
         print("set key expire!");
         saveData(g);
       }
@@ -211,13 +229,19 @@ class _KeySystemState extends State<KeySystem> {
 
     setState(() {
       hasValidKey =
-          (DateTime.now().toUtc().millisecondsSinceEpoch <= g['keyExpires']);
+          (DateTime.now().toUtc().millisecondsSinceEpoch <= decryptKey(g['keyExpires']));
       states['currentKeyPasses'] = 0;
     });
   }
 
   @override
   void initState() {
+    dummyCastle.genSymmKeyWith(password);
+    if (g["keyExpires"] == '0') {
+      g["keyExpires"] = encryptKey(0);
+    }
+
+    hasValidKey = (DateTime.now().toUtc().millisecondsSinceEpoch <= decryptKey(g["keyExpires"]));
     super.initState();
   }
 
@@ -258,7 +282,7 @@ class _KeySystemState extends State<KeySystem> {
                             color: Colors.white, fontSize: 16),
                         format: CountDownTimerFormat.hoursMinutesSeconds,
                         endTime: DateTime.fromMillisecondsSinceEpoch(
-                            g['keyExpires']),
+                            int.parse( decryptKey( g['keyExpires'] ).toString() )),
                         onEnd: () {
                           print(DateTime.fromMillisecondsSinceEpoch(
                               g['keyExpires']));

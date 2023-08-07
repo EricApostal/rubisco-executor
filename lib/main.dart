@@ -4,6 +4,8 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:window_manager/window_manager.dart';
 import 'package:flutter_acrylic/flutter_acrylic.dart';
+import 'package:fluent_ui/fluent_ui.dart' as fluent_ui;
+import 'package:win32_registry/win32_registry.dart';
 
 import 'package:Rubisco/ExecutorMain/ExecutorMain.dart';
 import 'package:Rubisco/ScriptSearch/ScriptSearch.dart';
