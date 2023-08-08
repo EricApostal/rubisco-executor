@@ -78,12 +78,16 @@ class _MyAppState extends State<MyApp> with WindowListener {
         // borderRadius: BorderRadius.circular(12),
         borderRadius: BorderRadius.circular(0),
         child: MaterialApp(
+          localizationsDelegates:
+              fluent_ui.FluentLocalizations.localizationsDelegates,
+          supportedLocales: fluent_ui.FluentLocalizations.supportedLocales,
           color: Colors.transparent,
           debugShowCheckedModeBanner: false,
           title: 'Rubisco',
           theme: ThemeData(
             splashColor: Colors.transparent,
             highlightColor: Colors.transparent,
+            iconTheme: IconThemeData(color: Colors.white),
             colorScheme:
                 ColorScheme.fromSeed(seedColor: const Color(0xFF13141A)),
             primaryColor: const Color(0xFF13141A),
@@ -167,8 +171,8 @@ class _SidebarState extends State<Sidebar> {
             width: 45,
             decoration: BoxDecoration(
               color: _selectedPage == pageIndex
-                  ? const Color.fromARGB(255, 11, 96, 214)
-                  : const Color(0xFF222735),
+                  ? const Color.fromARGB(255, 103, 245, 255)
+                  : const Color(0xFF13141A),
               borderRadius: BorderRadius.circular(12),
             ),
             child: TextButton(
@@ -179,8 +183,11 @@ class _SidebarState extends State<Sidebar> {
                 padding: const EdgeInsets.all(0),
                 child: SvgPicture.asset(
                   asset,
-                  colorFilter: const ColorFilter.mode(
-                      Color.fromARGB(255, 255, 255, 255), BlendMode.srcIn),
+                  colorFilter: ColorFilter.mode(
+                      _selectedPage == pageIndex
+                          ? Color.fromARGB(255, 0, 0, 0)
+                          : Color.fromARGB(255, 255, 255, 255),
+                      BlendMode.srcIn),
                   semanticsLabel: semanticsLabel,
                 ),
               ),
@@ -368,7 +375,8 @@ class _RunButtonState extends State<RunButton> {
 
   void stateChangeListen() async {
     while (true) {
-      var isAttachedRealtime = await csharpRpc.invoke(method: "IsAttached");
+      var isAttachedRealtime =
+          false; // await csharpRpc.invoke(method: "IsAttached");
       if (isAttachedRealtime != isAttached) {
         isAttached = isAttachedRealtime;
         updateButtonState(isAttachedRealtime ? 3 : 1);
@@ -392,23 +400,23 @@ class _RunButtonState extends State<RunButton> {
         ),
         child: TextButton(
           onPressed: () async {
-            csharpRpc.invoke(method: "IsAttached").then((isAttached) async {
-              if (!isAttached) {
-                updateButtonState(1);
-                csharpRpc.invoke(method: "Attach");
-                while (!await csharpRpc.invoke(method: "IsAttached")) {
-                  updateButtonState(2);
-                  await Future.delayed(const Duration(milliseconds: 50));
-                }
-                updateButtonState(3);
-                isAttached = true;
-              } else {
-                updateButtonState(3);
-                isAttached = true;
-              }
-              stateChangeListen();
-              states["editorCallback"]();
-            });
+            // csharpRpc.invoke(method: "IsAttached").then((isAttached) async {
+            //   if (!isAttached) {
+            //     updateButtonState(1);
+            //     csharpRpc.invoke(method: "Attach");
+            //     while (!await csharpRpc.invoke(method: "IsAttached")) {
+            //       updateButtonState(2);
+            //       await Future.delayed(const Duration(milliseconds: 50));
+            //     }
+            //     updateButtonState(3);
+            //     isAttached = true;
+            //   } else {
+            //     updateButtonState(3);
+            //     isAttached = true;
+            //   }
+            //   stateChangeListen();
+            //   states["editorCallback"]();
+            // });
           },
           child: Center(
             child: AnimatedSwitcher(

@@ -40,16 +40,16 @@ class _KeySystemBrowser extends State<KeySystemBrowser> {
     super.initState();
   }
 
-  void fixInvalidVisit() async {
+  void fixInvalidVisit() async { 
     // errorContainer
     while (true) {
-      if (await _controller.executeScript(
-          'document.getElementsByClassName("errorContainer").length > 0;')) {
+      if ( (await _controller.executeScript(
+          'document.getElementsByClassName("errorContainer").length > 0;')?? false) ) {
         await _controller.setZoomFactor(1000);
         await _controller.setZoomFactor(.1);
         await _controller.setZoomFactor(.7);
       }
-      await Future.delayed(const Duration(milliseconds: 10));
+      await Future.delayed(const Duration(milliseconds: 50));
     }
   }
 
@@ -170,7 +170,8 @@ class KeySystem extends StatefulWidget {
 
 class _KeySystemState extends State<KeySystem> {
   DummyCastle dummyCastle = DummyCastle();
-  String password= r"VA2Z-yA6qrtDc4{}D<)T)a/`JE)&^C[.6[74?ph&VWZ$Z_,MPxr+Dx$4'Z}C~I1";
+  String password =
+      r"VA2Z-yA6qrtDc4{}D<)T)a/`JE)&^C[.6[74?ph&VWZ$Z_,MPxr+Dx$4'Z}C~I1";
 
   String encryptKey(int key) {
     return dummyCastle.encryptSymmWith(key.toString()).getResult();
@@ -184,7 +185,7 @@ class _KeySystemState extends State<KeySystem> {
   }
 
   bool hasValidKey = false;
-      
+
   void updateKey() {
     /*
       Called every time the user passes through a key system checkpoint
@@ -194,13 +195,17 @@ class _KeySystemState extends State<KeySystem> {
     */
 
     setState(() {
-      hasValidKey = (states['currentKeyPasses'] >=
-              states['requiredKeyPasses']) |
-          (DateTime.now().toUtc().millisecondsSinceEpoch <= decryptKey(g['keyExpires']) );
+      hasValidKey =
+          (states['currentKeyPasses'] >= states['requiredKeyPasses']) |
+              (DateTime.now().toUtc().millisecondsSinceEpoch <=
+                  decryptKey(g['keyExpires']));
 
       if (states['currentKeyPasses'] >= states['requiredKeyPasses']) {
         states['currentKeyPasses'] = 0;
-        g['keyExpires'] = encryptKey(DateTime.now().add(const Duration(hours: 24)).toUtc().millisecondsSinceEpoch);
+        g['keyExpires'] = encryptKey(DateTime.now()
+            .add(const Duration(hours: 24))
+            .toUtc()
+            .millisecondsSinceEpoch);
         saveData(g);
       }
     });
@@ -210,8 +215,8 @@ class _KeySystemState extends State<KeySystem> {
     // We want to set valid key stuff on init, but not the unix timestamp
 
     setState(() {
-      hasValidKey =
-          (DateTime.now().toUtc().millisecondsSinceEpoch <= decryptKey(g['keyExpires']));
+      hasValidKey = (DateTime.now().toUtc().millisecondsSinceEpoch <=
+          decryptKey(g['keyExpires']));
       states['currentKeyPasses'] = 0;
     });
   }
@@ -223,7 +228,8 @@ class _KeySystemState extends State<KeySystem> {
       g["keyExpires"] = encryptKey(0);
     }
 
-    hasValidKey = (DateTime.now().toUtc().millisecondsSinceEpoch <= decryptKey(g["keyExpires"]));
+    hasValidKey = (DateTime.now().toUtc().millisecondsSinceEpoch <=
+        decryptKey(g["keyExpires"]));
     super.initState();
   }
 
@@ -234,7 +240,28 @@ class _KeySystemState extends State<KeySystem> {
       child: (!hasValidKey)
           ? ClipRRect(
               borderRadius: BorderRadius.circular(8),
-              child: KeySystemBrowser(updateKeyCallback: updateKey))
+              child: Stack(
+                children: [
+                  KeySystemBrowser(updateKeyCallback: updateKey),
+                  Positioned(
+                    bottom: 4,
+                    right: 4,
+                    child: Container(
+                      height: 40,
+                      width: 60,
+                      decoration: const BoxDecoration(color: Color(0xFF222735),
+                      borderRadius: BorderRadius.all( Radius.circular(8) )
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.only(bottom: 2),
+                        child: Center(child: Text("${states['currentKeyPasses']}/${states['requiredKeyPasses']}",
+                        style: GoogleFonts.montserrat(color: Colors.white, fontSize: 22)
+                        )),
+                      )
+                    ),
+                  )
+                ],
+              ))
           : Center(
               child: Container(
                 width: 350,
@@ -264,7 +291,7 @@ class _KeySystemState extends State<KeySystem> {
                             color: Colors.white, fontSize: 16),
                         format: CountDownTimerFormat.hoursMinutesSeconds,
                         endTime: DateTime.fromMillisecondsSinceEpoch(
-                            int.parse( decryptKey( g['keyExpires'] ).toString() )),
+                            int.parse(decryptKey(g['keyExpires']).toString())),
                         onEnd: () {
                           print(DateTime.fromMillisecondsSinceEpoch(
                               g['keyExpires']));
