@@ -59,9 +59,7 @@ class _KeySystemBrowser extends State<KeySystemBrowser> {
               'document.getElementsByClassName("scriptname").length > 0;') ??
           false; // annoying asf null error
       if (isDone) {
-        print("went through key pass!");
         states['currentKeyPasses'] += 1;
-        print(states['currentKeyPasses']);
         widget.updateKeyCallback();
         await _controller.loadUrl("https://link-target.net/918115/rubisco");
       }

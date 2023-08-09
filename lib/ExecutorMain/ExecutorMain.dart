@@ -290,16 +290,16 @@ class _TabState extends State<Tabs> {
 
   @override
   void initState() {
-    _tabs = ['Tab 1']
+    _tabs = ['src 1']
         .map(
           (e) => _getTab(e),
         )
         .toList();
     _controller = BlossomTabController<int>(
-      currentTab: 'Tab 1',
+      currentTab: 'src 1',
       tabs: _tabs,
     );
-    exampleBrowserKeys['Tab 1'] = GlobalKey<_ExampleBrowser>();
+    exampleBrowserKeys['src 1'] = GlobalKey<_ExampleBrowser>();
 
     WidgetsBinding.instance!.addPostFrameCallback((_) {
       callListener(_controller);
@@ -366,9 +366,9 @@ class _TabState extends State<Tabs> {
                           final numericPartB = int.parse(b.split(' ').last);
                           return numericPartA.compareTo(numericPartB);
                         });
-                        var c = z.isEmpty ? 'Tab 0' : z.last;
+                        var c = z.isEmpty ? 'src 0' : z.last;
                         final numericPart = int.parse(c.split(' ').last);
-                        c = 'Tab ${numericPart + 1}';
+                        c = 'src ${numericPart + 1}';
                         _controller.addTab(_getTab(c));
                       },
                     ),
