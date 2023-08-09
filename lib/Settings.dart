@@ -66,7 +66,7 @@ class _SettingsSidebarState extends State<SettingsSidebar> {
             width: 200,
             decoration: BoxDecoration(
               color: _selectedPage == pageIndex
-                  ? const Color.fromARGB(255, 11, 96, 214)
+                  ? const Color.fromARGB(255, 103, 245, 255)
                   : const Color(0xFF222735),
               borderRadius: BorderRadius.circular(8),
             ),
@@ -85,19 +85,23 @@ class _SettingsSidebarState extends State<SettingsSidebar> {
                       height: 15,
                       child: SvgPicture.asset(
                         svgPath,
-                        colorFilter: const ColorFilter.mode(
-                            Color.fromARGB(255, 229, 229, 229),
+                        colorFilter: ColorFilter.mode(
+                            _selectedPage == pageIndex
+                                ? const Color.fromARGB(255, 0, 0, 0)
+                                : const Color.fromARGB(255, 255, 255, 255),
                             BlendMode.srcIn),
                         semanticsLabel: buttonText,
                       ),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       width: 4,
                     ),
                     Text(
                       buttonText,
                       textAlign: TextAlign.start,
-                      style: GoogleFonts.lato(color: Colors.white),
+                      style: GoogleFonts.lato(color: _selectedPage == pageIndex
+                                ? const Color.fromARGB(255, 0, 0, 0)
+                                : const Color.fromARGB(255, 255, 255, 255),),
                     ),
                   ],
                 ),
