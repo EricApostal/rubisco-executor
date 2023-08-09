@@ -1,7 +1,7 @@
 import 'dart:ui';
 
-import 'package:Rubisco/Misc/datastore.dart';
-import 'package:Rubisco/globals.dart';
+import 'package:rubisco/Misc/datastore.dart';
+import 'package:rubisco/globals.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';

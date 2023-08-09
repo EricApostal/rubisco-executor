@@ -1,5 +1,5 @@
 import 'package:localstorage/localstorage.dart';
-import 'package:Rubisco/globals.dart';
+import 'package:rubisco/globals.dart';
 
 final LocalStorage storage = LocalStorage("RubiscoData.json");
 

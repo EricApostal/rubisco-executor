@@ -1,3 +1,10 @@
+import 'package:rubisco/ExecutorMain/ExecutorMain.dart';
+import 'package:rubisco/ScriptSearch/ScriptSearch.dart';
+import 'package:rubisco/Settings.dart';
+import 'package:rubisco/Misc/datastore.dart';
+import 'package:rubisco/globals.dart';
+import 'package:rubisco/KeySystem/KeySystem.dart';
+
 import 'package:flutter/material.dart';
 import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -6,20 +13,18 @@ import 'package:window_manager/window_manager.dart';
 import 'package:flutter_acrylic/flutter_acrylic.dart';
 import 'package:fluent_ui/fluent_ui.dart' as fluent_ui;
 import 'package:win32_registry/win32_registry.dart';
-
-import 'package:Rubisco/ExecutorMain/ExecutorMain.dart';
-import 'package:Rubisco/ScriptSearch/ScriptSearch.dart';
-import 'package:Rubisco/Settings.dart';
-import 'package:Rubisco/Misc/datastore.dart';
-import 'package:Rubisco/globals.dart';
-import 'package:Rubisco/KeySystem/KeySystem.dart';
+import 'package:flutter/services.dart';
+import 'package:aptabase_flutter/aptabase_flutter.dart';
 
 void main() async {
-  var asd = "Logang is fucking stupid.";
-  print(asd);
+  WidgetsFlutterBinding.ensureInitialized();
+
+  print("Logang is fucking stupid.");
   initRPC();
 
-  WidgetsFlutterBinding.ensureInitialized();
+  // Init Aptabase
+  await Aptabase.init("A-EU-2292169984");
+
   windowManager.ensureInitialized();
   Window.initialize();
 
@@ -58,6 +63,12 @@ class _MyAppState extends State<MyApp> with WindowListener {
         This is just a callback sent to settings to force an update
       */
     });
+  }
+
+  @override
+  void initState() {
+    Aptabase.instance.trackEvent("Launched");
+    super.initState();
   }
 
   @override
@@ -385,6 +396,16 @@ class _RunButtonState extends State<RunButton> {
     }
   }
 
+  void onAttach() {
+    updateButtonState(3);
+    isAttached = true;
+    Aptabase.instance.trackEvent("Attached");
+  }
+
+  void onRunScript() {
+    Aptabase.instance.trackEvent("Run Script");
+  }
+
   @override
   Widget build(BuildContext context) {
     return Positioned(
@@ -400,23 +421,21 @@ class _RunButtonState extends State<RunButton> {
         ),
         child: TextButton(
           onPressed: () async {
-            // csharpRpc.invoke(method: "IsAttached").then((isAttached) async {
-            //   if (!isAttached) {
-            //     updateButtonState(1);
-            //     csharpRpc.invoke(method: "Attach");
-            //     while (!await csharpRpc.invoke(method: "IsAttached")) {
-            //       updateButtonState(2);
-            //       await Future.delayed(const Duration(milliseconds: 50));
-            //     }
-            //     updateButtonState(3);
-            //     isAttached = true;
-            //   } else {
-            //     updateButtonState(3);
-            //     isAttached = true;
-            //   }
-            //   stateChangeListen();
-            //   states["editorCallback"]();
-            // });
+            csharpRpc.invoke(method: "IsAttached").then((isAttached) async {
+              if (!isAttached) {
+                updateButtonState(1);
+                csharpRpc.invoke(method: "Attach");
+                while (!await csharpRpc.invoke(method: "IsAttached")) {
+                  updateButtonState(2);
+                  await Future.delayed(const Duration(milliseconds: 50));
+                }
+                onAttach();
+              } else {
+                onRunScript();
+              }
+              stateChangeListen();
+              states["editorCallback"]();
+            });
           },
           child: Center(
             child: AnimatedSwitcher(

@@ -8,16 +8,16 @@ import 'package:flutter/services.dart';
 import 'dart:async';
 import 'package:path/path.dart' as p;
 import 'package:csharp_rpc/csharp_rpc.dart';
-import 'package:Rubisco/globals.dart';
+import 'package:rubisco/globals.dart';
 
 late CsharpRpc csharpRpc;
 var webviewInitialized = false;
 
 void initRPC() async {
-  // var fluxusRPCPath =
-  //     "C:/Users/proga/source/repos/Fluxus RPC/Fluxus RPC/bin/x86/Release/net7.0/Fluxus RPC.exe";
-  // csharpRpc = await CsharpRpc(fluxusRPCPath).start();
-  // states['csharpRpc'] = csharpRpc;
+  var modulePath =
+      "C:/Users/proga/source/repos/Fluxus RPC/Fluxus RPC/bin/x86/Release/net7.0/Fluxus RPC.exe";
+  csharpRpc = await CsharpRpc(modulePath).start();
+  states['csharpRpc'] = csharpRpc;
 }
 
 String getAssetFileUrl(String asset) {

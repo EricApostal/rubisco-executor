@@ -6,7 +6,8 @@ import 'package:http/http.dart' as http;
 import 'package:image_network/image_network.dart';
 import 'package:flutter/services.dart';
 import 'package:csharp_rpc/csharp_rpc.dart';
-import 'package:Rubisco/globals.dart';
+import 'package:rubisco/globals.dart';
+import 'package:aptabase_flutter/aptabase_flutter.dart';
 
 class SearchItem extends StatelessWidget {
   SearchItem({super.key, required this.scriptJson});
@@ -120,6 +121,7 @@ class SearchItem extends StatelessWidget {
                                                 Radius.circular(12))),
                                         child: TextButton(
                                           onPressed: () async {
+                                            Aptabase.instance.trackEvent("Script Search Clipboard");
                                             await Clipboard.setData(
                                                 ClipboardData(
                                                     text:
@@ -148,6 +150,7 @@ class SearchItem extends StatelessWidget {
                                                   Radius.circular(12))),
                                           child: TextButton(
                                             onPressed: () {
+                                              // Aptabase.instance.trackEvent("Script Search Run");
                                               states['csharpRpc'].invoke(
                                                   method: "RunScript",
                                                   params: [
@@ -196,6 +199,12 @@ class ScriptSearch extends StatefulWidget {
 
 class _ScriptSearchState extends State<ScriptSearch> {
   String searchTerm = '';
+
+  @override
+  void initState() {
+    Aptabase.instance.trackEvent("Script Search");
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {

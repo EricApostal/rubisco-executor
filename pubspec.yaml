@@ -1,4 +1,4 @@
-name: Rubisco
+name: rubisco
 description: A new Flutter project.
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
@@ -65,26 +65,16 @@ dependencies:
   flutter_timer_countdown: ^1.0.5
   win32_registry: ^1.0.2
   dummycastle: ^1.2.0
+  firedart: ^0.9.7
+  aptabase_flutter: ^0.0.10
 
 # To apply the icon stuffs, run
 # flutter pub run flutter_launcher_icons -f pubspec.yaml
 flutter_launcher_icons:
-  android: "launcher_icon"
-  ios: true
-  image_path: "assets/logo5.png"
-  min_sdk_android: 21 # android min sdk min:16, default 21
-  web:
-    generate: true
-    image_path: "assets/logo5.png"
-    background_color: "#hexcode"
-    theme_color: "#hexcode"
   windows:
     generate: true
-    image_path: "assets/logo5.png"
+    image_path: "assets/rubisco_logo.png"
     icon_size: 48 # min:48, max:256, default: 48
-  macos:
-    generate: true
-    image_path: "assets/logo5.png"
 
 dev_dependencies:
   flutter_test:
