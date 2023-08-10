@@ -1,11 +1,11 @@
 import 'dart:io';
 import 'dart:math';
+import 'dart:async';
 
 import 'package:blossom_tabs/blossom_tabs.dart';
 import 'package:flutter/material.dart';
 import 'package:webview_windows/webview_windows.dart';
 import 'package:flutter/services.dart';
-import 'dart:async';
 import 'package:path/path.dart' as p;
 import 'package:csharp_rpc/csharp_rpc.dart';
 import 'package:rubisco/globals.dart';
@@ -13,11 +13,7 @@ import 'package:rubisco/globals.dart';
 late CsharpRpc csharpRpc;
 var webviewInitialized = false;
 
-void initRPC() async {
-  var modulePath =
-      "C:/Users/proga/source/repos/Fluxus RPC/Fluxus RPC/bin/x86/Release/net7.0/Fluxus RPC.exe";
-  csharpRpc = await CsharpRpc(modulePath).start();
-  states['csharpRpc'] = csharpRpc;
+void setRPC() async {
 }
 
 String getAssetFileUrl(String asset) {
@@ -91,11 +87,7 @@ class _ExampleBrowser extends State<ExampleBrowser> {
         webviewInitialized = true;
       });
 
-      String url =
-          "${Directory.current.path}\\bin\\Release\\bin\\monaco\\Monaco.html";
-      if (!await File(url).exists()) {
-        url = "${Directory.current.path}\\bin\\monaco\\Monaco.html";
-      }
+      String url = "${Directory.current.path}\\bin\\monaco\\Monaco.html";
 
       await _controller.setBackgroundColor(Colors.transparent);
       await _controller.setPopupWindowPolicy(WebviewPopupWindowPolicy.deny);

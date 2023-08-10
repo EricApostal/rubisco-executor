@@ -15,6 +15,28 @@ import 'package:fluent_ui/fluent_ui.dart' as fluent_ui;
 import 'package:win32_registry/win32_registry.dart';
 import 'package:flutter/services.dart';
 import 'package:aptabase_flutter/aptabase_flutter.dart';
+import 'package:csharp_rpc/csharp_rpc.dart';
+
+late CsharpRpc csharpRpc;
+
+void doInjectLoop() async {
+  while (true) {
+    print( await csharpRpc.invoke(method: "IsAttached"));
+    await Future.delayed(const Duration(seconds: 1));
+  }
+}
+
+void initRPC() async {
+  var modulePath =
+      r"C:\Users\proga\source\repos\NihonRPCShitThingCringe\NihonRPCShitThingCringe\bin\Release\NihonRPCShitThingCringe.exe";
+  csharpRpc = await CsharpRpc(modulePath).start();
+  print("started!");
+  setRPC();
+  doInjectLoop();
+  // csharpRpc.invoke(method: "Attach");
+  states['csharpRpc'] = csharpRpc;
+  print(csharpRpc);
+}
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -421,11 +443,14 @@ class _RunButtonState extends State<RunButton> {
         ),
         child: TextButton(
           onPressed: () async {
-            csharpRpc.invoke(method: "IsAttached").then((isAttached) async {
+            states['csharpRpc'].invoke(method: "Attach");
+            print("Attaching / Run button called");
+            states['csharpRpc'].invoke(method: "IsAttached").then((isAttached) async {
+              print("IsAttached Referenced");
               if (!isAttached) {
                 updateButtonState(1);
-                csharpRpc.invoke(method: "Attach");
-                while (!await csharpRpc.invoke(method: "IsAttached")) {
+                states['csharpRpc'].invoke(method: "Attach");
+                while (!await states['csharpRpc'].invoke(method: "IsAttached")) {
                   updateButtonState(2);
                   await Future.delayed(const Duration(milliseconds: 50));
                 }
