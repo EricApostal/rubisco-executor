@@ -78,7 +78,8 @@ class _KeySystemBrowser extends State<KeySystemBrowser> {
         widget.updateKeyCallback();
         // Maybe fix no click bug?
         await Future.delayed(const Duration(milliseconds: 1000));
-        await _controller.loadUrl("https://link-target.net/918115/rubisco");
+        print("https://link-target.net/918115/rubisco-${states['currentKeyPasses']+1}");
+        await _controller.loadUrl("https://link-target.net/918115/rubisco-${states['currentKeyPasses']+1}"); // maybe dynamically change the link later? so have like 5 set up
       }
       await Future.delayed(const Duration(milliseconds: 500));
     }
@@ -92,8 +93,8 @@ class _KeySystemBrowser extends State<KeySystemBrowser> {
         webviewInitialized = true;
       });
 
-      // https://link-center.net/918115/rubico-testing-thing
-      String url = "https://link-target.net/918115/rubisco";
+      // I have to initialize at 1, the rest are handled from listenForCodeBox()
+      String url = "https://link-target.net/918115/rubisco-1";
       await _controller.setUserAgent(
           "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36 Edg/115.0.1901.188");
       await _controller.setBackgroundColor(Colors.transparent);
