@@ -17,27 +17,6 @@ import 'package:flutter/services.dart';
 import 'package:aptabase_flutter/aptabase_flutter.dart';
 import 'package:csharp_rpc/csharp_rpc.dart';
 
-late CsharpRpc csharpRpc;
-
-void doInjectLoop() async {
-  while (true) {
-    print( await csharpRpc.invoke(method: "IsAttached"));
-    await Future.delayed(const Duration(seconds: 1));
-  }
-}
-
-void initRPC() async {
-  var modulePath =
-      r"C:\Users\proga\source\repos\NihonRPCShitThingCringe\NihonRPCShitThingCringe\bin\Release\NihonRPCShitThingCringe.exe";
-  csharpRpc = await CsharpRpc(modulePath).start();
-  print("started!");
-  setRPC();
-  doInjectLoop();
-  // csharpRpc.invoke(method: "Attach");
-  states['csharpRpc'] = csharpRpc;
-  print(csharpRpc);
-}
-
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -408,8 +387,7 @@ class _RunButtonState extends State<RunButton> {
 
   void stateChangeListen() async {
     while (true) {
-      var isAttachedRealtime =
-          false; // await csharpRpc.invoke(method: "IsAttached");
+      var isAttachedRealtime = await csharpRpc.invoke(method: "IsAttached");
       if (isAttachedRealtime != isAttached) {
         isAttached = isAttachedRealtime;
         updateButtonState(isAttachedRealtime ? 3 : 1);
@@ -425,6 +403,7 @@ class _RunButtonState extends State<RunButton> {
   }
 
   void onRunScript() {
+    states["editorCallback"]();
     Aptabase.instance.trackEvent("Run Script");
   }
 
@@ -443,12 +422,12 @@ class _RunButtonState extends State<RunButton> {
         ),
         child: TextButton(
           onPressed: () async {
-            states['csharpRpc'].invoke(method: "Attach");
-            print("Attaching / Run button called");
+            if (!isAttached) {
+              updateButtonState(2);
+            }
             states['csharpRpc'].invoke(method: "IsAttached").then((isAttached) async {
-              print("IsAttached Referenced");
               if (!isAttached) {
-                updateButtonState(1);
+                updateButtonState(2);
                 states['csharpRpc'].invoke(method: "Attach");
                 while (!await states['csharpRpc'].invoke(method: "IsAttached")) {
                   updateButtonState(2);
@@ -458,8 +437,6 @@ class _RunButtonState extends State<RunButton> {
               } else {
                 onRunScript();
               }
-              stateChangeListen();
-              states["editorCallback"]();
             });
           },
           child: Center(

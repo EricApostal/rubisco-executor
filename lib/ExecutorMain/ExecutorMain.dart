@@ -13,7 +13,13 @@ import 'package:rubisco/globals.dart';
 late CsharpRpc csharpRpc;
 var webviewInitialized = false;
 
-void setRPC() async {
+void initRPC() async {
+  var modulePath =
+      r"C:\Users\Eric\source\repos\ShadowRPC\ShadowRPC\bin\Debug\net7.0\ShadowRPC.exe";
+  csharpRpc = await CsharpRpc(modulePath).start();
+  print("started!");
+  states['csharpRpc'] = csharpRpc;
+  print(csharpRpc);
 }
 
 String getAssetFileUrl(String asset) {
