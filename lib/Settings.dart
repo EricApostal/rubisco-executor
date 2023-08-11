@@ -43,8 +43,8 @@ class _SettingsSidebarState extends State<SettingsSidebar> {
             children: [
               _buildTextButton("Appearance", "assets/appearance.svg",
                   'Go to Code Editor', 0),
-              _buildTextButton("Behavior", "assets/appearance.svg",
-                  'Go to Script Search', 1),
+              // _buildTextButton("Behavior", "assets/appearance.svg",
+              //     'Go to Script Search', 1),
               // _buildTextButton("assets/settings.svg", 'Run script', 2),
             ],
           ),

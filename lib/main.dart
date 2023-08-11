@@ -24,18 +24,13 @@ void main() async {
   print("Logang is fucking stupid.");
   initRPC();
 
-  // Init Aptabase
+  // Init Aptabase analytics
   await Aptabase.init("A-EU-2292169984");
 
   windowManager.ensureInitialized();
   Window.initialize();
-
   Window.setEffect(effect: WindowEffect.transparent);
-
   windowManager.waitUntilReadyToShow().then((_) async {
-    // await windowManager.setTitleBarStyle(TitleBarStyle.hidden);
-    // await windowManager.setAsFrameless();
-    // await windowManager.setHasShadow(false);
     windowManager.show();
   });
 
@@ -45,6 +40,7 @@ void main() async {
     const minSize = Size(500, 300);
     appWindow.minSize = minSize;
     appWindow.size = initialSize; // default size
+    appWindow.title = "Rubisco BETA";
     appWindow.show();
   });
 }

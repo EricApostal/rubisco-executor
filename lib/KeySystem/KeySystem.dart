@@ -10,11 +10,12 @@ import 'package:flutter/services.dart';
 import 'package:webview_windows/webview_windows.dart';
 import 'package:flutter_timer_countdown/flutter_timer_countdown.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:dummycastle/pl/polinc/dummycastle/dummycastle.dart';
 
 final navigatorKey = GlobalKey<NavigatorState>();
 bool webviewInitialized = false;
 Encryption encryption = Encryption();
+
+
 
 bool isKeyValid() {
   if (g['keyExpires'] == '0') {
@@ -75,6 +76,8 @@ class _KeySystemBrowser extends State<KeySystemBrowser> {
       if (isDone) {
         states['currentKeyPasses'] += 1;
         widget.updateKeyCallback();
+        // Maybe fix no click bug?
+        await Future.delayed(const Duration(milliseconds: 1000));
         await _controller.loadUrl("https://link-target.net/918115/rubisco");
       }
       await Future.delayed(const Duration(milliseconds: 500));
@@ -89,6 +92,7 @@ class _KeySystemBrowser extends State<KeySystemBrowser> {
         webviewInitialized = true;
       });
 
+      // https://link-center.net/918115/rubico-testing-thing
       String url = "https://link-target.net/918115/rubisco";
       await _controller.setUserAgent(
           "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36 Edg/115.0.1901.188");

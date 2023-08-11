@@ -16,7 +16,7 @@ var webviewInitialized = false;
 
 void initRPC() async {
   var modulePath =
-      r"bin/ShadowRPC.exe";
+      r"bin\bin\ShadowRPC.exe";
   csharpRpc = await CsharpRpc(modulePath).start();
   print("started!");
   states['csharpRpc'] = csharpRpc;
@@ -94,7 +94,7 @@ class _ExampleBrowser extends State<ExampleBrowser> {
         webviewInitialized = true;
       });
 
-      String url = "${Directory.current.path}\\bin\\monaco\\Monaco.html";
+      String url = "${Directory.current.path}\\bin\\bin\\monaco\\Monaco.html";
 
       await _controller.setBackgroundColor(Colors.transparent);
       await _controller.setPopupWindowPolicy(WebviewPopupWindowPolicy.deny);
