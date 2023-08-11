@@ -8,6 +8,7 @@ import 'package:webview_windows/webview_windows.dart';
 import 'package:flutter/services.dart';
 import 'package:path/path.dart' as p;
 import 'package:csharp_rpc/csharp_rpc.dart';
+
 import 'package:rubisco/globals.dart';
 
 late CsharpRpc csharpRpc;
@@ -15,7 +16,7 @@ var webviewInitialized = false;
 
 void initRPC() async {
   var modulePath =
-      r"C:\Users\Eric\source\repos\ShadowRPC\ShadowRPC\bin\Debug\net7.0\ShadowRPC.exe";
+      r"bin/ShadowRPC.exe";
   csharpRpc = await CsharpRpc(modulePath).start();
   print("started!");
   states['csharpRpc'] = csharpRpc;
