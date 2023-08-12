@@ -3,7 +3,8 @@ library my_prj.globals;
 Map<String, dynamic> g = {
   'topMost': false,
   'transparent': false,
-  'keyExpires': '0'
+  'keyExpires': '0',
+  'tabData': {}, // {id: {'name': null, 'scriptContents': null} }
 };
 
 Map<String, dynamic> states = {

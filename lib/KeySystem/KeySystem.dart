@@ -76,8 +76,7 @@ class _KeySystemBrowser extends State<KeySystemBrowser> {
         widget.updateKeyCallback();
         // Maybe fix no click bug?
         await Future.delayed(const Duration(milliseconds: 500));
-        print("https://workink.net/1QPE/ll7zmowf");
-        await _controller.loadUrl("https://workink.net/1QPE/ll7zmowf"); // maybe dynamically change the link later? so have like 5 set up
+        await _controller.loadUrl("https://workink.net/1QPE/ll7zmowf");
       }
       await Future.delayed(const Duration(milliseconds: 500));
     }
@@ -291,9 +290,6 @@ class _KeySystemState extends State<KeySystem> {
                         endTime: DateTime.fromMillisecondsSinceEpoch(
                             int.parse(encryption.decryptKey(g['keyExpires']).toString())),
                         onEnd: () {
-                          print(DateTime.fromMillisecondsSinceEpoch(
-                              g['keyExpires']));
-                          print("Timer finished");
                           setState(() {
                             hasValidKey = false;
                           });

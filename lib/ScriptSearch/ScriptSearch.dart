@@ -37,8 +37,7 @@ class SearchItem extends StatelessWidget {
                       color: Color(0xff13141A),
                       borderRadius: BorderRadius.all(Radius.circular(8))),
                   child: ImageNetwork(
-                    image: "https://scriptblox.com/" +
-                        scriptJson["game"]["imageUrl"],
+                    image: "https://scriptblox.com/${scriptJson["game"]["imageUrl"]}",
                     height: 150,
                     width: 150,
                     duration: 100,
