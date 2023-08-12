@@ -15,8 +15,6 @@ final navigatorKey = GlobalKey<NavigatorState>();
 bool webviewInitialized = false;
 Encryption encryption = Encryption();
 
-
-
 bool isKeyValid() {
   if (g['keyExpires'] == '0') {
     // If key has not been initialized
