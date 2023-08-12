@@ -422,37 +422,3 @@ class _NewTabBtnState extends State<NewTabBtn> {
     );
   }
 }
-
-class ColorBox extends StatefulWidget {
-  const ColorBox({Key? key, this.child}) : super(key: key);
-
-  final Widget? child;
-
-  @override
-  _ColorBoxState createState() => _ColorBoxState();
-}
-
-class _ColorBoxState extends State<ColorBox> {
-  Color? _color;
-
-  _randomColor() => Color(0xFF000000 + Random().nextInt(0x00FFFFFF));
-
-  @override
-  void initState() {
-    _color = _randomColor();
-    super.initState();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        setState(() {
-          _color = _randomColor();
-        });
-      },
-      child: Container(
-          width: 150, height: 150, color: _color, child: widget.child),
-    );
-  }
-}

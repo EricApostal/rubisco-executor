@@ -75,7 +75,7 @@ class _KeySystemBrowser extends State<KeySystemBrowser> {
         states['currentKeyPasses'] += 1;
         widget.updateKeyCallback();
         // Maybe fix no click bug?
-        await Future.delayed(const Duration(milliseconds: 1000));
+        await Future.delayed(const Duration(milliseconds: 500));
         print("https://workink.net/1QPE/ll7zmowf");
         await _controller.loadUrl("https://workink.net/1QPE/ll7zmowf"); // maybe dynamically change the link later? so have like 5 set up
       }

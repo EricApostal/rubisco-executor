@@ -150,7 +150,7 @@ class SearchItem extends StatelessWidget {
                                                   Radius.circular(12))),
                                           child: TextButton(
                                             onPressed: () {
-                                              // Aptabase.instance.trackEvent("Script Search Run");
+                                              Aptabase.instance.trackEvent("Script Search Run");
                                               states['csharpRpc'].invoke(
                                                   method: "RunScript",
                                                   params: [
