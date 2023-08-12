@@ -4,6 +4,7 @@ import 'dart:async';
 
 import 'package:blossom_tabs/blossom_tabs.dart';
 import 'package:flutter/material.dart';
+import 'package:rubisco/Misc/datastore.dart';
 import 'package:webview_windows/webview_windows.dart';
 import 'package:flutter/services.dart';
 import 'package:path/path.dart' as p;
@@ -15,8 +16,7 @@ late CsharpRpc csharpRpc;
 var webviewInitialized = false;
 
 void initRPC() async {
-  var modulePath =
-      r"bin\bin\ShadowRPC.exe";
+  var modulePath = r"bin\bin\ShadowRPC.exe";
   csharpRpc = await CsharpRpc(modulePath).start();
   print("started!");
   states['csharpRpc'] = csharpRpc;
@@ -80,6 +80,29 @@ class _ExampleBrowser extends State<ExampleBrowser> {
     };
   }
 
+  // Sets the current tab state's box content (for tab saving)
+  void statePersistLoop() async {
+    // Prevents us from setting content when we don't need to
+    String lastContent = "";
+    while (true) {
+      String currentContent =
+          await _controller.executeScript("editor.getValue()") ?? "";
+      if (lastContent != currentContent) {
+        if (g['tabData'][widget.tabController.currentTab] == null) {
+          // bad fix, usually just for tab 1 which initializes seperately
+          g['tabData'][widget.tabController.currentTab] = {
+            'name': "Script ${widget.tabController.currentTab}",
+            'scriptContents': ""
+          };
+        }
+        g['tabData'][widget.tabController.currentTab]['scriptContents'] =
+            currentContent;
+        lastContent = currentContent;
+      }
+      await Future.delayed(const Duration(milliseconds: 1000));
+    }
+  }
+
   @override
   void initState() {
     initPlatformState();
@@ -99,6 +122,9 @@ class _ExampleBrowser extends State<ExampleBrowser> {
       await _controller.setBackgroundColor(Colors.transparent);
       await _controller.setPopupWindowPolicy(WebviewPopupWindowPolicy.deny);
       await _controller.loadUrl(url);
+
+      statePersistLoop();
+
       if (!mounted) return;
       setState(() {});
     } on PlatformException catch (e) {
@@ -246,7 +272,7 @@ class CustomTab extends StatelessWidget {
       ],
     );
   }
-} 
+}
 
 class Tabs extends StatefulWidget {
   const Tabs({Key? key}) : super(key: key);
@@ -289,16 +315,23 @@ class _TabState extends State<Tabs> {
 
   @override
   void initState() {
-    _tabs = ['src 1']
+    _tabs = ['t 1']
         .map(
           (e) => _getTab(e),
         )
         .toList();
     _controller = BlossomTabController<int>(
-      currentTab: 'src 1',
+      currentTab: 't 1',
       tabs: _tabs,
     );
-    exampleBrowserKeys['src 1'] = GlobalKey<_ExampleBrowser>();
+
+    if (g['tabData'] == null) {
+      // shitty way to handle old RubiscoData.json file
+      g['tabData'] = {};
+    }
+    saveData(g);
+
+    exampleBrowserKeys['t 1'] = GlobalKey<_ExampleBrowser>();
 
     WidgetsBinding.instance!.addPostFrameCallback((_) {
       callListener(_controller);
@@ -332,7 +365,7 @@ class _TabState extends State<Tabs> {
                 selectedColor: const Color(0xFF222735),
                 dragColor: const Color(0xFF222735),
                 stickyColor: Colors.white,
-                dividerColor: Color.fromARGB(255, 255, 255, 255),
+                dividerColor: const Color.fromARGB(255, 255, 255, 255),
                 shadowColor: const Color(0xFF13141A),
                 bottomColor: const Color(0xFF222735),
                 margin: const EdgeInsets.only(left: 20, top: 0, right: 10),
@@ -365,9 +398,15 @@ class _TabState extends State<Tabs> {
                           final numericPartB = int.parse(b.split(' ').last);
                           return numericPartA.compareTo(numericPartB);
                         });
-                        var c = z.isEmpty ? 'src 0' : z.last;
+                        var c = z.isEmpty ? 't 0' : z.last;
                         final numericPart = int.parse(c.split(' ').last);
-                        c = 'src ${numericPart + 1}';
+                        c = 't ${numericPart + 1}';
+                        g['tabData'][c] = {
+                          'name': "Script ${numericPart + 1}",
+                          'scriptContents': ""
+                        };
+                        saveData(g);
+                        print(g['tabData']);
                         _controller.addTab(_getTab(c));
                       },
                     ),
