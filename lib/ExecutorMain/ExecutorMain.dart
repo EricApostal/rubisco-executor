@@ -8,9 +8,6 @@ import 'package:webview_windows/webview_windows.dart';
 import 'package:flutter/services.dart';
 import 'package:path/path.dart' as p;
 import 'package:csharp_rpc/csharp_rpc.dart';
-import 'package:flutter_code_editor/flutter_code_editor.dart';
-import 'package:flutter_highlight/themes/monokai-sublime.dart';
-import 'package:highlight/languages/lua.dart';
 
 import 'package:rubisco/globals.dart';
 
@@ -18,7 +15,8 @@ late CsharpRpc csharpRpc;
 var webviewInitialized = false;
 
 void initRPC() async {
-  var modulePath = r"bin\bin\ShadowRPC.exe";
+  var modulePath =
+      r"bin\bin\ShadowRPC.exe";
   csharpRpc = await CsharpRpc(modulePath).start();
   print("started!");
   states['csharpRpc'] = csharpRpc;
@@ -248,7 +246,7 @@ class CustomTab extends StatelessWidget {
       ],
     );
   }
-}
+} 
 
 class Tabs extends StatefulWidget {
   const Tabs({Key? key}) : super(key: key);
@@ -385,17 +383,9 @@ class _TabState extends State<Tabs> {
                 tab.id, () => GlobalKey<_ExampleBrowser>());
             return Padding(
               padding: const EdgeInsets.only(top: 8.0),
-              child: CodeTheme(
-                data: CodeThemeData(styles: monokaiSublimeTheme),
-                child: SingleChildScrollView(
-                  child: CodeField(
-                    background: Color(0xFF13141A),
-                    controller: CodeController(
-                      text: '', // Initial code
-                      language: lua,
-                    ),
-                  ),
-                ),
+              child: ExampleBrowser(
+                key: exampleBrowserKeys[tab.id],
+                tabController: _controller,
               ),
             );
           },
