@@ -22,6 +22,8 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   print("Logang is fucking stupid.");
+
+  // Starts RPC in ExecutorMain. Uses some shitty global system.
   initRPC();
 
   // Init Aptabase analytics
@@ -59,6 +61,7 @@ class _MyAppState extends State<MyApp> with WindowListener {
       /*
         In order to update is I still need to set the state to update the widget
         This is just a callback sent to settings to force an update
+        This might be the cause of too much being updated.
       */
     });
   }

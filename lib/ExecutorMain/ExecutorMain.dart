@@ -75,6 +75,7 @@ class _ExampleBrowser extends State<ExampleBrowser> {
 
     states["editorCallback"] = () {
       _controller.executeScript("editor.getValue()").then((script) {
+        // this doesn't have to be a callback but whatever
         csharpRpc.invoke(method: "RunScript", params: [jsonUtf8Escape(script)]);
       });
     };
@@ -85,18 +86,26 @@ class _ExampleBrowser extends State<ExampleBrowser> {
     // Prevents us from setting content when we don't need to
     String lastContent = "";
     while (true) {
-      String currentContent =
-          await _controller.executeScript("editor.getValue()") ?? "";
+      // This technically can return Null, so we have to add a handler for that
+      String currentContent = await _controller.executeScript("editor.getValue()") ?? "";
+
+      // If it even matters to write
       if (lastContent != currentContent) {
+        // bad fix, just for tab 1 which initializes seperately
         if (g['tabData'][widget.tabController.currentTab] == null) {
-          // bad fix, usually just for tab 1 which initializes seperately
           g['tabData'][widget.tabController.currentTab] = {
             'name': "Script ${widget.tabController.currentTab}",
             'scriptContents': ""
           };
         }
-        g['tabData'][widget.tabController.currentTab]['scriptContents'] =
-            currentContent;
+
+        // Update tab array with new state
+        g['tabData'][widget.tabController.currentTab]['scriptContents'] = currentContent;
+
+        // Write to file (shouldn't cause race condition hopefully)
+        saveData(g);
+
+        // To prevent excessive writes
         lastContent = currentContent;
       }
       await Future.delayed(const Duration(milliseconds: 1000));
@@ -343,9 +352,15 @@ class _TabState extends State<Tabs> {
   }
 
   Widget buildTab(BuildContext context, BlossomTab<int> tab, bool isActive) {
+    String title;
+
+    if (g['tabData'][tab.id] == null) {
+      // TODO: YOU LEFT OFF HERE 8/12/2023
+    }
+
     return CustomTab(
       isActive: isActive,
-      title: tab.id,
+      title: g['tabData'][tab.id]['name'],
       onClose: () => _controller.removeTabById(tab.id),
     );
   }
@@ -401,6 +416,8 @@ class _TabState extends State<Tabs> {
                         var c = z.isEmpty ? 't 0' : z.last;
                         final numericPart = int.parse(c.split(' ').last);
                         c = 't ${numericPart + 1}';
+                        print("Number bit:");
+                        print(numericPart);
                         g['tabData'][c] = {
                           'name': "Script ${numericPart + 1}",
                           'scriptContents': ""
