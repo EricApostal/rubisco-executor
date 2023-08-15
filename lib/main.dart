@@ -84,7 +84,7 @@ class _MyAppState extends State<MyApp> with WindowListener {
     return Opacity(
       // opacity: ((g["transparent"] ?? false) & !windowFocused) ? .6 : 1,
 
-      // Can't use the windowFocused thing since it updates the entire state, thus you can't click the text but / stuff breaks
+      // Can't use the windowFocused thing since it updates the entire state, thus you can't click the text / stuff breaks
       opacity: (g["transparent"] ?? false) ? .6 : 1,
       child: ClipRRect(
         // borderRadius: BorderRadius.circular(12),
@@ -343,136 +343,138 @@ final closeButtonColors = WindowButtonColors(
   mouseOver: const Color.fromARGB(255, 220, 54, 54),
 );
 
-  class RunButton extends StatefulWidget {    
-    const RunButton({Key? key}) : super(key: key);
+class RunButton extends StatefulWidget {
+  const RunButton({Key? key}) : super(key: key);
 
-    @override
-    State<RunButton> createState() => _RunButtonState();
+  @override
+  State<RunButton> createState() => _RunButtonState();
+}
+
+class _RunButtonState extends State<RunButton> {
+  var currentColor = const Color.fromARGB(255, 11, 96, 214);
+  var iconColor = Colors.white;
+  var isAttached = false;
+  var assetPath = "assets/attach.svg";
+
+  void updateButtonState(int newState) {
+    setState(() {
+      // Idle: 1, Injecting: 2, Ready: 3
+      if (newState == 1) {
+        currentColor = const Color.fromARGB(255, 11, 96, 214);
+        iconColor = Colors.white;
+        isAttached = false;
+        assetPath = "assets/attach.svg";
+      }
+      if (newState == 2) {
+        currentColor = const Color.fromARGB(255, 235, 255, 54);
+        iconColor = Colors.black;
+        assetPath = "assets/wait.svg";
+      }
+      if (newState == 3) {
+        isAttached = true;
+        currentColor = const Color.fromARGB(255, 54, 255, 141);
+        iconColor = Colors.black;
+        assetPath = "assets/play_arrow.svg";
+      }
+    });
   }
 
+  @override
+  void initState() {
+    super.initState();
+    stateChangeListen();
+  }
 
-  class _RunButtonState extends State<RunButton> {
-    var currentColor = const Color.fromARGB(255, 11, 96, 214);
-    var iconColor = Colors.white;
-    var isAttached = false;
-    var assetPath = "assets/attach.svg";
-
-    void updateButtonState(int newState) {
-      setState(() {
-        // Idle: 1, Injecting: 2, Ready: 3
-        if (newState == 1) {
-          currentColor = const Color.fromARGB(255, 11, 96, 214);
-          iconColor = Colors.white;
-          isAttached = false;
-          assetPath = "assets/attach.svg";
-        }
-        if (newState == 2) {
-          currentColor = const Color.fromARGB(255, 235, 255, 54);
-          iconColor = Colors.black;
-          assetPath = "assets/wait.svg";
-        }
-        if (newState == 3) {
-          isAttached = true;
-          currentColor = const Color.fromARGB(255, 54, 255, 141);
-          iconColor = Colors.black;
-          assetPath = "assets/play_arrow.svg";
-        }
-      });
-    }
-
-    @override
-    void initState() {
-      super.initState();
-      stateChangeListen();
-    }
-
-    void stateChangeListen() async {
-      while (true) {
-        var isAttachedRealtime = await csharpRpc.invoke(method: "IsAttached");
-        if (isAttachedRealtime != isAttached) {
-          isAttached = isAttachedRealtime;
-          updateButtonState(isAttachedRealtime ? 3 : 1);
-        }
-        await Future.delayed(const Duration(milliseconds: 50));
+  void stateChangeListen() async {
+    while (true) {
+      var isAttachedRealtime = await csharpRpc.invoke(method: "IsAttached");
+      if (isAttachedRealtime != isAttached) {
+        isAttached = isAttachedRealtime;
+        updateButtonState(isAttachedRealtime ? 3 : 1);
       }
+      await Future.delayed(const Duration(milliseconds: 50));
     }
+  }
 
-    void onAttach() {
-      updateButtonState(3);
-      isAttached = true;
-      Aptabase.instance.trackEvent("Attached");
-    }
+  void onAttach() {
+    updateButtonState(3);
+    isAttached = true;
+    Aptabase.instance.trackEvent("Attached");
+  }
 
-    void onRunScript() {
-      states["editorCallback"]();
-      Aptabase.instance.trackEvent("Run Script");
-    }
+  void onRunScript() {
+    states["editorCallback"]();
+    Aptabase.instance.trackEvent("Run Script");
+  }
 
-    @override
-    Widget build(BuildContext context) {
-      return Positioned(
-        right: 20,
-        bottom: 20,
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 200),
-          width: 50,
-          height: 50,
-          decoration: BoxDecoration(
-            color: currentColor,
-            borderRadius: const BorderRadius.all(Radius.circular(14)),
-          ),
-          child: TextButton(
-            onPressed: () async {
-              if (!isKeyValid()) {
-                print("key is not valid, so returning");
-                context.setPage(2);  // Navigate to the KeySystem page
-                return;
-              }
+  @override
+  Widget build(BuildContext context) {
+    return Positioned(
+      right: 20,
+      bottom: 20,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        width: 50,
+        height: 50,
+        decoration: BoxDecoration(
+          color: currentColor,
+          borderRadius: const BorderRadius.all(Radius.circular(14)),
+        ),
+        child: TextButton(
+          onPressed: () async {
+            if (!isKeyValid()) {
+              print("key is not valid, so returning");
+              context.setPage(2); // Navigate to the KeySystem page
+              return;
+            }
 
+            if (!isAttached) {
+              updateButtonState(2);
+            }
+            states['csharpRpc']
+                .invoke(method: "IsAttached")
+                .then((isAttached) async {
               if (!isAttached) {
                 updateButtonState(2);
-              }
-              states['csharpRpc'].invoke(method: "IsAttached").then((isAttached) async {
-                if (!isAttached) {
+                states['csharpRpc'].invoke(method: "Attach");
+                while (
+                    !await states['csharpRpc'].invoke(method: "IsAttached")) {
                   updateButtonState(2);
-                  states['csharpRpc'].invoke(method: "Attach");
-                  while (!await states['csharpRpc'].invoke(method: "IsAttached")) {
-                    updateButtonState(2);
-                    await Future.delayed(const Duration(milliseconds: 50));
-                  }
-                  onAttach();
-                } else {
-                  onRunScript();
+                  await Future.delayed(const Duration(milliseconds: 50));
                 }
-              });
-            },
-            child: Center(
-              child: AnimatedSwitcher(
-                duration: const Duration(milliseconds: 100),
-                transitionBuilder: (child, animation) {
-                  return ScaleTransition(
-                    scale: animation,
-                    child: child,
-                  );
-                },
-                child: SvgPicture.asset(
-                  assetPath,
-                  key: ValueKey<String>(assetPath),
-                  colorFilter: ColorFilter.mode(iconColor, BlendMode.srcIn),
-                  semanticsLabel: 'Run script',
-                ),
+                onAttach();
+              } else {
+                onRunScript();
+              }
+            });
+          },
+          child: Center(
+            child: AnimatedSwitcher(
+              duration: const Duration(milliseconds: 100),
+              transitionBuilder: (child, animation) {
+                return ScaleTransition(
+                  scale: animation,
+                  child: child,
+                );
+              },
+              child: SvgPicture.asset(
+                assetPath,
+                key: ValueKey<String>(assetPath),
+                colorFilter: ColorFilter.mode(iconColor, BlendMode.srcIn),
+                semanticsLabel: 'Run script',
               ),
             ),
           ),
         ),
-      );
-    }
+      ),
+    );
   }
-
-extension SetPageContext on BuildContext {
-  Function get setPage => this.findAncestorStateOfType<_RubiscoFrameState>()!.setPage;
 }
 
+extension SetPageContext on BuildContext {
+  Function get setPage =>
+      this.findAncestorStateOfType<_RubiscoFrameState>()!.setPage;
+}
 
 class ExecutorWindow extends StatelessWidget {
   const ExecutorWindow({Key? key}) : super(key: key);

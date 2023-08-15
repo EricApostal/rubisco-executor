@@ -87,7 +87,8 @@ class _ExampleBrowser extends State<ExampleBrowser> {
     String lastContent = "";
     while (true) {
       // This technically can return Null, so we have to add a handler for that
-      String currentContent = await _controller.executeScript("editor.getValue()") ?? "";
+      String currentContent =
+          await _controller.executeScript("editor.getValue()") ?? "";
 
       // If it even matters to write
       if (lastContent != currentContent) {
@@ -100,7 +101,8 @@ class _ExampleBrowser extends State<ExampleBrowser> {
         }
 
         // Update tab array with new state
-        g['tabData'][widget.tabController.currentTab]['scriptContents'] = currentContent;
+        g['tabData'][widget.tabController.currentTab]['scriptContents'] =
+            currentContent;
 
         // Write to file (shouldn't cause race condition hopefully)
         saveData(g);
@@ -356,6 +358,7 @@ class _TabState extends State<Tabs> {
 
     if (g['tabData'][tab.id] == null) {
       // TODO: YOU LEFT OFF HERE 8/12/2023
+      g['tabData'][tab.id] = {'name': "Script ${1}", 'scriptContents': ""};
     }
 
     return CustomTab(
