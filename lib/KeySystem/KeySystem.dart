@@ -69,9 +69,10 @@ class _KeySystemBrowser extends State<KeySystemBrowser> {
   void listenForCodeBox() async {
     while (true) {
       var isDone = await _controller.executeScript(
-              'window.location.href == "https://pastebin.com/raw/xeDkATrU";') ??
+              '(document.getElementById("destination-button") != null)') ??
           false; // annoying asf null error
       if (isDone) {
+        print("is done!");
         states['currentKeyPasses'] += 1;
         widget.updateKeyCallback();
         // Maybe fix no click bug?
@@ -92,15 +93,17 @@ class _KeySystemBrowser extends State<KeySystemBrowser> {
 
       // I have to initialize at 1, the rest are handled from listenForCodeBox()
       String url = "https://workink.net/1QPE/ll7zmowf";
-      await _controller.setUserAgent(
-          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36 Edg/115.0.1901.188");
+      // await _controller.setUserAgent(
+      //     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36 Edg/115.0.1901.188");
       await _controller.setBackgroundColor(Colors.transparent);
-      await _controller.setPopupWindowPolicy(WebviewPopupWindowPolicy.sameWindow);
+      await _controller.setPopupWindowPolicy(WebviewPopupWindowPolicy.deny);
       await _controller.setZoomFactor(1);
+      await _controller.clearCache();
+      await _controller.clearCookies();
       await _controller.loadUrl(url);
 
       // fixInvalidVisit();
-      listenForCodeBox();
+      // listenForCodeBox();
 
       if (!mounted) return;
       setState(() {});
@@ -219,7 +222,6 @@ class _KeySystemState extends State<KeySystem> {
 
   @override
   void initState() {
-    
     if (g["keyExpires"] == '0') {
       g["keyExpires"] = encryption.encryptKey(0);
     }
@@ -287,8 +289,8 @@ class _KeySystemState extends State<KeySystem> {
                         descriptionTextStyle: GoogleFonts.montserrat(
                             color: Colors.white, fontSize: 16),
                         format: CountDownTimerFormat.hoursMinutesSeconds,
-                        endTime: DateTime.fromMillisecondsSinceEpoch(
-                            int.parse(encryption.decryptKey(g['keyExpires']).toString())),
+                        endTime: DateTime.fromMillisecondsSinceEpoch(int.parse(
+                            encryption.decryptKey(g['keyExpires']).toString())),
                         onEnd: () {
                           setState(() {
                             hasValidKey = false;
