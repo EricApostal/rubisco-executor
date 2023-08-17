@@ -14,6 +14,7 @@ import 'package:window_manager/window_manager.dart';
 import 'package:flutter_acrylic/flutter_acrylic.dart';
 import 'package:fluent_ui/fluent_ui.dart' as fluent_ui;
 import 'package:win32_registry/win32_registry.dart';
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/services.dart';
 import 'package:aptabase_flutter/aptabase_flutter.dart';
 import 'package:csharp_rpc/csharp_rpc.dart';
@@ -25,6 +26,7 @@ void main() async {
 
   // Starts RPC in ExecutorMain. Uses some shitty global system.
   initRPC();
+  initDeviceInfo();
 
   // Init Aptabase analytics
   await Aptabase.init("A-EU-2292169984");
@@ -45,6 +47,19 @@ void main() async {
     appWindow.title = "Rubisco BETA";
     appWindow.show();
   });
+}
+
+void initDeviceInfo() async {
+  final deviceInfoPlugin = DeviceInfoPlugin();
+  final deviceInfo = await deviceInfoPlugin.deviceInfo;
+  final deviceId = deviceInfo.data['deviceId']
+      .toString(); // toString just to make sure since return is dynamic
+
+  states['deviceId'] = deviceId;
+
+  print("Device ID: ");
+  print(deviceId);
+  print(deviceId.runtimeType);
 }
 
 class MyApp extends StatefulWidget {

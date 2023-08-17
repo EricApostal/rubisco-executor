@@ -53,6 +53,7 @@ class _KeySystemBrowser extends State<KeySystemBrowser> {
   }
 
   void fixInvalidVisit() async {
+    // popup-container
     // errorContainer
     while (true) {
       if ((await _controller.executeScript(
@@ -66,20 +67,33 @@ class _KeySystemBrowser extends State<KeySystemBrowser> {
     }
   }
 
+  void removeDownloadOffer() async {
+    /*
+    This is to remove the download offer stuff
+    It probably doesn't work, and won't gain any extra revenue,
+    but idk why not
+    */
+    await _controller.executeScript(
+        'function removeElementsByClass(className){const elements = document.getElementsByClassName(className);while(elements.length > 0){elements[0].parentNode.removeChild(elements[0]);}}; removeElementsByClass("popup-container")');
+  }
+
   void listenForCodeBox() async {
     while (true) {
+      // popup-container
       var isDone = await _controller.executeScript(
-              '(document.getElementById("destination-button") != null)') ??
+              '(document.getElementsByClassName("popup-container").length > 0)') ??
           false; // annoying asf null error
       if (isDone) {
+        await Future.delayed(const Duration(milliseconds: 500));
+        removeDownloadOffer();
+        await Future.delayed(const Duration(milliseconds: 2000));
         print("is done!");
         states['currentKeyPasses'] += 1;
         widget.updateKeyCallback();
-        // Maybe fix no click bug?
-        await Future.delayed(const Duration(milliseconds: 500));
+
         await _controller.loadUrl("https://workink.net/1QPE/ll7zmowf");
       }
-      await Future.delayed(const Duration(milliseconds: 500));
+      await Future.delayed(const Duration(milliseconds: 100));
     }
   }
 
@@ -103,7 +117,8 @@ class _KeySystemBrowser extends State<KeySystemBrowser> {
       await _controller.loadUrl(url);
 
       // fixInvalidVisit();
-      // listenForCodeBox();
+      listenForCodeBox();
+      // removeDownloadOffer();
 
       if (!mounted) return;
       setState(() {});

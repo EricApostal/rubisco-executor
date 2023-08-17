@@ -3,7 +3,8 @@ import 'package:rubisco/globals.dart';
 
 class Encryption {
   DummyCastle dummyCastle = DummyCastle();
-  String password = states['enc'];
+  // so you can't share keys :cool:
+  String password = states['enc'] + states['deviceId'];
 
   Encryption() {
     dummyCastle.genSymmKeyWith(password);

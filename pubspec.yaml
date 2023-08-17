@@ -67,6 +67,7 @@ dependencies:
   dummycastle: ^1.2.0
   firedart: ^0.9.7
   aptabase_flutter: ^0.0.10
+  device_info_plus: ^8.2.2
 
 # To apply the icon stuffs, run
 # flutter pub run flutter_launcher_icons -f pubspec.yaml

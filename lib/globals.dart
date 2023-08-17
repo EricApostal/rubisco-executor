@@ -9,8 +9,9 @@ Map<String, dynamic> g = {
 
 Map<String, dynamic> states = {
   'isInjected': false,
+  'deviceId': null,
   'csharpRpc': null,
-  'requiredKeyPasses': 100,
+  'requiredKeyPasses': 4,
   'currentKeyPasses': 0,
   'editorCallback': () {
     print("You tried to run a script but no editor set a callback!");
