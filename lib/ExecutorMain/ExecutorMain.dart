@@ -120,6 +120,18 @@ class _ExampleBrowser extends State<ExampleBrowser> {
     super.initState();
   }
 
+  void fillTabContent() async {
+    var currentTab = g['tabData'][widget.tabController.currentTab];
+    if (!(g['tabData'][widget.tabController.currentTab] == null)) {
+      while ((currentTab["scriptContents"]) !=
+          (await _controller.executeScript("editor.getValue();"))) {
+        await _controller.executeScript(
+            "editor.setValue('${currentTab["scriptContents"]}')");
+        await Future.delayed(Duration(milliseconds: 250));
+      }
+    }
+  }
+
   Future<void> initPlatformState() async {
     try {
       await _controller.initialize();
@@ -135,6 +147,9 @@ class _ExampleBrowser extends State<ExampleBrowser> {
       await _controller.loadUrl(url);
 
       statePersistLoop();
+      fillTabContent();
+
+      print("platform state init!");
 
       if (!mounted) return;
       setState(() {});
@@ -295,6 +310,7 @@ class Tabs extends StatefulWidget {
 class _TabState extends State<Tabs> {
   var _controller = BlossomTabController<int>(tabs: []);
   var _tabs = <BlossomTab<int>>[];
+  var hasDataSet = false;
 
   BlossomTab<int> _getTab(String e) => BlossomTab<int>(
         id: e,
@@ -326,30 +342,48 @@ class _TabState extends State<Tabs> {
 
   @override
   void initState() {
-    _tabs = ['t 1']
-        .map(
-          (e) => _getTab(e),
-        )
-        .toList();
-    _controller = BlossomTabController<int>(
-      currentTab: 't 1',
-      tabs: _tabs,
-    );
-
-    if (g['tabData'] == null) {
-      // shitty way to handle old RubiscoData.json file
-      g['tabData'] = {};
-    }
-    saveData(g);
-
-    exampleBrowserKeys['t 1'] = GlobalKey<_ExampleBrowser>();
-
     WidgetsBinding.instance!.addPostFrameCallback((_) {
       callListener(_controller);
     });
     _controller.pageController.addListener(() {
       callListener(_controller);
     });
+
+    void addSavedTabs() async {
+      print("running tab foreach!");
+      print(g['tabData']);
+      while (!states['dataSet']) {
+        await Future.delayed(const Duration(milliseconds: 100));
+      }
+      g['tabData'].forEach((index, value) {
+        print("$index - $value");
+        _controller.addTab(_getTab(index));
+      });
+    }
+
+    void initTabStates() async {
+      while (!states['dataSet']) {
+        await Future.delayed(const Duration(milliseconds: 100));
+      }
+      if (g['tabData'].length > 0) {
+        addSavedTabs();
+      } else {
+        _tabs = ['t 1']
+            .map(
+              (e) => _getTab(e),
+            )
+            .toList();
+        _controller = BlossomTabController<int>(
+          currentTab: 't 1',
+          tabs: _tabs,
+        );
+
+        exampleBrowserKeys['t 1'] = GlobalKey<_ExampleBrowser>();
+      }
+    }
+
+    addSavedTabs();
+
     super.initState();
   }
 

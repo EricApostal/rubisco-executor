@@ -10,6 +10,7 @@ void saveData(Map<String, dynamic> value) {
 Future<Map<String, dynamic>?> getData() async {
   await storage.ready;
   if (storage.getItem("RubiscoData.json") == null) {
+    print("data is null, saving blank");
     saveData(g);
   }
   Map<String, dynamic> data = storage.getItem("RubiscoData.json");

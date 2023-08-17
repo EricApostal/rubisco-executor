@@ -9,6 +9,7 @@ Map<String, dynamic> g = {
 
 Map<String, dynamic> states = {
   'isInjected': false,
+  'dataSet': false,
   'deviceId': null,
   'csharpRpc': null,
   'requiredKeyPasses': 4,

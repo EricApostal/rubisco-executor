@@ -90,7 +90,12 @@ class _MyAppState extends State<MyApp> with WindowListener {
   @override
   Widget build(BuildContext context) {
     getData().then((value) {
+      print("setting g to");
+      print(g);
       g = value ?? g;
+
+      print("set data, updating global state");
+      states['dataSet'] = true;
 
       // Start initial states
       windowManager.setAlwaysOnTop(g['topMost'] ?? false);
