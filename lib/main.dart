@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:rubisco/ExecutorMain/ExecutorMain.dart';
 import 'package:rubisco/ScriptSearch/ScriptSearch.dart';
 import 'package:rubisco/Settings.dart';
@@ -25,6 +27,7 @@ void main() async {
   // Starts RPC in ExecutorMain. Uses some shitty global system.
   initRPC();
   initDeviceInfo();
+  noFileHandler();
 
   // Init Aptabase analytics
   await Aptabase.init("A-EU-2292169984");
@@ -45,6 +48,22 @@ void main() async {
     appWindow.title = "Rubisco BETA";
     appWindow.show();
   });
+}
+
+void noFileHandler() async {
+  // Adds folders to ensure no runtime errors
+
+  if (!(await File("bin").exists())) {
+    Directory('bin').create();
+  }
+
+  if (!(await File("bin/tabs").exists())) {
+    print("TABS DO NOT EXIST, GENERATING");
+    var bin = Directory('bin/tabs').create();
+    print(bin);
+  } else {
+    print(await File("bin/tabs"));
+  }
 }
 
 void initDeviceInfo() async {

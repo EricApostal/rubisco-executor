@@ -32,15 +32,13 @@ String getAssetFileUrl(String asset) {
 
 final navigatorKey = GlobalKey<NavigatorState>();
 
-class ScriptStorage {
-  Future getScript(String tabID) async {
-    return File('bin/tabs/${tabID}.txt');
-  }
+Future getScript(String tabID) async {
+  return File('bin/tabs/${tabID}.txt');
+}
 
-  Future setScript(String tabID, String content) async {
-    File file = File('bin/tabs/${tabID}.txt');
-    return file.writeAsString(content);
-  }
+Future setScript(String tabID, String content) async {
+  File file = File('bin/tabs/${tabID}.txt');
+  return file.writeAsString(content);
 }
 
 class ExampleBrowser extends StatefulWidget {
@@ -585,6 +583,7 @@ class _TabState extends State<Tabs> {
                         };
                         saveData(g);
                         print(g['tabData']);
+                        setScript(c, "");
                         _controller.addTab(_getTab(c));
                       },
                     ),
