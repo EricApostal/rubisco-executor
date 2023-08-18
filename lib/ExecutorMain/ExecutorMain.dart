@@ -136,9 +136,9 @@ class _ExampleBrowser extends State<ExampleBrowser> {
 
   void fillTabContent() async {
     /*
-      Problem: It will retrieve properly, but often sets the wrong value
-      Why: I'm using currentTab, which may not be itself. I should pass self into constructor.
-    */
+    Problem: It will retrieve properly, but often sets the wrong value
+    Why: I'm using currentTab, which may not be itself. I should pass self into constructor.
+  */
     var currentTab = g['tabData'][widget.tabID];
     print("ID: ");
     print(widget.tabID);
@@ -146,8 +146,10 @@ class _ExampleBrowser extends State<ExampleBrowser> {
       print("tab not null");
       while (getScript(widget.tabID) !=
           (await _controller.executeScript("editor.getValue();"))) {
-        await _controller.executeScript(
-            'editor.setValue(String.raw`${getScript(widget.tabID)}`)');
+        // replaces backticks with escaped so it doesn't escape the JS script
+        String escapedScript = getScript(widget.tabID).replaceAll('`', '\\`');
+        await _controller.executeScript('editor.setValue(`$escapedScript`)');
+
         await Future.delayed(const Duration(milliseconds: 10));
       }
     }
