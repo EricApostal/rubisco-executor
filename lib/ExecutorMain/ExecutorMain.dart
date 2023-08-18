@@ -32,13 +32,17 @@ String getAssetFileUrl(String asset) {
 
 final navigatorKey = GlobalKey<NavigatorState>();
 
-Future getScript(String tabID) async {
-  return File('bin/tabs/${tabID}.txt');
+String getScript(String tabID) {
+  if (File('bin/tabs/${tabID}.txt').existsSync()) {
+    return File('bin/tabs/${tabID}.txt').readAsStringSync();
+  } else {
+    return "";
+  }
 }
 
-Future setScript(String tabID, String content) async {
+void setScript(String tabID, String content) async {
   File file = File('bin/tabs/${tabID}.txt');
-  return file.writeAsString(content);
+  file.writeAsString(content);
 }
 
 class ExampleBrowser extends StatefulWidget {
@@ -107,14 +111,12 @@ class _ExampleBrowser extends State<ExampleBrowser> {
         // bad fix, just for tab 1 which initializes seperately
         if (g['tabData'][widget.tabID] == null) {
           print("Tab is Null!");
-          g['tabData'][widget.tabID] = {
-            'name': "Script ${widget.tabID}",
-            'scriptContents': ""
-          };
+          g['tabData'][widget.tabID] = {'name': "Script ${widget.tabID}"};
+          setScript(widget.tabID, currentContent);
         }
 
         // Update tab array with new state
-        g['tabData'][widget.tabID]['scriptContents'] = currentContent;
+        setScript(widget.tabID, currentContent);
         print(g['tabData'][widget.tabID]);
         // Write to file (shouldn't cause race condition hopefully)
         saveData(g);
@@ -140,11 +142,12 @@ class _ExampleBrowser extends State<ExampleBrowser> {
     var currentTab = g['tabData'][widget.tabID];
     print("ID: ");
     print(widget.tabID);
-    if (!(currentTab == null)) {
-      while ((currentTab["scriptContents"]) !=
+    if (currentTab != null) {
+      print("tab not null");
+      while (getScript(widget.tabID) !=
           (await _controller.executeScript("editor.getValue();"))) {
         await _controller.executeScript(
-            "editor.setValue('${currentTab["scriptContents"]}')");
+            'editor.setValue(String.raw`${getScript(widget.tabID)}`)');
         await Future.delayed(const Duration(milliseconds: 10));
       }
     }
@@ -509,7 +512,8 @@ class _TabState extends State<Tabs> {
   Widget buildTab(BuildContext context, BlossomTab<int> tab, bool isActive) {
     if (g['tabData'][tab.id] == null) {
       // TODO: YOU LEFT OFF HERE 8/12/2023
-      g['tabData'][tab.id] = {'name': "Script ${1}", 'scriptContents': ""};
+      g['tabData'][tab.id] = {'name': "Script ${1}"};
+      setScript(tab.id, "");
     }
 
     return CustomTab(
@@ -577,10 +581,8 @@ class _TabState extends State<Tabs> {
                         c = 't ${numericPart + 1}';
                         print("Number bit:");
                         print(numericPart);
-                        g['tabData'][c] = {
-                          'name': "Script ${numericPart + 1}",
-                          'scriptContents': ""
-                        };
+                        g['tabData'][c] = {'name': "Script ${numericPart + 1}"};
+                        setScript(c, "");
                         saveData(g);
                         print(g['tabData']);
                         setScript(c, "");
