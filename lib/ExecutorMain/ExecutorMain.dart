@@ -172,6 +172,12 @@ class _ExampleBrowser extends State<ExampleBrowser> {
       statePersistLoop();
       fillTabContent();
 
+      // TODO: make a required bool "isFirstTab", this won't work if user removes t 1.
+      if (widget.tabID == "t 1") {
+        print("forcing tab selected call");
+        onTabSelected(widget.tabController);
+      }
+
       if (!mounted) return;
       setState(() {});
     } on PlatformException catch (e) {
@@ -513,7 +519,7 @@ class _TabState extends State<Tabs> {
 
   Widget buildTab(BuildContext context, BlossomTab<int> tab, bool isActive) {
     if (g['tabData'][tab.id] == null) {
-      // TODO: YOU LEFT OFF HERE 8/12/2023
+      // crappy, but tends to work
       g['tabData'][tab.id] = {'name': "Script ${1}"};
       setScript(tab.id, "");
     }

@@ -12,7 +12,7 @@ Map<String, dynamic> states = {
   'dataSet': false,
   'deviceId': null,
   'csharpRpc': null,
-  'requiredKeyPasses': 4,
+  'requiredKeyPasses': 2,
   'currentKeyPasses': 0,
   'editorCallback': () {
     print("You tried to run a script but no editor set a callback!");
