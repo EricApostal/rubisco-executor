@@ -32,11 +32,24 @@ String getAssetFileUrl(String asset) {
 
 final navigatorKey = GlobalKey<NavigatorState>();
 
+class ScriptStorage {
+  Future getScript(String tabID) async {
+    return File('bin/tabs/${tabID}.txt');
+  }
+
+  Future setScript(String tabID, String content) async {
+    File file = File('bin/tabs/${tabID}.txt');
+    return file.writeAsString(content);
+  }
+}
+
 class ExampleBrowser extends StatefulWidget {
-  const ExampleBrowser({Key? key, required this.tabController})
+  const ExampleBrowser(
+      {Key? key, required this.tabController, required this.tabID})
       : super(key: key);
 
   final BlossomTabController tabController;
+  final String tabID;
 
   @override
   State<ExampleBrowser> createState() => _ExampleBrowser();
@@ -92,18 +105,19 @@ class _ExampleBrowser extends State<ExampleBrowser> {
 
       // If it even matters to write
       if (lastContent != currentContent) {
+        print("UPDATING CONTENT!");
         // bad fix, just for tab 1 which initializes seperately
-        if (g['tabData'][widget.tabController.currentTab] == null) {
-          g['tabData'][widget.tabController.currentTab] = {
-            'name': "Script ${widget.tabController.currentTab}",
+        if (g['tabData'][widget.tabID] == null) {
+          print("Tab is Null!");
+          g['tabData'][widget.tabID] = {
+            'name': "Script ${widget.tabID}",
             'scriptContents': ""
           };
         }
 
         // Update tab array with new state
-        g['tabData'][widget.tabController.currentTab]['scriptContents'] =
-            currentContent;
-
+        g['tabData'][widget.tabID]['scriptContents'] = currentContent;
+        print(g['tabData'][widget.tabID]);
         // Write to file (shouldn't cause race condition hopefully)
         saveData(g);
 
@@ -121,13 +135,19 @@ class _ExampleBrowser extends State<ExampleBrowser> {
   }
 
   void fillTabContent() async {
-    var currentTab = g['tabData'][widget.tabController.currentTab];
-    if (!(g['tabData'][widget.tabController.currentTab] == null)) {
+    /*
+      Problem: It will retrieve properly, but often sets the wrong value
+      Why: I'm using currentTab, which may not be itself. I should pass self into constructor.
+    */
+    var currentTab = g['tabData'][widget.tabID];
+    print("ID: ");
+    print(widget.tabID);
+    if (!(currentTab == null)) {
       while ((currentTab["scriptContents"]) !=
           (await _controller.executeScript("editor.getValue();"))) {
         await _controller.executeScript(
             "editor.setValue('${currentTab["scriptContents"]}')");
-        await Future.delayed(Duration(milliseconds: 250));
+        await Future.delayed(const Duration(milliseconds: 10));
       }
     }
   }
@@ -148,8 +168,6 @@ class _ExampleBrowser extends State<ExampleBrowser> {
 
       statePersistLoop();
       fillTabContent();
-
-      print("platform state init!");
 
       if (!mounted) return;
       setState(() {});
@@ -257,46 +275,152 @@ class ExecutorMain extends StatelessWidget {
   }
 }
 
-class CustomTab extends StatelessWidget {
-  final bool isActive;
-  final String title;
-  final VoidCallback onClose;
+class HoverableContainer extends StatefulWidget {
+  @override
+  _HoverableContainerState createState() => _HoverableContainerState();
+}
 
-  const CustomTab({
-    required this.isActive,
-    required this.title,
-    required this.onClose,
-  });
+class _HoverableContainerState extends State<HoverableContainer> {
+  final ValueNotifier<bool> _isHovered = ValueNotifier<bool>(false);
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-        const SizedBox(width: 12),
-        Text(
-          title,
-          style: TextStyle(
-            color: isActive
-                ? Colors.white
-                : const Color.fromARGB(255, 189, 189, 189),
-            fontSize: 15,
-          ),
-        ),
-        const Expanded(child: SizedBox()),
-        if (isActive)
-          Padding(
-            padding: const EdgeInsets.only(right: 8.0),
-            child: GestureDetector(
-              onTap: onClose,
-              child: const Icon(
-                Icons.close,
-                color: Colors.white,
-                size: 16,
-              ),
+    return ValueListenableBuilder<bool>(
+      valueListenable: _isHovered,
+      builder: (BuildContext context, bool isHovered, Widget? child) {
+        return MouseRegion(
+          onEnter: (_) => _isHovered.value = true,
+          onExit: (_) => _isHovered.value = false,
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 75),
+            curve: Curves.easeInOut,
+            width: 25,
+            height: 25,
+            decoration: BoxDecoration(
+              color:
+                  isHovered ? const Color(0xFF13141A) : const Color(0xFF222735),
+              borderRadius: const BorderRadius.all(Radius.circular(4)),
+            ),
+            child: const Icon(
+              Icons.close,
+              color: Colors
+                  .white, // You might want to change the color when hovered, so the icon remains visible.
+              size: 16,
             ),
           ),
-      ],
+        );
+      },
     );
+  }
+}
+
+class CustomTab extends StatefulWidget {
+  final bool isActive;
+  final String title;
+  final VoidCallback onClose;
+  final String tabId;
+
+  const CustomTab(
+      {required this.isActive,
+      required this.title,
+      required this.onClose,
+      required this.tabId});
+
+  @override
+  State<CustomTab> createState() => _CustomTabState();
+}
+
+class _CustomTabState extends State<CustomTab> {
+  late TextEditingController _titleController;
+  bool _isEditing = false;
+  String title = '';
+
+  @override
+  void initState() {
+    super.initState();
+    _titleController = TextEditingController(text: widget.title);
+    title = widget.title;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: const BoxDecoration(
+          border: Border.symmetric(
+              vertical: BorderSide(color: Color(0xff13141A), width: 2))),
+      child: Container(
+        decoration: BoxDecoration(
+            color: widget.isActive ? Color(0xff222735) : Color(0xFF13141A),
+            borderRadius: const BorderRadius.all(Radius.circular(8))),
+        child: SizedBox(
+          width: 200,
+          child: Stack(
+            children: [
+              const SizedBox(width: 12),
+              Padding(
+                padding: const EdgeInsets.only(left: 8),
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: _isEditing
+                      ? Padding(
+                          padding: const EdgeInsets.only(bottom: 12, right: 38),
+                          child: TextField(
+                            controller: _titleController,
+                            style: TextStyle(
+                              color: widget.isActive
+                                  ? Colors.white
+                                  : const Color.fromARGB(255, 189, 189, 189),
+                              fontSize: 15,
+                            ),
+                            onSubmitted: (value) {
+                              setState(() {
+                                g['tabData'][widget.tabId]['name'] = value;
+                                title = value;
+                                _isEditing = false;
+                              });
+                              // Update the title value in the parent widget if necessary
+                            },
+                          ),
+                        )
+                      : GestureDetector(
+                          onDoubleTap: () {
+                            setState(() {
+                              _isEditing = true;
+                            });
+                          },
+                          child: Text(
+                            title,
+                            style: TextStyle(
+                              color: widget.isActive
+                                  ? Colors.white
+                                  : const Color.fromARGB(255, 189, 189, 189),
+                              fontSize: 15,
+                            ),
+                          ),
+                        ),
+                ),
+              ),
+              if (widget.isActive)
+                Positioned(
+                  right: 0,
+                  top: 6,
+                  child: Padding(
+                    padding: const EdgeInsets.only(right: 8.0),
+                    child: GestureDetector(
+                        onTap: widget.onClose, child: HoverableContainer()),
+                  ),
+                ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  @override
+  void dispose() {
+    _titleController.dispose();
+    super.dispose();
   }
 }
 
@@ -350,13 +474,10 @@ class _TabState extends State<Tabs> {
     });
 
     void addSavedTabs() async {
-      print("running tab foreach!");
-      print(g['tabData']);
       while (!states['dataSet']) {
         await Future.delayed(const Duration(milliseconds: 100));
       }
       g['tabData'].forEach((index, value) {
-        print("$index - $value");
         _controller.addTab(_getTab(index));
       });
     }
@@ -388,8 +509,6 @@ class _TabState extends State<Tabs> {
   }
 
   Widget buildTab(BuildContext context, BlossomTab<int> tab, bool isActive) {
-    String title;
-
     if (g['tabData'][tab.id] == null) {
       // TODO: YOU LEFT OFF HERE 8/12/2023
       g['tabData'][tab.id] = {'name': "Script ${1}", 'scriptContents': ""};
@@ -397,8 +516,13 @@ class _TabState extends State<Tabs> {
 
     return CustomTab(
       isActive: isActive,
+      tabId: tab.id,
       title: g['tabData'][tab.id]['name'],
-      onClose: () => _controller.removeTabById(tab.id),
+      onClose: () {
+        _controller.removeTabById(tab.id);
+        g['tabData'].remove(tab.id);
+        saveData(g);
+      },
     );
   }
 
@@ -417,7 +541,7 @@ class _TabState extends State<Tabs> {
                 selectedColor: const Color(0xFF222735),
                 dragColor: const Color(0xFF222735),
                 stickyColor: Colors.white,
-                dividerColor: const Color.fromARGB(255, 255, 255, 255),
+                dividerColor: const Color(0xFF222735),
                 shadowColor: const Color(0xFF13141A),
                 bottomColor: const Color(0xFF222735),
                 margin: const EdgeInsets.only(left: 20, top: 0, right: 10),
@@ -479,6 +603,7 @@ class _TabState extends State<Tabs> {
               child: ExampleBrowser(
                 key: exampleBrowserKeys[tab.id],
                 tabController: _controller,
+                tabID: tab.id,
               ),
             );
           },

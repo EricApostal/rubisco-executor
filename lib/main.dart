@@ -22,8 +22,6 @@ import 'package:csharp_rpc/csharp_rpc.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  print("Logang is fucking stupid.");
-
   // Starts RPC in ExecutorMain. Uses some shitty global system.
   initRPC();
   initDeviceInfo();
@@ -90,11 +88,8 @@ class _MyAppState extends State<MyApp> with WindowListener {
   @override
   Widget build(BuildContext context) {
     getData().then((value) {
-      print("setting g to");
-      print(g);
       g = value ?? g;
 
-      print("set data, updating global state");
       states['dataSet'] = true;
 
       // Start initial states

@@ -1,7 +1,7 @@
 import 'package:localstorage/localstorage.dart';
 import 'package:rubisco/globals.dart';
 
-final LocalStorage storage = LocalStorage("RubiscoData.json");
+final LocalStorage storage = LocalStorage("RubiscoData.json", "bin");
 
 void saveData(Map<String, dynamic> value) {
   storage.setItem("RubiscoData.json", value);
