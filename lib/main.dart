@@ -6,7 +6,7 @@ import 'package:rubisco/Settings.dart';
 import 'package:rubisco/Misc/datastore.dart';
 import 'package:rubisco/globals.dart';
 import 'package:rubisco/KeySystem/KeySystem.dart';
-import 'package:rubisco/Encryption.dart';
+import 'package:rubisco/LocalScripts.dart';
 
 import 'package:flutter/material.dart';
 import 'package:bitsdojo_window/bitsdojo_window.dart';
@@ -210,34 +210,38 @@ class _SidebarState extends State<Sidebar> {
       padding: const EdgeInsets.only(bottom: 6),
       child: Align(
         alignment: Alignment.centerRight,
-        child: AnimatedContainer(
-            duration: const Duration(milliseconds: 300),
-            curve: Curves.easeInOut,
-            height: 45,
-            width: 45,
-            decoration: BoxDecoration(
-              color: _selectedPage == pageIndex
-                  ? const Color.fromARGB(255, 103, 245, 255)
-                  : const Color(0xFF13141A),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: TextButton(
-              onPressed: () {
-                setPage(pageIndex);
-              },
-              child: Padding(
-                padding: const EdgeInsets.all(0),
-                child: SvgPicture.asset(
-                  asset,
-                  colorFilter: ColorFilter.mode(
-                      _selectedPage == pageIndex
-                          ? Color.fromARGB(255, 0, 0, 0)
-                          : Color.fromARGB(255, 255, 255, 255),
-                      BlendMode.srcIn),
-                  semanticsLabel: semanticsLabel,
-                ),
-              ),
-            )),
+        child: Stack(
+          children: [
+            Positioned(
+                left: 0,
+                child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 100),
+                  curve: Curves.linear,
+                  width: 5,
+                  height: 100,
+                  color: _selectedPage == pageIndex
+                      ? const Color(0xFF23CAFF)
+                      : const Color(0xFF13141A),
+                )),
+            SizedBox(
+                height: 45,
+                width: 55,
+                child: TextButton(
+                  onPressed: () {
+                    setPage(pageIndex);
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 4),
+                    child: SvgPicture.asset(
+                      asset,
+                      colorFilter: const ColorFilter.mode(
+                          Color.fromARGB(255, 255, 255, 255), BlendMode.srcIn),
+                      semanticsLabel: semanticsLabel,
+                    ),
+                  ),
+                )),
+          ],
+        ),
       ),
     );
   }
@@ -308,16 +312,11 @@ class _RubiscoFrameState extends State<RubiscoFrame> {
                           SizedBox(
                             width: MediaQuery.of(context).size.width - 89,
                             height: MediaQuery.of(context).size.height - 200,
-                            child: const Column(
+                            child: Row(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
+                                LocalScripts(),
                                 ExecutorWindow(),
-                                // if (MediaQuery.of(context).size.height > 350)
-                                //   Padding(
-                                //     padding: EdgeInsets.only(
-                                //         top: 8, bottom: 4, left: 16),
-                                //     child: OutputConsole(),
-                                //   ),
                               ],
                             ),
                           ),
