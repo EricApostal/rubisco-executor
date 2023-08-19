@@ -4,16 +4,21 @@ import 'dart:async';
 
 import 'package:blossom_tabs/blossom_tabs.dart';
 import 'package:flutter/material.dart';
-import 'package:rubisco/Misc/datastore.dart';
 import 'package:webview_windows/webview_windows.dart';
 import 'package:flutter/services.dart';
 import 'package:path/path.dart' as p;
 import 'package:csharp_rpc/csharp_rpc.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 import 'package:rubisco/globals.dart';
+import 'package:rubisco/Misc/datastore.dart';
 
 late CsharpRpc csharpRpc;
+late Function addTabWithContent;
+String initialTab = "";
+
 var webviewInitialized = false;
+var setContentCallbacks = {};
 
 void initRPC() async {
   var modulePath = r"bin\bin\ShadowRPC.exe";
@@ -140,19 +145,40 @@ class _ExampleBrowser extends State<ExampleBrowser> {
     Why: I'm using currentTab, which may not be itself. I should pass self into constructor.
   */
     var currentTab = g['tabData'][widget.tabID];
-    print("ID: ");
-    print(widget.tabID);
     if (currentTab != null) {
-      print("tab not null");
       while (getScript(widget.tabID) !=
           (await _controller.executeScript("editor.getValue();"))) {
         // replaces backticks with escaped so it doesn't escape the JS script
         String escapedScript = getScript(widget.tabID).replaceAll('`', '\\`');
         await _controller.executeScript('editor.setValue(`$escapedScript`)');
-
         await Future.delayed(const Duration(milliseconds: 10));
       }
     }
+  }
+
+  void initSetEditorCallback() async {
+    /*
+    Maybe the problem is that, if this is called when it's not built, it won't work?
+    */
+    // await Future.delayed(const Duration(seconds: 1));
+    if (setContentCallbacks[widget.tabID] != null) {
+      setContentCallbacks[widget.tabID] = null;
+      print("DEFINITE PROBLEM: This Tab ID already has a callback.");
+    }
+    setContentCallbacks[widget.tabID] = (String content) async {
+      print("set content callback");
+      String escapedScript = content.replaceAll('`', '\\`');
+      print("waiting for value to be correct...");
+      print("Tab ID is:");
+      print(widget.tabID);
+      while (escapedScript !=
+          (await _controller.executeScript("editor.getValue();"))) {
+        await _controller.executeScript('editor.setValue(`$escapedScript`)');
+        await _controller.executeScript("editor.getValue();");
+        await Future.delayed(const Duration(milliseconds: 10));
+      }
+      print("editor value set I think");
+    };
   }
 
   Future<void> initPlatformState() async {
@@ -168,15 +194,20 @@ class _ExampleBrowser extends State<ExampleBrowser> {
       await _controller.setBackgroundColor(Colors.transparent);
       await _controller.setPopupWindowPolicy(WebviewPopupWindowPolicy.deny);
       await _controller.loadUrl(url);
+      print(await _controller.executeScript("editor"));
 
       statePersistLoop();
       fillTabContent();
 
       // TODO: make a required bool "isFirstTab", this won't work if user removes t 1.
-      if (widget.tabID == "t 1") {
-        print("forcing tab selected call");
-        onTabSelected(widget.tabController);
-      }
+      // if (initialTab == "") {
+      //   print("forcing tab selected call");
+      //   onTabSelected(widget.tabController);
+      //   initialTab = widget.tabID;
+      // }
+
+      // I mean I *think* this works?
+      onTabSelected(widget.tabController);
 
       if (!mounted) return;
       setState(() {});
@@ -217,6 +248,7 @@ class _ExampleBrowser extends State<ExampleBrowser> {
         ),
       );
     } else {
+      initSetEditorCallback();
       return RunButton(
         webviewController: _controller,
       );
@@ -365,9 +397,24 @@ class _CustomTabState extends State<CustomTab> {
           width: 200,
           child: Stack(
             children: [
-              const SizedBox(width: 12),
+              Positioned(
+                left: 4,
+                top: 8,
+                child: SizedBox(
+                  width: 23,
+                  height: 23,
+                  child: SvgPicture.asset("assets/document.svg",
+                      key: const ValueKey<String>("assets/folder.svg"),
+                      colorFilter: ColorFilter.mode(
+                          widget.isActive
+                              ? Colors.white
+                              : const Color.fromARGB(255, 189, 189, 189),
+                          BlendMode.srcIn),
+                      semanticsLabel: "Script"),
+                ),
+              ),
               Padding(
-                padding: const EdgeInsets.only(left: 8),
+                padding: const EdgeInsets.only(left: 30),
                 child: Align(
                   alignment: Alignment.centerLeft,
                   child: _isEditing
@@ -399,7 +446,9 @@ class _CustomTabState extends State<CustomTab> {
                           },
                           child: Text(
                             title,
+                            softWrap: false,
                             style: TextStyle(
+                              overflow: TextOverflow.fade,
                               color: widget.isActive
                                   ? Colors.white
                                   : const Color.fromARGB(255, 189, 189, 189),
@@ -490,6 +539,49 @@ class _TabState extends State<Tabs> {
         _controller.addTab(_getTab(index));
       });
     }
+
+    String generateTabId() {
+      print('generating tab');
+      var tabIdList = [];
+      g['tabData'].forEach((index, value) {
+        tabIdList.add(index);
+      });
+
+      num tabIdIndex = 1;
+      while (true) {
+        if (!tabIdList.contains("t $tabIdIndex")) {
+          print("generated!");
+          print("t $tabIdIndex");
+          return "t $tabIdIndex";
+        }
+        tabIdIndex += 1;
+      }
+    }
+
+    addTabWithContent = (String content) async {
+      /*
+        PROBLEM MAYBE:
+        Okay so I think it calls the init twice (for some reason)
+        I think that it calls init on initialized, and init on build.
+        I want init on build, but maybe it's just not getting that?
+      */
+      String tabId = generateTabId();
+      if (setContentCallbacks[tabId] == null) {
+        print("set right after generating tab (probably bad), removing key");
+        setContentCallbacks[tabId] = null;
+      }
+      _controller.addTab(_getTab(tabId));
+      print("added tab, now setting content via callback (waiting for set)");
+      while (setContentCallbacks[tabId] == null) {
+        await Future.delayed(const Duration(milliseconds: 10));
+      }
+      print("Set complete, calling");
+      print("generated tab: ");
+      print(tabId);
+      print("callbacks: ");
+      print(setContentCallbacks);
+      setContentCallbacks[tabId](content);
+    };
 
     void initTabStates() async {
       while (!states['dataSet']) {

@@ -56,6 +56,9 @@ void noFileHandler() async {
   if (!(await File("bin").exists())) {
     Directory('bin').create();
   }
+  if (!(await File("scripts").exists())) {
+    Directory('scripts').create();
+  }
 
   if (!(await File("bin/tabs").exists())) {
     print("TABS DO NOT EXIST, GENERATING");
@@ -183,7 +186,7 @@ class _SidebarState extends State<Sidebar> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 50,
+      width: 55,
       height: MediaQuery.of(context).size.height - 40,
       decoration: const BoxDecoration(color: Color(0xFF13141A)),
       child: Align(
@@ -207,7 +210,7 @@ class _SidebarState extends State<Sidebar> {
 
   Widget _buildTextButton(String asset, String semanticsLabel, int pageIndex) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 6),
+      padding: const EdgeInsets.only(bottom: 6, right: 4),
       child: Align(
         alignment: Alignment.centerRight,
         child: Stack(
