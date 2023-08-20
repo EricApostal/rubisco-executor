@@ -171,13 +171,15 @@ class _ExampleBrowser extends State<ExampleBrowser> {
       print("waiting for value to be correct...");
       print("Tab ID is:");
       print(widget.tabID);
-      while (escapedScript !=
-          (await _controller.executeScript("editor.getValue();"))) {
+      // await Future.delayed(Duration(milliseconds: 0));
+      // await _controller.executeScript('editor.setValue(`$escapedScript`)');
+      print("Script: ");
+      print(await _controller.executeScript("editor.getValue();") == null);
+      while ((await _controller.executeScript("editor.getValue();")) == null) {
+        await Future.delayed(const Duration(milliseconds: 250));
         await _controller.executeScript('editor.setValue(`$escapedScript`)');
-        await _controller.executeScript("editor.getValue();");
-        await Future.delayed(const Duration(milliseconds: 10));
       }
-      print("editor value set I think");
+      print("Value has been set!");
     };
   }
 
@@ -194,7 +196,7 @@ class _ExampleBrowser extends State<ExampleBrowser> {
       await _controller.setBackgroundColor(Colors.transparent);
       await _controller.setPopupWindowPolicy(WebviewPopupWindowPolicy.deny);
       await _controller.loadUrl(url);
-      print(await _controller.executeScript("editor"));
+      await _controller.setZoomFactor(1.1);
 
       statePersistLoop();
       fillTabContent();
@@ -391,7 +393,8 @@ class _CustomTabState extends State<CustomTab> {
               vertical: BorderSide(color: Color(0xff13141A), width: 2))),
       child: Container(
         decoration: BoxDecoration(
-            color: widget.isActive ? Color(0xff222735) : Color(0xFF13141A),
+            color:
+                widget.isActive ? const Color(0xff222735) : Color(0xFF13141A),
             borderRadius: const BorderRadius.all(Radius.circular(8))),
         child: SizedBox(
           width: 200,
@@ -699,13 +702,24 @@ class _TabState extends State<Tabs> {
           builder: (tab) {
             exampleBrowserKeys.putIfAbsent(
                 tab.id, () => GlobalKey<_ExampleBrowser>());
-            return Padding(
-              padding: const EdgeInsets.only(top: 8.0),
-              child: ExampleBrowser(
-                key: exampleBrowserKeys[tab.id],
-                tabController: _controller,
-                tabID: tab.id,
-              ),
+            return Stack(
+              children: [
+                Positioned(
+                  left: 0,
+                  top: 4,
+                  child: SizedBox(
+                    width: 4000, // or your desired width
+                    height: 2000, // or your desired height
+                    child: ClipRect(
+                      child: ExampleBrowser(
+                        key: exampleBrowserKeys[tab.id],
+                        tabController: _controller,
+                        tabID: tab.id,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             );
           },
         ),

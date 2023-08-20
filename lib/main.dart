@@ -20,6 +20,7 @@ import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/services.dart';
 import 'package:aptabase_flutter/aptabase_flutter.dart';
 import 'package:csharp_rpc/csharp_rpc.dart';
+import 'package:dropdown_button2/dropdown_button2.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -250,6 +251,109 @@ class _SidebarState extends State<Sidebar> {
   }
 }
 
+class DropDown extends StatefulWidget {
+  const DropDown({super.key});
+
+  @override
+  State<DropDown> createState() => _DropDownState();
+}
+
+class _DropDownState extends State<DropDown> {
+  final List<String> items = [
+    'Item1',
+    'Item2',
+    'Item3',
+    'Item4',
+    'Item5',
+    'Item6',
+    'Item7',
+    'Item8',
+  ];
+  String? selectedValue;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Center(
+        child: DropdownButtonHideUnderline(
+          child: DropdownButton2<String>(
+            isExpanded: true,
+            hint: Row(
+              children: [
+                const SizedBox(
+                  width: 4,
+                ),
+                Expanded(
+                  child: Text(
+                    "View",
+                    style: GoogleFonts.content(
+                      fontSize: 16,
+                      fontWeight: FontWeight.normal,
+                      color: const Color(0xFFC8C8C8),
+                    ),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ],
+            ),
+            items: items
+                .map((String item) => DropdownMenuItem<String>(
+                      value: item,
+                      child: Center(
+                        child: Text(
+                          item,
+                          style: GoogleFonts.content(
+                            fontSize: 16,
+                            fontWeight: FontWeight.normal,
+                            color: const Color(0xFFC8C8C8),
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ))
+                .toList(),
+            value: selectedValue,
+            onChanged: (value) {
+              setState(() {
+                selectedValue = value;
+              });
+            },
+            buttonStyleData: ButtonStyleData(
+              height: 100,
+              width: 160,
+              padding: const EdgeInsets.only(left: 14, right: 14),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(4),
+                color: const Color(0xFF222735),
+              ),
+              elevation: 2,
+            ),
+            iconStyleData: const IconStyleData(icon: SizedBox()),
+            dropdownStyleData: DropdownStyleData(
+              maxHeight: 200,
+              width: 200,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(4),
+                color: const Color(0xFF13141A),
+              ),
+              offset: const Offset(-20, 0),
+              scrollbarTheme: ScrollbarThemeData(
+                radius: const Radius.circular(40),
+                thickness: MaterialStateProperty.all(6),
+                thumbVisibility: MaterialStateProperty.all(true),
+              ),
+            ),
+            menuItemStyleData: const MenuItemStyleData(
+              height: 40,
+              padding: EdgeInsets.only(left: 14, right: 14),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 class RubiscoFrame extends StatefulWidget {
   RubiscoFrame({Key? key, required this.updateOpacity}) : super(key: key);
 
@@ -294,6 +398,7 @@ class _RubiscoFrameState extends State<RubiscoFrame> {
                     ),
                   ),
                 )),
+                // Container(width: 70, height: 30, child: DropDown()),
                 const WindowButtons(),
               ],
             ),

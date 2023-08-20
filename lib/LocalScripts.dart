@@ -110,7 +110,7 @@ class _FolderIconState extends State<FolderIcon> {
                 Text(
                   widget.fileItem.name,
                   style:
-                      GoogleFonts.inter(color: widget.textColor, fontSize: 16),
+                      GoogleFonts.inter(color: widget.textColor, fontSize: 15),
                   overflow: TextOverflow
                       .clip, // Ensure the text doesn't visually overflow
                 ),
@@ -119,6 +119,66 @@ class _FolderIconState extends State<FolderIcon> {
           ),
         ),
       ),
+    );
+  }
+}
+
+class Resizable extends StatefulWidget {
+  final Widget child;
+  final double initialWidth;
+
+  Resizable({required this.child, this.initialWidth = 200.0});
+
+  @override
+  _ResizableState createState() => _ResizableState();
+}
+
+class _ResizableState extends State<Resizable> {
+  late double _width;
+
+  @override
+  void initState() {
+    super.initState();
+    _width = widget.initialWidth;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return Row(
+          children: [
+            SizedBox(
+              width: _width,
+              child: widget.child,
+            ),
+            GestureDetector(
+              behavior: HitTestBehavior.translucent,
+              onHorizontalDragUpdate: (details) {
+                setState(() {
+                  _width += details.delta.dx;
+                  if (_width < 50) _width = 50; // Minimum width constraint
+                  if (_width > constraints.maxWidth - 50)
+                    _width =
+                        constraints.maxWidth - 50; // Maximum width constraint
+                });
+              },
+              child: Container(
+                width: 5,
+                color: Colors.transparent, // Transparent area for easy dragging
+                child: Align(
+                  alignment: Alignment.center,
+                  child: Container(
+                    width: 1,
+                    color: Color(0xFF222735),
+                  ),
+                ),
+              ),
+            ),
+            Expanded(child: Container()), // Remaining space
+          ],
+        );
+      },
     );
   }
 }
@@ -139,13 +199,13 @@ class _LocalScriptsState extends State<LocalScripts> {
     SpecialFolder(
         name: 'Workspace',
         path: Directory(
-            'C:\\Users\\${getUsername()}\\AppData\\Local\\Packages\\ROBLOXCORPORATION.ROBLOX_55nm5eh3cm0pr\\AC\\workspace'),
+            'C:\\Users\\${getUsername()}\\AppData\\Local\\Packages\\ROBLOXCORPORATION.ROBLOX_55nm5eh3cm0pr\\AC\\Roblox\\Rubisco\\workspace'),
         color: const Color(0xFFFFF968)),
     SpecialFolder(
         name: 'AutoExec',
         color: const Color(0xFF77EF91),
         path: Directory(
-            'C:\\Users\\${getUsername()}\\AppData\\Local\\Packages\\ROBLOXCORPORATION.ROBLOX_55nm5eh3cm0pr\\AC\\autoexec')),
+            'C:\\Users\\${getUsername()}\\AppData\\Local\\Packages\\ROBLOXCORPORATION.ROBLOX_55nm5eh3cm0pr\\AC\\Roblox\\Rubisco\\autoexecute')),
     SpecialFolder(
         name: 'Scripts',
         color: const Color(0xFF37C3FF),
@@ -226,7 +286,7 @@ class _LocalScriptsState extends State<LocalScripts> {
 
     final displayText = isInSpecialView
         ? '~'
-        : '~\\${currentDirectory.path.replaceAll("C:\\Users\\${getUsername()}\\AppData\\Local\\Packages\\ROBLOXCORPORATION.ROBLOX_55nm5eh3cm0pr\\AC\\", "")}';
+        : '~\\${currentDirectory.path.replaceAll("C:\\Users\\${getUsername()}\\AppData\\Local\\Packages\\ROBLOXCORPORATION.ROBLOX_55nm5eh3cm0pr\\AC\\Roblox\\Rubisco\\", "")}';
     final double textWidth = getTextWidth(displayText, style);
     final double maxWidth = MediaQuery.of(context)
         .size

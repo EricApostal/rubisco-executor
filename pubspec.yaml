@@ -68,6 +68,8 @@ dependencies:
   firedart: ^0.9.7
   aptabase_flutter: ^0.0.10
   device_info_plus: ^8.2.2
+  drop_down_list: ^0.0.5
+  dropdown_button2: ^2.3.8
 
 # To apply the icon stuffs, run
 # flutter pub run flutter_launcher_icons -f pubspec.yaml
