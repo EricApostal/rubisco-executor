@@ -7,6 +7,7 @@ import 'package:rubisco/misc/data_store.dart';
 import 'package:rubisco/session/globals.dart';
 import 'package:rubisco/key/key_system.dart';
 import 'package:rubisco/script/local_scripts.dart';
+import 'package:rubisco/code/tab/native/window.dart';
 
 import 'package:flutter/material.dart';
 import 'package:bitsdojo_window/bitsdojo_window.dart';
@@ -127,24 +128,27 @@ class _MyAppState extends State<MyApp> with WindowListener {
       child: ClipRRect(
         // borderRadius: BorderRadius.circular(12),
         borderRadius: BorderRadius.circular(0),
-        child: MaterialApp(
-          localizationsDelegates:
-              fluent.FluentLocalizations.localizationsDelegates,
-          supportedLocales: fluent.FluentLocalizations.supportedLocales,
-          color: Colors.transparent,
-          debugShowCheckedModeBanner: false,
-          title: 'Rubisco',
-          theme: ThemeData(
-            splashColor: Colors.transparent,
-            highlightColor: Colors.transparent,
-            iconTheme: IconThemeData(color: Colors.white),
-            colorScheme:
-                ColorScheme.fromSeed(seedColor: const Color(0xFF13141A)),
-            primaryColor: const Color(0xFF13141A),
-            scaffoldBackgroundColor: const Color(0xFF13141A),
-            useMaterial3: true,
+        child: fluent.FluentTheme(
+          data: fluent.FluentThemeData(),
+          child: MaterialApp(
+            localizationsDelegates:
+                fluent.FluentLocalizations.localizationsDelegates,
+            supportedLocales: fluent.FluentLocalizations.supportedLocales,
+            color: Colors.transparent,
+            debugShowCheckedModeBanner: false,
+            title: 'Rubisco',
+            theme: ThemeData(
+              splashColor: Colors.transparent,
+              highlightColor: Colors.transparent,
+              iconTheme: IconThemeData(color: Colors.white),
+              colorScheme:
+                  ColorScheme.fromSeed(seedColor: const Color(0xFF13141A)),
+              primaryColor: const Color(0xFF13141A),
+              scaffoldBackgroundColor: const Color(0xFF13141A),
+              useMaterial3: true,
+            ),
+            home: MainWindow(updateOpacity: updateOpacity),
           ),
-          home: MainWindow(updateOpacity: updateOpacity),
         ),
       ),
     );

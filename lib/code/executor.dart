@@ -23,6 +23,6 @@ class ExecutorMain extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return NativeTabs();
+    return const NativeTabs();
   }
 }

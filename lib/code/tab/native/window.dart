@@ -1,17 +1,17 @@
-import 'package:fluent_ui/fluent_ui.dart';
-import 'package:debug_console/debug_console.dart';
 import 'dart:math';
 
-class TabViewPage extends StatefulWidget {
-  const TabViewPage({Key? key}) : super(key: key);
+import 'package:fluent_ui/fluent_ui.dart';
+
+class NativeTabs extends StatefulWidget {
+  const NativeTabs({super.key});
 
   @override
-  State<TabViewPage> createState() => _TabViewPageState();
+  State<NativeTabs> createState() => _TabViewPageState();
 }
 
-class _TabViewPageState extends State<TabViewPage> {
+class _TabViewPageState extends State<NativeTabs> {
   int currentIndex = 0;
-  List<Tab>? tabs;
+  List<Tab> tabs = [];
 
   TabWidthBehavior tabWidthBehavior = TabWidthBehavior.equal;
   CloseButtonVisibilityMode closeButtonVisibilityMode =
@@ -32,7 +32,8 @@ class _TabViewPageState extends State<TabViewPage> {
       ),
       onClosed: () {
         setState(() {
-          tabs!.remove(tab);
+          tabs.remove(tab);
+
           if (currentIndex > 0) currentIndex--;
         });
       },
@@ -42,7 +43,8 @@ class _TabViewPageState extends State<TabViewPage> {
 
   @override
   Widget build(BuildContext context) {
-    tabs ??= List.generate(3, generateTab);
+    generateTab(1);
+    tabs = List.generate(3, generateTab);
     final theme = FluentTheme.of(context);
     return ScaffoldPage.scrollable(
       header: const PageHeader(title: Text('TabView')),
@@ -100,6 +102,10 @@ class _TabViewPageState extends State<TabViewPage> {
               ]),
             ]);
           }(),
+          //         '''  •  Ctrl + T opens a new tab
+          // •  Ctrl + W or Ctrl + F4 closes the selected tab
+          // •  Ctrl 1 + Ctrl 8 selects that number tab
+          // •  Ctrl 9 selects the last tab''',
         ),
         Card(
           child: Wrap(
@@ -163,65 +169,6 @@ class _TabViewPageState extends State<TabViewPage> {
           ),
         ),
       ],
-    );
-  }
-}
-
-class NativeTabs extends StatefulWidget {
-  const NativeTabs({Key? key}) : super(key: key);
-
-  @override
-  State<NativeTabs> createState() => _NativeTabsState();
-}
-
-class _NativeTabsState extends State<NativeTabs> {
-  final controller = DebugConsole().controller;
-  int currentIndex = 0;
-  List<Tab>? tabs;
-
-  @override
-  void initState() {
-    super.initState();
-    tabs = List.generate(3, (index) {
-      final allIcons = FluentIcons.allIcons.values;
-      late Tab tab;
-      tab = Tab(
-        text: Text('Document $index'),
-        semanticLabel: 'Document #$index',
-        icon: Icon(allIcons.elementAt(Random().nextInt(allIcons.length))),
-        body: Container(
-          color:
-              Colors.accentColors[Random().nextInt(Colors.accentColors.length)],
-        ),
-        onClosed: () {
-          setState(() {
-            tabs!.remove(tab);
-            if (currentIndex > 0) currentIndex--;
-          });
-        },
-      );
-      return tab;
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    controller.log('Building Tabview...', level: DebugConsoleLevel.info);
-    return FluentApp(
-      theme: FluentThemeData(),
-      builder: (context, child) {
-        return FluentTheme(
-          data: FluentThemeData(),
-          child: SizedBox(
-            height: 400,
-            child: TabView(
-              tabs: tabs!,
-              currentIndex: currentIndex,
-              onChanged: (index) => setState(() => currentIndex = index),
-            ),
-          ),
-        );
-      },
     );
   }
 }
