@@ -14,7 +14,6 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:window_manager/window_manager.dart';
 import 'package:flutter_acrylic/flutter_acrylic.dart';
-import 'package:fluent_ui/fluent_ui.dart' as fluent_ui;
 import 'package:win32_registry/win32_registry.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/services.dart';
@@ -22,11 +21,12 @@ import 'package:aptabase_flutter/aptabase_flutter.dart';
 import 'package:csharp_rpc/csharp_rpc.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 
+late CsharpRpc shadowRPC;
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   // Starts RPC in ExecutorMain. Uses some shitty global system.
-  initRPC();
+  shadowRPC = await getShadowRPC();
   initDeviceInfo();
   noFileHandler();
 
@@ -49,6 +49,11 @@ void main() async {
     appWindow.title = "Rubisco BETA";
     appWindow.show();
   });
+}
+
+Future getShadowRPC() async {
+  var modulePath = r"bin\bin\ShadowRPC.exe";
+  return await CsharpRpc(modulePath).start();
 }
 
 void noFileHandler() async {
@@ -128,9 +133,6 @@ class _MyAppState extends State<MyApp> with WindowListener {
         // borderRadius: BorderRadius.circular(12),
         borderRadius: BorderRadius.circular(0),
         child: MaterialApp(
-          localizationsDelegates:
-              fluent_ui.FluentLocalizations.localizationsDelegates,
-          supportedLocales: fluent_ui.FluentLocalizations.supportedLocales,
           color: Colors.transparent,
           debugShowCheckedModeBanner: false,
           title: 'Rubisco',
@@ -528,7 +530,7 @@ class _RunButtonState extends State<RunButton> {
 
   void stateChangeListen() async {
     while (true) {
-      var isAttachedRealtime = await csharpRpc.invoke(method: "IsAttached");
+      var isAttachedRealtime = await shadowRPC.invoke(method: "IsAttached");
       if (isAttachedRealtime != isAttached) {
         isAttached = isAttachedRealtime;
         updateButtonState(isAttachedRealtime ? 3 : 1);
@@ -572,14 +574,11 @@ class _RunButtonState extends State<RunButton> {
             if (!isAttached) {
               updateButtonState(2);
             }
-            states['csharpRpc']
-                .invoke(method: "IsAttached")
-                .then((isAttached) async {
+            shadowRPC.invoke(method: "IsAttached").then((isAttached) async {
               if (!isAttached) {
                 updateButtonState(2);
-                states['csharpRpc'].invoke(method: "Attach");
-                while (
-                    !await states['csharpRpc'].invoke(method: "IsAttached")) {
+                shadowRPC.invoke(method: "Attach");
+                while (!await shadowRPC.invoke(method: "IsAttached")) {
                   updateButtonState(2);
                   await Future.delayed(const Duration(milliseconds: 50));
                 }
@@ -622,8 +621,9 @@ class ExecutorWindow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Expanded(
-      child: Stack(children: [ExecutorMain(), RunButton()]),
+    return Expanded(
+      child: Stack(
+          children: [ExecutorMain(shadowRPC: shadowRPC), const RunButton()]),
     );
   }
 }
