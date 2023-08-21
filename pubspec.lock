@@ -217,6 +217,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.5"
+  debug_console:
+    dependency: "direct main"
+    description:
+      name: debug_console
+      sha256: "85a43612dc73ae52db7f52a94b0705182ade42aacaa2db2e89608b40e83a7a26"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.0.1"
   device_info_plus:
     dependency: "direct main"
     description:
@@ -273,6 +281,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.0.5"
+  expandable:
+    dependency: transitive
+    description:
+      name: expandable
+      sha256: "9604d612d4d1146dafa96c6d8eec9c2ff0994658d6d09fed720ab788c7f5afc2"
+      url: "https://pub.dev"
+    source: hosted
+    version: "5.0.1"
   fake_async:
     dependency: transitive
     description:
@@ -437,6 +453,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.1.2"
+  go_router:
+    dependency: "direct main"
+    description:
+      name: go_router
+      sha256: "2aa884667eeda3a1c461f31e72af1f77984ab0f29450d8fb12ec1f7bc53eea14"
+      url: "https://pub.dev"
+    source: hosted
+    version: "10.1.0"
   google_fonts:
     dependency: "direct main"
     description:
@@ -837,6 +861,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.1.0"
+  rxdart:
+    dependency: transitive
+    description:
+      name: rxdart
+      sha256: "0c7c0cedd93788d996e33041ffecda924cc54389199cde4e6a34b440f50044cb"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.27.7"
   scoped_model:
     dependency: transitive
     description:

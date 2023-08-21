@@ -18,6 +18,7 @@ import 'package:device_info_plus/device_info_plus.dart';
 import 'package:aptabase_flutter/aptabase_flutter.dart';
 import 'package:csharp_rpc/csharp_rpc.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
+import 'package:fluent_ui/fluent_ui.dart' as fluent;
 
 late CsharpRpc shadowRPC;
 void main() async {
@@ -127,6 +128,9 @@ class _MyAppState extends State<MyApp> with WindowListener {
         // borderRadius: BorderRadius.circular(12),
         borderRadius: BorderRadius.circular(0),
         child: MaterialApp(
+          localizationsDelegates:
+              fluent.FluentLocalizations.localizationsDelegates,
+          supportedLocales: fluent.FluentLocalizations.supportedLocales,
           color: Colors.transparent,
           debugShowCheckedModeBanner: false,
           title: 'Rubisco',

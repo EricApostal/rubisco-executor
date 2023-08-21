@@ -4,6 +4,7 @@ import 'package:path/path.dart' as p;
 import 'package:csharp_rpc/csharp_rpc.dart';
 
 import 'package:rubisco/code/tab/monaco/window.dart';
+import 'package:rubisco/code/tab/native/window.dart';
 
 String initialTab = "";
 
@@ -22,6 +23,6 @@ class ExecutorMain extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MonacoTabs(shadowRPC: shadowRPC);
+    return NativeTabs();
   }
 }
