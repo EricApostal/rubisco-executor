@@ -552,7 +552,7 @@ class _RunButtonState extends State<RunButton> {
   Widget build(BuildContext context) {
     return Positioned(
       right: 20,
-      bottom: 20,
+      bottom: 12,
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
         width: 50,

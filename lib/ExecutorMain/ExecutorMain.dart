@@ -346,8 +346,7 @@ class _HoverableContainerState extends State<HoverableContainer> {
             ),
             child: const Icon(
               Icons.close,
-              color: Colors
-                  .white, // You might want to change the color when hovered, so the icon remains visible.
+              color: Colors.white,
               size: 16,
             ),
           ),
@@ -363,11 +362,12 @@ class CustomTab extends StatefulWidget {
   final VoidCallback onClose;
   final String tabId;
 
-  const CustomTab(
-      {required this.isActive,
-      required this.title,
-      required this.onClose,
-      required this.tabId});
+  const CustomTab({
+    required this.isActive,
+    required this.title,
+    required this.onClose,
+    required this.tabId,
+  });
 
   @override
   State<CustomTab> createState() => _CustomTabState();
@@ -389,90 +389,114 @@ class _CustomTabState extends State<CustomTab> {
   Widget build(BuildContext context) {
     return Container(
       decoration: const BoxDecoration(
-          border: Border.symmetric(
-              vertical: BorderSide(color: Color(0xff13141A), width: 2))),
+        border: Border.symmetric(
+          vertical: BorderSide(color: Color(0xff13141A), width: 2),
+        ),
+      ),
       child: Container(
         decoration: BoxDecoration(
-            color:
-                widget.isActive ? const Color(0xff222735) : Color(0xFF13141A),
-            borderRadius: const BorderRadius.all(Radius.circular(8))),
+          color: widget.isActive ? const Color(0xff222735) : Color(0xFF13141A),
+          borderRadius: const BorderRadius.all(Radius.circular(8)),
+        ),
         child: SizedBox(
           width: 200,
           child: Stack(
             children: [
-              Positioned(
-                left: 4,
-                top: 8,
-                child: SizedBox(
-                  width: 23,
-                  height: 23,
-                  child: SvgPicture.asset("assets/document.svg",
-                      key: const ValueKey<String>("assets/folder.svg"),
-                      colorFilter: ColorFilter.mode(
-                          widget.isActive
-                              ? Colors.white
-                              : const Color.fromARGB(255, 189, 189, 189),
-                          BlendMode.srcIn),
-                      semanticsLabel: "Script"),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(left: 30),
-                child: Align(
-                  alignment: Alignment.centerLeft,
-                  child: _isEditing
-                      ? Padding(
-                          padding: const EdgeInsets.only(bottom: 12, right: 38),
-                          child: TextField(
-                            controller: _titleController,
-                            style: TextStyle(
-                              color: widget.isActive
-                                  ? Colors.white
-                                  : const Color.fromARGB(255, 189, 189, 189),
-                              fontSize: 15,
-                            ),
-                            onSubmitted: (value) {
-                              setState(() {
-                                g['tabData'][widget.tabId]['name'] = value;
-                                title = value;
-                                _isEditing = false;
-                              });
-                              // Update the title value in the parent widget if necessary
-                            },
-                          ),
-                        )
-                      : GestureDetector(
-                          onDoubleTap: () {
-                            setState(() {
-                              _isEditing = true;
-                            });
-                          },
-                          child: Text(
-                            title,
-                            softWrap: false,
-                            style: TextStyle(
-                              overflow: TextOverflow.fade,
-                              color: widget.isActive
-                                  ? Colors.white
-                                  : const Color.fromARGB(255, 189, 189, 189),
-                              fontSize: 15,
-                            ),
-                          ),
-                        ),
-                ),
-              ),
-              if (widget.isActive)
-                Positioned(
-                  right: 0,
-                  top: 6,
-                  child: Padding(
-                    padding: const EdgeInsets.only(right: 8.0),
-                    child: GestureDetector(
-                        onTap: widget.onClose, child: HoverableContainer()),
-                  ),
-                ),
+              _buildIcon(),
+              _buildTitleOrTextField(),
+              if (widget.isActive) _buildCloseButton(),
             ],
           ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildIcon() {
+    return Positioned(
+      left: 4,
+      top: 8,
+      child: SizedBox(
+        width: 23,
+        height: 23,
+        child: SvgPicture.asset(
+          "assets/document.svg",
+          key: const ValueKey<String>("assets/folder.svg"),
+          colorFilter: ColorFilter.mode(
+            widget.isActive
+                ? Colors.white
+                : const Color.fromARGB(255, 189, 189, 189),
+            BlendMode.srcIn,
+          ),
+          semanticsLabel: "Script",
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTitleOrTextField() {
+    return Padding(
+      padding: const EdgeInsets.only(left: 30),
+      child: Align(
+        alignment: Alignment.centerLeft,
+        child: _isEditing ? _buildTextField() : _buildTitleText(),
+      ),
+    );
+  }
+
+  Widget _buildTextField() {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12, right: 38),
+      child: TextField(
+        controller: _titleController,
+        style: TextStyle(
+          color: widget.isActive
+              ? Colors.white
+              : const Color.fromARGB(255, 189, 189, 189),
+          fontSize: 15,
+        ),
+        onSubmitted: (value) {
+          setState(() {
+            // Use appropriate way to get g['tabData']
+            g['tabData'][widget.tabId]['name'] = value;
+            title = value;
+            _isEditing = false;
+          });
+        },
+      ),
+    );
+  }
+
+  Widget _buildTitleText() {
+    return GestureDetector(
+      onDoubleTap: () {
+        setState(() {
+          _isEditing = true;
+        });
+      },
+      child: Text(
+        title,
+        softWrap: false,
+        style: TextStyle(
+          overflow: TextOverflow.fade,
+          color: widget.isActive
+              ? Colors.white
+              : const Color.fromARGB(255, 189, 189, 189),
+          fontSize: 15,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildCloseButton() {
+    return Positioned(
+      right: 0,
+      top: 6,
+      child: Padding(
+        padding: const EdgeInsets.only(right: 8.0),
+        child: GestureDetector(
+          onTap: widget.onClose,
+          child: HoverableContainer(),
         ),
       ),
     );
@@ -484,6 +508,8 @@ class _CustomTabState extends State<CustomTab> {
     super.dispose();
   }
 }
+
+// The rest of the file remains mostly the same since breaking it down further would require knowledge of logic and architecture.
 
 class Tabs extends StatefulWidget {
   const Tabs({Key? key}) : super(key: key);
