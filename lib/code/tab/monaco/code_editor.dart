@@ -1,26 +1,18 @@
 import 'dart:io';
-import 'dart:math';
 import 'dart:async';
 
 import 'package:blossom_tabs/blossom_tabs.dart';
 import 'package:flutter/material.dart';
 import 'package:webview_windows/webview_windows.dart';
 import 'package:flutter/services.dart';
-import 'package:path/path.dart' as p;
 import 'package:csharp_rpc/csharp_rpc.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 
-import 'package:rubisco/globals.dart';
-import 'package:rubisco/Misc/datastore.dart';
-import 'package:code_editor/code_editor.dart';
+import 'package:rubisco/session/globals.dart';
+import 'package:rubisco/misc/data_store.dart';
 
 final navigatorKey = GlobalKey<NavigatorState>();
 bool webviewInitialized = false;
-var setContentCallbacks = {};
-
-Map<dynamic, dynamic> getContentCallbacks() {
-  return setContentCallbacks;
-}
+Map<dynamic, dynamic> setContentCallbacks = {};
 
 String getScript(String tabID) {
   if (File('bin/tabs/${tabID}.txt').existsSync()) {

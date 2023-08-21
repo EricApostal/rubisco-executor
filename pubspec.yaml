@@ -36,13 +36,6 @@ dependencies:
   universal_platform: ^1.0.0+1
   flutter_code_editor: ^0.3.0
   cupertino_icons: ^1.0.2
-
-    # When depending on this package from a real application you should use:
-    #   webview_window: ^x.y.z
-    # See https://dart.dev/tools/pub/dependencies#version-constraints
-    # The example app is bundled with the plugin so we use a path dependency on
-    # the parent directory to use the current plugin's version.
-    # path: ../
   path_provider: ^2.0.7
   blossom_tabs: ^4.0.0
   webview_windows: ^0.3.0
@@ -70,6 +63,11 @@ dependencies:
   drop_down_list: ^0.0.5
   dropdown_button2: ^2.3.8
   code_editor: ^2.1.0
+  ffi: ^2.1.0
+  win32: ^3.1.4
+  flutter_highlight: ^0.7.0
+  highlight: ^0.7.0
+  fluent_ui: ^4.7.3
 
 # To apply the icon stuffs, run
 # flutter pub run flutter_launcher_icons -f pubspec.yaml

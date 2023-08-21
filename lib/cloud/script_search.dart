@@ -6,9 +6,10 @@ import 'package:http/http.dart' as http;
 import 'package:image_network/image_network.dart';
 import 'package:flutter/services.dart';
 import 'package:csharp_rpc/csharp_rpc.dart';
-import 'package:rubisco/globals.dart';
 import 'package:aptabase_flutter/aptabase_flutter.dart';
+import 'package:rubisco/main.dart';
 
+// ignore: must_be_immutable
 class SearchItem extends StatelessWidget {
   SearchItem({super.key, required this.scriptJson});
 
@@ -37,7 +38,8 @@ class SearchItem extends StatelessWidget {
                       color: Color(0xff13141A),
                       borderRadius: BorderRadius.all(Radius.circular(8))),
                   child: ImageNetwork(
-                    image: "https://scriptblox.com/${scriptJson["game"]["imageUrl"]}",
+                    image:
+                        "https://scriptblox.com/${scriptJson["game"]["imageUrl"]}",
                     height: 150,
                     width: 150,
                     duration: 100,
@@ -120,7 +122,8 @@ class SearchItem extends StatelessWidget {
                                                 Radius.circular(12))),
                                         child: TextButton(
                                           onPressed: () async {
-                                            Aptabase.instance.trackEvent("Script Search Clipboard");
+                                            Aptabase.instance.trackEvent(
+                                                "Script Search Clipboard");
                                             await Clipboard.setData(
                                                 ClipboardData(
                                                     text:
@@ -149,8 +152,9 @@ class SearchItem extends StatelessWidget {
                                                   Radius.circular(12))),
                                           child: TextButton(
                                             onPressed: () {
-                                              Aptabase.instance.trackEvent("Script Search Run");
-                                              states['csharpRpc'].invoke(
+                                              Aptabase.instance.trackEvent(
+                                                  "Script Search Run");
+                                              shadowRPC.invoke(
                                                   method: "RunScript",
                                                   params: [
                                                     scriptJson["script"]
@@ -190,7 +194,9 @@ class SearchItem extends StatelessWidget {
 }
 
 class ScriptSearch extends StatefulWidget {
-  const ScriptSearch({Key? key}) : super(key: key);
+  const ScriptSearch({Key? key, required this.shadowRPC}) : super(key: key);
+
+  final CsharpRpc shadowRPC;
 
   @override
   State<ScriptSearch> createState() => _ScriptSearchState();

@@ -1,16 +1,15 @@
 import 'dart:io';
-import 'dart:io' as io;
 import 'dart:ffi';
+
+import 'package:ffi/ffi.dart';
+import 'package:win32/win32.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:path/path.dart' as path;
 
-import 'package:ffi/ffi.dart';
-import 'package:win32/win32.dart';
-
-import 'package:rubisco/ExecutorMain/ExecutorMain.dart';
+import 'package:rubisco/code/tab/monaco/window.dart';
 
 const unLen = 256;
 
@@ -72,8 +71,6 @@ class _FolderIconState extends State<FolderIcon> {
       onDoubleTap: widget.fileItem.isFolder
           ? widget.onDoubleTap
           : () async {
-              // print("content: ");
-              // print(File(widget.fileItem.entity.path).readAsStringSync());
               addTabWithContent(
                   await File(widget.fileItem.entity.path).readAsString());
             },
@@ -235,7 +232,7 @@ class _LocalScriptsState extends State<LocalScripts> {
         navigationHistory.add(directory);
       }
     });
-    WidgetsBinding.instance!.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
     });
   }
@@ -257,7 +254,7 @@ class _LocalScriptsState extends State<LocalScripts> {
         _updateFiles(navigationHistory.last, initialSetup: true);
       }
     }
-    WidgetsBinding.instance!.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
     });
   }
@@ -274,7 +271,7 @@ class _LocalScriptsState extends State<LocalScripts> {
   @override
   void didUpdateWidget(LocalScripts oldWidget) {
     super.didUpdateWidget(oldWidget);
-    WidgetsBinding.instance!.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
     });
   }
@@ -300,7 +297,8 @@ class _LocalScriptsState extends State<LocalScripts> {
             children: [
               Row(
                 children: [
-                  IconButton(icon: Icon(Icons.arrow_back), onPressed: _goBack),
+                  IconButton(
+                      icon: const Icon(Icons.arrow_back), onPressed: _goBack),
                   Expanded(
                     child: SingleChildScrollView(
                       controller: _scrollController,
@@ -350,7 +348,7 @@ class _LocalScriptsState extends State<LocalScripts> {
                         if (isInSpecialView) {
                           _updateFiles(specialFolders[index].path);
                         } else if (isFolder) {
-                          _updateFiles(fileEntity as Directory);
+                          _updateFiles(fileEntity);
                         } else {}
                       },
                     );

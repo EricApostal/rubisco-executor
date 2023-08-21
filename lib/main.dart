@@ -1,12 +1,12 @@
 import 'dart:io';
 
-import 'package:rubisco/ExecutorMain/ExecutorMain.dart';
-import 'package:rubisco/ScriptSearch/ScriptSearch.dart';
-import 'package:rubisco/Settings.dart';
-import 'package:rubisco/Misc/datastore.dart';
-import 'package:rubisco/globals.dart';
-import 'package:rubisco/KeySystem/KeySystem.dart';
-import 'package:rubisco/LocalScripts.dart';
+import 'package:rubisco/code/executor.dart';
+import 'package:rubisco/cloud/script_search.dart';
+import 'package:rubisco/settings/settings.dart';
+import 'package:rubisco/misc/data_store.dart';
+import 'package:rubisco/session/globals.dart';
+import 'package:rubisco/key/key_system.dart';
+import 'package:rubisco/script/local_scripts.dart';
 
 import 'package:flutter/material.dart';
 import 'package:bitsdojo_window/bitsdojo_window.dart';
@@ -14,9 +14,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:window_manager/window_manager.dart';
 import 'package:flutter_acrylic/flutter_acrylic.dart';
-import 'package:win32_registry/win32_registry.dart';
 import 'package:device_info_plus/device_info_plus.dart';
-import 'package:flutter/services.dart';
 import 'package:aptabase_flutter/aptabase_flutter.dart';
 import 'package:csharp_rpc/csharp_rpc.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
@@ -82,10 +80,6 @@ void initDeviceInfo() async {
       .toString(); // toString just to make sure since return is dynamic
 
   states['deviceId'] = deviceId;
-
-  print("Device ID: ");
-  print(deviceId);
-  print(deviceId.runtimeType);
 }
 
 class MyApp extends StatefulWidget {
@@ -357,7 +351,7 @@ class _DropDownState extends State<DropDown> {
 }
 
 class RubiscoFrame extends StatefulWidget {
-  RubiscoFrame({Key? key, required this.updateOpacity}) : super(key: key);
+  const RubiscoFrame({Key? key, required this.updateOpacity}) : super(key: key);
 
   final Function updateOpacity;
 
@@ -430,7 +424,7 @@ class _RubiscoFrameState extends State<RubiscoFrame> {
                               ],
                             ),
                           ),
-                          const ScriptSearch(),
+                          ScriptSearch(shadowRPC: shadowRPC),
                           const KeySystem(),
                           Settings(updateOpacity: widget.updateOpacity),
                         ],

@@ -1,8 +1,8 @@
 import 'dart:ui';
 
-import 'package:rubisco/Misc/datastore.dart';
-import 'package:rubisco/globals.dart';
-import 'package:rubisco/Encryption.dart';
+import 'package:rubisco/misc/data_store.dart';
+import 'package:rubisco/session/globals.dart';
+import 'package:rubisco/crypt/encryption.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';

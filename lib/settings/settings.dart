@@ -1,23 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:dropdown_search/dropdown_search.dart';
-import 'package:rubisco/globals.dart';
+import 'package:rubisco/session/globals.dart';
 import 'package:animated_toggle_switch/animated_toggle_switch.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:window_manager/window_manager.dart';
-import 'package:rubisco/Misc/datastore.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+import 'package:rubisco/Misc/data_store.dart';
 
 class SettingsSidebar extends StatefulWidget {
   final void Function(int) setPage;
 
-  const SettingsSidebar({required this.setPage});
+  const SettingsSidebar({Key? key, required this.setPage});
 
   @override
-  _SettingsSidebarState createState() => _SettingsSidebarState();
+  SettingsSidebarState createState() => SettingsSidebarState();
 }
 
-class _SettingsSidebarState extends State<SettingsSidebar> {
+class SettingsSidebarState extends State<SettingsSidebar> {
   int _selectedPage = 0; // Set initial page to 0
 
   void setPage(int newPage) {
@@ -99,9 +97,11 @@ class _SettingsSidebarState extends State<SettingsSidebar> {
                     Text(
                       buttonText,
                       textAlign: TextAlign.start,
-                      style: GoogleFonts.lato(color: _selectedPage == pageIndex
-                                ? const Color.fromARGB(255, 0, 0, 0)
-                                : const Color.fromARGB(255, 255, 255, 255),),
+                      style: GoogleFonts.lato(
+                        color: _selectedPage == pageIndex
+                            ? const Color.fromARGB(255, 0, 0, 0)
+                            : const Color.fromARGB(255, 255, 255, 255),
+                      ),
                     ),
                   ],
                 ),
@@ -112,6 +112,7 @@ class _SettingsSidebarState extends State<SettingsSidebar> {
   }
 }
 
+// ignore: must_be_immutable
 class SettingsCard extends StatefulWidget {
   SettingsCard(
       {super.key,

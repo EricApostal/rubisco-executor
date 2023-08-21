@@ -1,5 +1,5 @@
 import 'package:dummycastle/pl/polinc/dummycastle/dummycastle.dart';
-import 'package:rubisco/globals.dart';
+import 'package:rubisco/session/globals.dart';
 
 class Encryption {
   DummyCastle dummyCastle = DummyCastle();
