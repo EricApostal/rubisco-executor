@@ -23,7 +23,7 @@ class _TabViewPageState extends State<NativeTabs> {
     final allIcons = FluentIcons.allIcons.values;
     late Tab tab;
     tab = Tab(
-      text: Text('Document $index'),
+      text: Text('Document $index', style: TextStyle(color: Colors.white)),
       semanticLabel: 'Document #$index',
       icon: Icon(allIcons.elementAt(Random().nextInt(allIcons.length))),
       body: Container(
@@ -41,11 +41,11 @@ class _TabViewPageState extends State<NativeTabs> {
     return tab;
   }
 
+  // This issue proposes the solution, but I cannot find the color thing
+  // https://github.com/bdlukaa/fluent_ui/issues/562
   @override
   Widget build(BuildContext context) {
-    generateTab(1);
-    tabs = List.generate(3, generateTab);
-    final theme = FluentTheme.of(context);
+    // tabs = List.generate(3, generateTab);
     return SizedBox(
       child: TabView(
         tabs: tabs,
@@ -66,7 +66,7 @@ class _TabViewPageState extends State<NativeTabs> {
             if (oldIndex < newIndex) {
               newIndex -= 1;
             }
-            final item = tabs!.removeAt(oldIndex);
+            final item = tabs.removeAt(oldIndex);
             tabs.insert(newIndex, item);
 
             if (currentIndex == newIndex) {

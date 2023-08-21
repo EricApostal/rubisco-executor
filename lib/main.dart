@@ -129,7 +129,11 @@ class _MyAppState extends State<MyApp> with WindowListener {
         // borderRadius: BorderRadius.circular(12),
         borderRadius: BorderRadius.circular(0),
         child: fluent.FluentTheme(
-          data: fluent.FluentThemeData(),
+          data: fluent.FluentThemeData(
+            scaffoldBackgroundColor: const Color.fromARGB(255, 255, 10, 133),
+            micaBackgroundColor: const Color.fromARGB(255, 255, 10, 133),
+            inactiveBackgroundColor: const Color.fromARGB(255, 255, 10, 133),
+          ),
           child: MaterialApp(
             localizationsDelegates:
                 fluent.FluentLocalizations.localizationsDelegates,
@@ -423,7 +427,7 @@ class _RubiscoFrameState extends State<RubiscoFrame> {
                         children: [
                           SizedBox(
                             width: MediaQuery.of(context).size.width - 89,
-                            height: MediaQuery.of(context).size.height - 200,
+                            height: MediaQuery.of(context).size.height - 150,
                             child: Row(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
@@ -568,7 +572,6 @@ class _RunButtonState extends State<RunButton> {
         child: TextButton(
           onPressed: () async {
             if (!isKeyValid()) {
-              print("key is not valid, so returning");
               context.setPage(2); // Navigate to the KeySystem page
               return;
             }
@@ -626,33 +629,6 @@ class ExecutorWindow extends StatelessWidget {
     return Expanded(
       child: Stack(
           children: [ExecutorMain(shadowRPC: shadowRPC), const RunButton()]),
-    );
-  }
-}
-
-class OutputConsole extends StatelessWidget {
-  const OutputConsole({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(right: 10),
-      child: Container(
-        width: MediaQuery.of(context).size.width,
-        height: 100, // height: 100,
-        decoration: const BoxDecoration(
-          borderRadius: BorderRadius.all(Radius.circular(6)),
-          color: Color(0xFF222735),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Text(
-            "[4:20:69] Rubisco has injected!",
-            style: GoogleFonts.robotoMono(
-                color: const Color(0xFFF7F7F7), fontSize: 14),
-          ),
-        ),
-      ),
     );
   }
 }
