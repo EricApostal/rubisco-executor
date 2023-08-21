@@ -47,7 +47,6 @@ class _TabViewPageState extends State<NativeTabs> {
     tabs = List.generate(3, generateTab);
     final theme = FluentTheme.of(context);
     return SizedBox(
-      height: 400,
       child: TabView(
         tabs: tabs,
         currentIndex: currentIndex,
