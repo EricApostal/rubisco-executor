@@ -138,27 +138,15 @@ class _TabState extends State<MonacoTabs> {
       tabId: tab.id,
       title: g['tabData'][tab.id]['name'],
       onClose: () async {
-        // Find the index of the tab that's being closed
-        int closedTabIndex = _controller.tabs.indexWhere((t) => t.id == tab.id);
-
-        // Remove the tab
+        // Remove the current tab
         _controller.removeTabById(tab.id);
-
-        // If the closed tab was the last tab
-        if (closedTabIndex == _controller.tabs.length) {
-          // Select the previous tab, if available
-          if (closedTabIndex - 1 >= 0) {
-            _controller.currentTab = _controller.tabs[closedTabIndex - 1].id;
-          }
-        } else {
-          // If the closed tab wasn't the last tab, select the next tab
-          _controller.currentTab = _controller.tabs[closedTabIndex].id;
-        }
-
-        // The rest of your onClose code
         File("bin/tabs/${tab.id}.txt").delete();
         g['tabData'].remove(tab.id);
         saveData(g);
+        monacoEditorKeys[tab.id].tabStillOpen(false)
+
+        // Set the new current tab
+        // _controller.currentTab = 0;
       },
     );
   }

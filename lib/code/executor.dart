@@ -23,7 +23,7 @@ class ExecutorMain extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return NativeTabs(shadowRPC: shadowRPC);
+    return MonacoTabs(shadowRPC: shadowRPC);
     // return MonacoTabs(shadowRPC: shadowRPC);
   }
 }

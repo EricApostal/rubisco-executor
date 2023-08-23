@@ -28,16 +28,22 @@ void setScript(String tabID, String content) async {
 }
 
 class MonacoWindow extends StatefulWidget {
-  const MonacoWindow(
-      {Key? key,
-      required this.tabController,
-      required this.tabID,
-      required this.shadowRPC})
-      : super(key: key);
+  MonacoWindow({
+    Key? key,
+    required this.tabController,
+    required this.tabID,
+    required this.shadowRPC,
+  }) : super(key: key);
 
   final BlossomTabController tabController;
   final String tabID;
   final CsharpRpc shadowRPC;
+
+  bool tabStillOpen = true;
+
+  void setTabOpenState(bool newState) {
+    tabStillOpen = newState;
+  }
 
   @override
   State<MonacoWindow> createState() => MonacoWindowState();
@@ -46,6 +52,8 @@ class MonacoWindow extends StatefulWidget {
 class MonacoWindowState extends State<MonacoWindow> {
   final _controller = WebviewController();
   final _textController = TextEditingController();
+
+  // TODO: Implement a way to mutate this on close
 
   @protected
   @mustCallSuper
@@ -91,6 +99,11 @@ class MonacoWindowState extends State<MonacoWindow> {
       // This technically can return Null, so we have to add a handler for that
       String currentContent =
           await _controller.executeScript("editor.getValue()") ?? "";
+
+      if (!widget.tabStillOpen) {
+        // Tab is no longer open, don't run file
+        return;
+      }
 
       // If it even matters to write
       if (lastContent != currentContent) {
@@ -179,7 +192,7 @@ class MonacoWindowState extends State<MonacoWindow> {
       await _controller.loadUrl(url);
       await _controller.setZoomFactor(1.1);
 
-      // statePersistLoop();
+      statePersistLoop();
       fillTabContent();
 
       // I mean I *think* this works?

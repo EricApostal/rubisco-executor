@@ -20,16 +20,15 @@ class _TabViewPageState extends State<NativeTabs> {
   int currentIndex = 0;
   List<Tab> tabs = [];
 
-  TabWidthBehavior tabWidthBehavior = TabWidthBehavior.equal;
-  CloseButtonVisibilityMode closeButtonVisibilityMode =
-      CloseButtonVisibilityMode.always;
-  bool showScrollButtons = true;
-  bool wheelScroll = false;
-
   Tab generateTab(int index) {
-    late Tab tab;
-    tab = Tab(
-      text: Text('Script $index', style: const TextStyle(color: Colors.white)),
+    print("generating tab");
+    final tabKey = 'Script $index';
+    Map<String, GlobalKey<MonacoWindowState>> monacoEditorKeys = {};
+    // Assign a key for each MonacoWindow
+    monacoEditorKeys.putIfAbsent(tabKey, () => GlobalKey<MonacoWindowState>());
+
+    return Tab(
+      text: Text(tabKey, style: const TextStyle(color: Colors.white)),
       semanticLabel: 'Script #$index',
       icon: material.SizedBox(
         width: 20,
@@ -47,18 +46,28 @@ class _TabViewPageState extends State<NativeTabs> {
       body: material.Padding(
         padding: const EdgeInsets.only(top: 2),
         child: MonacoWindow(
-          shadowRPC: shadowRPC,
+          key: monacoEditorKeys[tabKey],
+          shadowRPC: widget.shadowRPC,
         ),
       ),
       onClosed: () {
         setState(() {
-          tabs.remove(tab);
+          int indexToRemove = -1;
+          for (int i = 0; i < tabs.length; i++) {
+            if (tabs[i].semanticLabel == 'Script #$index') {
+              indexToRemove = i;
+              break;
+            }
+          }
+
+          if (indexToRemove != -1) {
+            tabs.removeAt(indexToRemove);
+          }
 
           if (currentIndex > 0) currentIndex--;
         });
       },
     );
-    return tab;
   }
 
   @override
@@ -67,8 +76,6 @@ class _TabViewPageState extends State<NativeTabs> {
     super.initState();
   }
 
-  // This issue proposes the solution, but I cannot find the color thing
-  // https://github.com/bdlukaa/fluent_ui/issues/562
   @override
   Widget build(BuildContext context) {
     return SizedBox(
@@ -76,9 +83,6 @@ class _TabViewPageState extends State<NativeTabs> {
         tabs: tabs,
         currentIndex: currentIndex,
         onChanged: (index) => setState(() => currentIndex = index),
-        tabWidthBehavior: tabWidthBehavior,
-        closeButtonVisibility: closeButtonVisibilityMode,
-        showScrollButtons: showScrollButtons,
         onNewPressed: () {
           setState(() {
             final index = tabs.length + 1;
@@ -93,12 +97,6 @@ class _TabViewPageState extends State<NativeTabs> {
             }
             final item = tabs.removeAt(oldIndex);
             tabs.insert(newIndex, item);
-
-            if (currentIndex == newIndex) {
-              currentIndex = oldIndex;
-            } else if (currentIndex == oldIndex) {
-              currentIndex = newIndex;
-            }
           });
         },
       ),
