@@ -134,13 +134,12 @@ class _MyAppState extends State<MyApp> with WindowListener {
         */
         child: fluent.FluentTheme(
           data: fluent.FluentThemeData(
-            resources: const fluent.ResourceDictionary.dark(
-              solidBackgroundFillColorTertiary: Color(0xFF222735),
-            ),
-            scaffoldBackgroundColor: const Color.fromARGB(255, 255, 10, 133),
-            micaBackgroundColor: const Color.fromARGB(255, 255, 10, 133),
-            inactiveBackgroundColor: const Color.fromARGB(255, 255, 10, 133),
-          ),
+              activeColor: Colors.white,
+              inactiveColor: Colors.white,
+              resources: const fluent.ResourceDictionary.dark(
+                solidBackgroundFillColorTertiary: Color(0xFF222735),
+              ),
+              iconTheme: const IconThemeData(color: Colors.white)),
           child: MaterialApp(
             localizationsDelegates:
                 fluent.FluentLocalizations.localizationsDelegates,

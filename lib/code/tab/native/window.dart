@@ -23,8 +23,8 @@ class _TabViewPageState extends State<NativeTabs> {
     final allIcons = FluentIcons.allIcons.values;
     late Tab tab;
     tab = Tab(
-      text: Text('Document $index', style: TextStyle(color: Colors.white)),
-      semanticLabel: 'Document #$index',
+      text: Text('Script $index', style: TextStyle(color: Colors.white)),
+      semanticLabel: 'Script #$index',
       icon: Icon(allIcons.elementAt(Random().nextInt(allIcons.length))),
       body: Container(
         color:
