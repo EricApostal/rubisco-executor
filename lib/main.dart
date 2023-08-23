@@ -7,7 +7,6 @@ import 'package:rubisco/misc/data_store.dart';
 import 'package:rubisco/session/globals.dart';
 import 'package:rubisco/key/key_system.dart';
 import 'package:rubisco/script/local_scripts.dart';
-import 'package:rubisco/code/tab/native/window.dart';
 
 import 'package:flutter/material.dart';
 import 'package:bitsdojo_window/bitsdojo_window.dart';
@@ -150,7 +149,7 @@ class _MyAppState extends State<MyApp> with WindowListener {
             theme: ThemeData(
               splashColor: Colors.transparent,
               highlightColor: Colors.transparent,
-              iconTheme: IconThemeData(color: Colors.white),
+              iconTheme: const IconThemeData(color: Colors.white),
               colorScheme:
                   ColorScheme.fromSeed(seedColor: const Color(0xFF13141A)),
               primaryColor: const Color(0xFF13141A),

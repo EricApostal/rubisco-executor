@@ -1,9 +1,16 @@
 import 'dart:math';
+import 'package:flutter/material.dart' as material;
 
 import 'package:fluent_ui/fluent_ui.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:rubisco/code/tab/native/monaco_editor.dart';
+import 'package:csharp_rpc/csharp_rpc.dart';
+import 'package:rubisco/main.dart';
 
 class NativeTabs extends StatefulWidget {
-  const NativeTabs({super.key});
+  const NativeTabs({super.key, required this.shadowRPC});
+
+  final CsharpRpc shadowRPC;
 
   @override
   State<NativeTabs> createState() => _TabViewPageState();
@@ -20,15 +27,28 @@ class _TabViewPageState extends State<NativeTabs> {
   bool wheelScroll = false;
 
   Tab generateTab(int index) {
-    final allIcons = FluentIcons.allIcons.values;
     late Tab tab;
     tab = Tab(
-      text: Text('Script $index', style: TextStyle(color: Colors.white)),
+      text: Text('Script $index', style: const TextStyle(color: Colors.white)),
       semanticLabel: 'Script #$index',
-      icon: Icon(allIcons.elementAt(Random().nextInt(allIcons.length))),
-      body: Container(
-        color:
-            Colors.accentColors[Random().nextInt(Colors.accentColors.length)],
+      icon: material.SizedBox(
+        width: 20,
+        height: 20,
+        child: SvgPicture.asset(
+          "assets/document.svg",
+          key: const ValueKey<String>("assets/folder.svg"),
+          colorFilter: const ColorFilter.mode(
+            Color.fromARGB(255, 189, 189, 189),
+            BlendMode.srcIn,
+          ),
+          semanticsLabel: "Script",
+        ),
+      ),
+      body: material.Padding(
+        padding: const EdgeInsets.only(top: 2),
+        child: MonacoWindow(
+          shadowRPC: shadowRPC,
+        ),
       ),
       onClosed: () {
         setState(() {
@@ -43,7 +63,7 @@ class _TabViewPageState extends State<NativeTabs> {
 
   @override
   void initState() {
-    tabs = List.generate(3, generateTab);
+    tabs = List.generate(1, generateTab);
     super.initState();
   }
 

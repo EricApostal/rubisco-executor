@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_code_editor/flutter_code_editor.dart';
-import 'package:flutter_highlight/themes/monokai-sublime.dart';
+import 'package:flutter_highlight/themes/tomorrow-night-eighties.dart';
 import 'package:highlight/languages/lua.dart';
 
+/*
+  I really do like this, but it crashes when using large scripts, and uses a shitload of ram
+  I don't think it's a possiblity :(
+*/
+
 final controller = CodeController(
-  text: '...', // Initial code
+  text: '', // Initial code
   language: lua,
 );
 
@@ -20,15 +25,12 @@ class NativeEditorState extends State<NativeEditor> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Scaffold(
-        body: CodeTheme(
-          data: CodeThemeData(styles: monokaiSublimeTheme),
-          child: SingleChildScrollView(
-            child: CodeField(
-              controller: controller,
-            ),
-          ),
+    return CodeTheme(
+      data: CodeThemeData(styles: tomorrowNightEightiesTheme),
+      child: SingleChildScrollView(
+        child: CodeField(
+          background: const Color(0xFF13141A),
+          controller: controller,
         ),
       ),
     );
