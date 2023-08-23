@@ -6,6 +6,9 @@ import 'package:rubisco/code/tab/monaco/tab.dart';
 import 'package:rubisco/session/globals.dart';
 import 'package:rubisco/misc/data_store.dart';
 
+import 'dart:math';
+import 'dart:io';
+
 late Function addTabWithContent;
 
 // ignore: must_be_immutable
@@ -69,18 +72,19 @@ class _TabState extends State<MonacoTabs> {
     }
 
     String generateTabId() {
-      var tabIdList = [];
-      g['tabData'].forEach((index, value) {
-        tabIdList.add(index);
-      });
+      return "t ${Random().nextInt(100) + 50}";
+      // var tabIdList = [];
+      // g['tabData'].forEach((index, value) {
+      //   tabIdList.add(index);
+      // });
 
-      num tabIdIndex = 1;
-      while (true) {
-        if (!tabIdList.contains("t $tabIdIndex")) {
-          return "t $tabIdIndex";
-        }
-        tabIdIndex += 1;
-      }
+      // num tabIdIndex = 1;
+      // while (true) {
+      //   if (!tabIdList.contains("t $tabIdIndex")) {
+      //     return "t $tabIdIndex";
+      //   }
+      //   tabIdIndex += 1;
+      // }
     }
 
     // Creates a tab then fills monaco with specified content
@@ -125,7 +129,7 @@ class _TabState extends State<MonacoTabs> {
   Widget buildTab(BuildContext context, BlossomTab<int> tab, bool isActive) {
     if (g['tabData'][tab.id] == null) {
       // crappy, but tends to work
-      g['tabData'][tab.id] = {'name': "Script ${1}"};
+      g['tabData'][tab.id] = {'name': "Script 1"};
       setScript(tab.id, "");
     }
 
@@ -133,8 +137,26 @@ class _TabState extends State<MonacoTabs> {
       isActive: isActive,
       tabId: tab.id,
       title: g['tabData'][tab.id]['name'],
-      onClose: () {
+      onClose: () async {
+        // Find the index of the tab that's being closed
+        int closedTabIndex = _controller.tabs.indexWhere((t) => t.id == tab.id);
+
+        // Remove the tab
         _controller.removeTabById(tab.id);
+
+        // If the closed tab was the last tab
+        if (closedTabIndex == _controller.tabs.length) {
+          // Select the previous tab, if available
+          if (closedTabIndex - 1 >= 0) {
+            _controller.currentTab = _controller.tabs[closedTabIndex - 1].id;
+          }
+        } else {
+          // If the closed tab wasn't the last tab, select the next tab
+          _controller.currentTab = _controller.tabs[closedTabIndex].id;
+        }
+
+        // The rest of your onClose code
+        File("bin/tabs/${tab.id}.txt").delete();
         g['tabData'].remove(tab.id);
         saveData(g);
       },

@@ -26,6 +26,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   // Starts RPC in ExecutorMain. Uses some shitty global system.
+  print("IF PROGRAM STOPS HERE, YOU NEED TO RUN AS ADMIN!");
   shadowRPC = await getShadowRPC();
   initDeviceInfo();
   noFileHandler();
@@ -128,8 +129,14 @@ class _MyAppState extends State<MyApp> with WindowListener {
       child: ClipRRect(
         // borderRadius: BorderRadius.circular(12),
         borderRadius: BorderRadius.circular(0),
+        /*
+          I hate how messy the theme data is, but it's required for fluent UI
+        */
         child: fluent.FluentTheme(
           data: fluent.FluentThemeData(
+            resources: const fluent.ResourceDictionary.dark(
+              solidBackgroundFillColorTertiary: Color(0xFF222735),
+            ),
             scaffoldBackgroundColor: const Color.fromARGB(255, 255, 10, 133),
             micaBackgroundColor: const Color.fromARGB(255, 255, 10, 133),
             inactiveBackgroundColor: const Color.fromARGB(255, 255, 10, 133),
@@ -219,7 +226,7 @@ class _SidebarState extends State<Sidebar> {
 
   Widget _buildTextButton(String asset, String semanticsLabel, int pageIndex) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 6, right: 4),
+      padding: const EdgeInsets.only(bottom: 4, right: 4),
       child: Align(
         alignment: Alignment.centerRight,
         child: Stack(

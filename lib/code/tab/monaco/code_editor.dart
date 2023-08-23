@@ -133,7 +133,7 @@ class MonacoWindowState extends State<MonacoWindow> {
         // replaces backticks with escaped so it doesn't escape the JS script
         String escapedScript = getScript(widget.tabID).replaceAll('`', '\\`');
         await _controller.executeScript('editor.setValue(`$escapedScript`)');
-        await Future.delayed(const Duration(milliseconds: 10));
+        await Future.delayed(const Duration(milliseconds: 100));
       }
     }
   }
@@ -179,15 +179,8 @@ class MonacoWindowState extends State<MonacoWindow> {
       await _controller.loadUrl(url);
       await _controller.setZoomFactor(1.1);
 
-      statePersistLoop();
+      // statePersistLoop();
       fillTabContent();
-
-      // TODO: make a required bool "isFirstTab", this won't work if user removes t 1.
-      // if (initialTab == "") {
-      //   print("forcing tab selected call");
-      //   onTabSelected(widget.tabController);
-      //   initialTab = widget.tabID;
-      // }
 
       // I mean I *think* this works?
       onTabSelected(widget.tabController);

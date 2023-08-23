@@ -41,11 +41,16 @@ class _TabViewPageState extends State<NativeTabs> {
     return tab;
   }
 
+  @override
+  void initState() {
+    tabs = List.generate(3, generateTab);
+    super.initState();
+  }
+
   // This issue proposes the solution, but I cannot find the color thing
   // https://github.com/bdlukaa/fluent_ui/issues/562
   @override
   Widget build(BuildContext context) {
-    // tabs = List.generate(3, generateTab);
     return SizedBox(
       child: TabView(
         tabs: tabs,
