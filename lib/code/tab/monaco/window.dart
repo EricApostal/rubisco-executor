@@ -72,19 +72,19 @@ class _TabState extends State<MonacoTabs> {
     }
 
     String generateTabId() {
-      return "t ${Random().nextInt(100) + 50}";
-      // var tabIdList = [];
-      // g['tabData'].forEach((index, value) {
-      //   tabIdList.add(index);
-      // });
+      // return "t ${Random().nextInt(100) + 50}";
+      var tabIdList = [];
+      g['tabData'].forEach((index, value) {
+        tabIdList.add(index);
+      });
 
-      // num tabIdIndex = 1;
-      // while (true) {
-      //   if (!tabIdList.contains("t $tabIdIndex")) {
-      //     return "t $tabIdIndex";
-      //   }
-      //   tabIdIndex += 1;
-      // }
+      num tabIdIndex = 1;
+      while (true) {
+        if (!tabIdList.contains("t $tabIdIndex")) {
+          return "t $tabIdIndex";
+        }
+        tabIdIndex += 1;
+      }
     }
 
     // Creates a tab then fills monaco with specified content
@@ -143,7 +143,6 @@ class _TabState extends State<MonacoTabs> {
         File("bin/tabs/${tab.id}.txt").delete();
         g['tabData'].remove(tab.id);
         saveData(g);
-        monacoEditorKeys[tab.id].tabStillOpen(false)
 
         // Set the new current tab
         // _controller.currentTab = 0;

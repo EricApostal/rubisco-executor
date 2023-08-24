@@ -181,12 +181,14 @@ class _CustomTabState extends State<CustomTab> {
       child: Padding(
           padding: const EdgeInsets.only(right: 8.0),
           child: Listener(
-              onPointerDown: (PointerDownEvent event) {
-                print("pointer is indeed down");
-                widget.onClose();
-              },
-              onPointerUp: (PointerUpEvent event) {},
-              child: const HoverableContainer())),
+            onPointerDown: (PointerDownEvent event) {
+              print("pointer is indeed down");
+            },
+            onPointerUp: (PointerUpEvent event) {
+              widget.onClose();
+            },
+            child: const HoverableContainer(),
+          )),
     );
   }
 
