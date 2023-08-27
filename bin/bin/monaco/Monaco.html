@@ -1,294 +1,542 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-		<style type="text/css">
-			html,
-			body {
-				width: 100%;
-				height: 100%;
-				margin: 0;
-				padding: 0;
-				overflow: hidden;
+
+<head>
+	<style type="text/css">
+		html,
+		body {
+			width: 100%;
+			height: 100%;
+			margin: 0;
+			padding: 0;
+			overflow: hidden;
+		}
+	</style>
+	<meta charset="utf-8" />
+	<title></title>
+</head>
+
+<body>
+	<div id="container" style="width:100%;height:100%;"></div>
+	<script src="vs/loader.js"></script>
+	<script src="vs/themesLoader.js"></script>
+	<script type="module" src="./index.js"></script>
+
+	<script type="text/javascript">
+		require.config({ paths: { 'vs': 'vs' } });
+		// API
+		var GetText;
+		var SetText;
+		var SetScroll;
+		var ShowErr;
+		var Refresh;
+		var SetTheme;
+
+		// Enablers
+		var SwitchMinimap;
+		var SwitchReadonly;
+		var SwitchRenderWhitespace;
+		var SwitchLinks;
+		var SwitchLineHeight;
+		var SwitchFontSize;
+		var SwitchFolding;
+		var SwitchAutoIndent;
+		var SwitchFontFamily;
+		var SwitchFontLigatures;
+		var AddIntellisense;
+
+		// Variables
+		var editor;
+		var Proposals = [];
+
+		require(['vs/editor/editor.main'], function () {
+			function getDependencyProposals() {
+				return Proposals;
 			}
-		</style>
-        <meta charset="utf-8" />
-        <title></title>
-    </head>
-    <body>
-		<div id="container" style="width:100%;height:100%;"></div>
-        <script src="vs/loader.js"></script>
-        <script src="vs/themesLoader.js"></script>
-		<script type="text/javascript">
-			require.config({ paths: { 'vs': 'vs' } });
-			// API
-			var GetText;
-			var SetText;
-			var SetScroll;
-			var ShowErr;
-			var Refresh;
-			var SetTheme;
-			
-			// Enablers
-			var SwitchMinimap;
-			var SwitchReadonly;
-			var SwitchRenderWhitespace;
-			var SwitchLinks;
-			var SwitchLineHeight;
-			var SwitchFontSize;
-			var SwitchFolding;
-			var SwitchAutoIndent;
-			var SwitchFontFamily;
-			var SwitchFontLigatures;
-			var AddIntellisense;
-			
-			// Variables
-			var editor;
-			var Proposals = [];
-			
-			require(['vs/editor/editor.main'], function () {
-				function getDependencyProposals() {
-					return Proposals;
-				}
-				
-				monaco.languages.registerCompletionItemProvider('lua', {
-					provideCompletionItems: function(model, position) {
-						return getDependencyProposals();
-					}
-				});
-				
-				monaco.editor.defineTheme('darkTheme', {
-					base: 'vs-dark',
-					inherit: true,
-					rules: [
-						{ token: 'global', foreground: '43F4FF', fontStyle: "bold" },
-						{ token: 'keyword', foreground: 'ff5370', fontStyle: "bold" },
-						{ token: 'comment', foreground: '546e7a' },
-						{ token: 'number', foreground: 'ffc600' },
-						{ token: 'string', foreground: 'c3e88d' },
-						{ token: 'custom', foreground: 'ffcb6b', fontStle: "bold" }
-					],
-					colors: {
-						'editor.background': '#13141A'
-					}
-				});
-				
-				editor = monaco.editor.create(document.getElementById('container'), {
-					language: 'lua',
-					theme: 'darkTheme',
-					acceptSuggestionOnEnter: "smart",
-					suggestOnTriggerCharacters: true,
-					suggestSelection: "recentlyUsed",
-					folding: true,
-					wordBasedSuggestions : true,
-					scrollbar: {
-						verticalHasArrows: true,
-					},
-					minimap: {
-						enabled: false,
-					},
-					showFoldingControls: "always",
-					smoothScrolling: true,
-					contextmenu: true
-				});
-				
-				window.onresize = function() {
-					editor.layout();
-				};
-				
-				GetText = function() {
-					return editor.getValue();
-				}
-				
-				SetText = function(x) {
-					editor.setValue(x);
-				}
 
-				SetTheme = function(themeName) {
-					monaco.editor.setTheme(themeName)
-				}
-				
-				SwitchMinimap = function(flag) {
-					editor.updateOptions({
-						minimap: {
-							enabled: flag,
-						}
-					});
-				}
-				
-				SwitchReadonly = function(flag) {
-					editor.updateOptions({
-						readOnly: flag,
-					});
-				}
-				
-				SwitchRenderWhitespace = function(op) {
-					editor.updateOptions({
-						renderWhitespace: op,
-					});
-				}
-				
-				SwitchLinks = function(flag) {
-					editor.updateOptions({
-						links: flag,
-					});
-				}
-				
-				SwitchLineHeight = function(num) {
-					editor.updateOptions({
-						lineHeight: num,
-					});
-				}
-				
-				SwitchFontSize = function(num) {
-					editor.updateOptions({
-						fontSize: num,
-					});
-				}
-				
-				SwitchFolding = function(flag) {
-					editor.updateOptions({
-						folding: flag,
-					});
-				}
-				
-				SwitchAutoIndent = function(flag) {
-					editor.updateOptions({
-						autoIndent: flag,
-					});
-				}
-				
-				SwitchFontFamily = function(name) {
-					editor.updateOptions({
-						fontFamily: name,
-					});
-				}
-				
-				SwitchFontLigatures = function(flag) {
-					editor.updateOptions({
-						fontLigatures: flag,
-					});
-				}
-				
-				
-				ShowErr = function(line, column, endline, endcolumn, errMessage) {
-					editor.revealPositionInCenter({ lineNumber: line, column: column});
-					editor.deltaDecorations([], [
-						{ 
-							range: new monaco.Range(line, column, endline, endcolumn), 
-							options: { 
-								inlineClassName: 'squiggly-error',
-								hoverMessage: {
-									value: errMessage,
-								}
-							},
-						},
-					]);
-				}
-				
-				AddIntellisense = function(l, k, d, i) {
-					var t;
-					switch(k)
-					{
-						case "Class":
-							t = monaco.languages.CompletionItemKind.Class;
-							break;
-						case "Color":
-							t = monaco.languages.CompletionItemKind.Color;
-							break;
-						case "Constructor":
-							t = monaco.languages.CompletionItemKind.Constructor;
-							break;
-						case "Enum":
-							t = monaco.languages.CompletionItemKind.Enum;
-							break;
-						case "Field":
-							t = monaco.languages.CompletionItemKind.Field;
-							break;
-						case "File":
-							t = monaco.languages.CompletionItemKind.File;
-							break;
-						case "Folder":
-							t = monaco.languages.CompletionItemKind.Folder;
-							break;
-						case "Function":
-							t = monaco.languages.CompletionItemKind.Function;
-							break;
-						case "Interface":
-							t = monaco.languages.CompletionItemKind.Interface;
-							break;
-						case "Keyword":
-							t = monaco.languages.CompletionItemKind.Keyword;
-							break;
-						case "Method":
-							t = monaco.languages.CompletionItemKind.Method;
-							break;
-						case "Module":
-							t = monaco.languages.CompletionItemKind.Module;
-							break;
-						case "Property":
-							t = monaco.languages.CompletionItemKind.Property;
-							break;
-						case "Reference":
-							t = monaco.languages.CompletionItemKind.Reference;
-							break;
-						case "Snippet":
-							t = monaco.languages.CompletionItemKind.Snippet;
-							break;
-						case "Text":
-							t = monaco.languages.CompletionItemKind.Text;
-							break;
-						case "Unit":
-							t = monaco.languages.CompletionItemKind.Unit;
-							break;
-						case "Value":
-							t = monaco.languages.CompletionItemKind.Value;
-							break;
-						case "Variable":
-							t = monaco.languages.CompletionItemKind.Variable;
-							break;
-					}
-					
-					Proposals.push({
-						label: l,
-						kind: t,
-						detail: d,
-						insertText: i
-					});
-				}
-				
-				SetScroll = function(line) {
-					editor.revealLineInCenter({ lineNumber: line});
-				}
-
-				async function load() {
-
-					for (const Key of ["_G", "_VERSION", "Enum", "game", "plugin", "shared", "script", "workspace", "DebuggerManager", "elapsedTime", "LoadLibrary", "PluginManager", "settings", "tick", "time", "typeof", "UserSettings"])
-						AddIntellisense(Key, "Keyword", Key, Key);
-
-					for (const Key of ["and", "break", "do", "else", "elseif", "end", "false", "for", "function", "if", "in", "local", "nil", "not", "or", "repeat", "return", "then", "true", "until", "while"])
-						AddIntellisense(Key, "Variable", Key, Key);
-
-					for (const Key of ["math.abs", "math.acos", "math.asin", "math.atan", "math.atan2", "math.ceil", "math.cos", "math.cosh", "math.deg", "math.exp", "math.floor", "math.fmod", "math.frexp", "math.huge", "math.ldexp", "math.log", "math.max", "math.min", "math.modf", "math.pi", "math.pow", "math.rad", "math.random", "math.randomseed", "math.sin", "math.sinh", "math.sqrt", "math.tan", "math.tanh", "table.concat", "table.foreach", "table.foreachi", "table.sort", "table.insert", "table.remove", "Color3.new", "Instance.new", "BrickColor.new", "Vector3.new", "Vector2.new", "debug.gethook", "debug.getinfo", "debug.getlocal", "debug.getmetatable", "debug.getregistry", "debug.getupvalue", "debug.getuservalue", "debug.sethook", "debug.setlocal", "debug.setmetatable", "debug.setupvalue", "debug.setuservalue", "debug.traceback", "debug.upvalueid", "debug.upvaluejoin", "string.byte", "string.char", "string.dump", "string.find", "string.format", "string.gmatch", "string.gsub", "string.len", "string.lower", "string.match", "string.rep", "string.reverse", "string.sub", "string.upper", "coroutine.create", "coroutine.resume", "coroutine.running", "coroutine.status", "coroutine.wrap", "coroutine.yield"])
-						AddIntellisense(Key, "Method", Key, Key);
-
-					for (const Key of ["Drawing", "debug", "Instance", "Color3", "Vector3", "Vector2", "BrickColor", "math", "table", "string", "coroutine", "Humanoid", "ClickDetector", "LocalScript", "Model", "ModuleScript", "Mouse", "Part", "Player", "Script", "Tool", "RunService", "UserInputService", "Workspace"])
-						AddIntellisense(Key, "Class", Key, Key);
-
-					for (const Key of ["print", "warn", "wait", "Websocket.OnClose", "Websocket.connect", "WebSocket:Close", "WebSocket.OnMessage", "autoexec", "setthreadcontext", "isluau", "getexecutorname", "getallthreads", "identifyexecutor", "info", "gethwid", "saveinstance", "getnamecallmethod", "setnamecallmethod", "setfflag", "setclipboard", "dumpstring", "islclosure", "mousemoveabs", "checkcaller", "mousemoverel", "mousescroll", "mouse2release", "mouse2press", "mouse2click", "mouse1release", "mouse1press", "mouse1click", "getsenv", "getrawmetatable", "setrawmetatable", "isrbxactive", "keyrelease", "keypress", "setreadonly", "isreadonly", "getscriptclosure", "getscriptclosure", "getscripthash", "printidentity", "assert", "collectgarbage", "error", "getfenv", "getmetatable", "setmetatable", "ipairs", "loadfile", "loadstring", "newproxy", "next", "pairs", "pcall", "spawn", "rawequal", "rawget", "rawset", "select", "tonumber", "tostring", "type", "unpack", "xpcall", "delay", "stats", "getscriptclosure", ":Remove()", ":BreakJoints()", ":GetChildren()", ":FindFirstChild()", ":FireServer()", ":InvokeServer()", ":ClearAllChildren()", ":Clone()", ":Destroy()", ":FindFirstAncestor()", ":FindFirstAncestorOfClass()", ":FindFirstAncestorWhichIsA()", ":FindFirstChildOfClass()", ":FindFirstChildWhichIsA()", ":GetDebugId()", ":GetDescendants()", ":GetFullName()", ":IsA()", ":GetPropertyChangedSignal()", ":IsAncestorOf()", ":IsDescendantOf()", ":WaitForChild()", ":Connect()", ":AncestryChanged()", ":Changed()", ":ChildAdded()", ":ChildRemoved()", ":DescendantAdded()", ":DescendantRemoving()", ":GetService()", ":GetObjects()", ":HttpGet()", ":Wait()"])
-						AddIntellisense(Key, "Function", Key, Key.includes(":") ? Key.substring(1, Key.length) : Key);
-
-					for (const Key of ["Visible", "Color", "Transparency", "Thickness", "From", "To", "Text", "Size", "Center", "Outline", "OutlineColor", "Position", "TextBounds", "Font", "Data", "Rounding", "NumSides", "Radius", "Filled", "PointA", "PointB", "PointC", "PointD"])
-						AddIntellisense(Key, "Property", "Drawing Library");
-
-				}
-				load();
-				
-				Refresh = function() {
-					var text = getText();
-					setText("");
-					editor.trigger('keyboard', 'type', {text: text});
+			monaco.languages.registerCompletionItemProvider('lua', {
+				provideCompletionItems: function (model, position) {
+					return getDependencyProposals();
 				}
 			});
-		</script>
-    </body>
+
+			const themeData = {
+				"base": "vs-dark",
+				"inherit": true,
+				"rules": [
+					{
+						"background": "2D2D2D",
+						"token": ""
+					},
+					{
+						"foreground": "999999",
+						"token": "comment"
+					},
+					{
+						"foreground": "cccccc",
+						"token": "keyword.operator.class"
+					},
+					{
+						"foreground": "cccccc",
+						"token": "constant.other"
+					},
+					{
+						"foreground": "cccccc",
+						"token": "source.php.embedded.line"
+					},
+					{
+						"foreground": "f2777a",
+						"token": "variable"
+					},
+					{
+						"foreground": "f2777a",
+						"token": "support.other.variable"
+					},
+					{
+						"foreground": "f2777a",
+						"token": "string.other.link"
+					},
+					{
+						"foreground": "f2777a",
+						"token": "entity.name.tag"
+					},
+					{
+						"foreground": "f2777a",
+						"token": "entity.other.attribute-name"
+					},
+					{
+						"foreground": "f2777a",
+						"token": "meta.tag"
+					},
+					{
+						"foreground": "f2777a",
+						"token": "declaration.tag"
+					},
+					{
+						"foreground": "f2777a",
+						"token": "markup.deleted.git_gutter"
+					},
+					{
+						"foreground": "f99157",
+						"token": "constant.numeric"
+					},
+					{
+						"foreground": "f99157",
+						"token": "constant.language"
+					},
+					{
+						"foreground": "f99157",
+						"token": "support.constant"
+					},
+					{
+						"foreground": "f99157",
+						"token": "constant.character"
+					},
+					{
+						"foreground": "f99157",
+						"token": "variable.parameter"
+					},
+					{
+						"foreground": "f99157",
+						"token": "punctuation.section.embedded"
+					},
+					{
+						"foreground": "f99157",
+						"token": "keyword.other.unit"
+					},
+					{
+						"foreground": "ffcc66",
+						"token": "entity.name.class"
+					},
+					{
+						"foreground": "ffcc66",
+						"token": "entity.name.type.class"
+					},
+					{
+						"foreground": "ffcc66",
+						"token": "support.type"
+					},
+					{
+						"foreground": "ffcc66",
+						"token": "support.class"
+					},
+					{
+						"foreground": "99cc99",
+						"token": "string"
+					},
+					{
+						"foreground": "99cc99",
+						"token": "constant.other.symbol"
+					},
+					{
+						"foreground": "99cc99",
+						"token": "entity.other.inherited-class"
+					},
+					{
+						"foreground": "99cc99",
+						"token": "markup.heading"
+					},
+					{
+						"foreground": "99cc99",
+						"token": "markup.inserted.git_gutter"
+					},
+					{
+						"foreground": "66cccc",
+						"token": "keyword.operator"
+					},
+					{
+						"foreground": "66cccc",
+						"token": "constant.other.color"
+					},
+					{
+						"foreground": "6699cc",
+						"token": "entity.name.function"
+					},
+					{
+						"foreground": "6699cc",
+						"token": "meta.function-call"
+					},
+					{
+						"foreground": "6699cc",
+						"token": "support.function"
+					},
+					{
+						"foreground": "6699cc",
+						"token": "keyword.other.special-method"
+					},
+					{
+						"foreground": "6699cc",
+						"token": "meta.block-level"
+					},
+					{
+						"foreground": "6699cc",
+						"token": "markup.changed.git_gutter"
+					},
+					{
+						"foreground": "cc99cc",
+						"token": "keyword"
+					},
+					{
+						"foreground": "cc99cc",
+						"token": "storage"
+					},
+					{
+						"foreground": "cc99cc",
+						"token": "storage.type"
+					},
+					{
+						"foreground": "cc99cc",
+						"token": "entity.name.tag.css"
+					},
+					{
+						"foreground": "cdcdcd",
+						"background": "f2777a",
+						"token": "invalid"
+					},
+					{
+						"foreground": "cdcdcd",
+						"background": "99cccc",
+						"token": "meta.separator"
+					},
+					{
+						"foreground": "cdcdcd",
+						"background": "cc99cc",
+						"token": "invalid.deprecated"
+					},
+					{
+						"foreground": "ffffff",
+						"token": "markup.inserted.diff"
+					},
+					{
+						"foreground": "ffffff",
+						"token": "markup.deleted.diff"
+					},
+					{
+						"foreground": "ffffff",
+						"token": "meta.diff.header.to-file"
+					},
+					{
+						"foreground": "ffffff",
+						"token": "meta.diff.header.from-file"
+					},
+					{
+						"foreground": "718c00",
+						"token": "markup.inserted.diff"
+					},
+					{
+						"foreground": "718c00",
+						"token": "meta.diff.header.to-file"
+					},
+					{
+						"foreground": "c82829",
+						"token": "markup.deleted.diff"
+					},
+					{
+						"foreground": "c82829",
+						"token": "meta.diff.header.from-file"
+					},
+					{
+						"foreground": "ffffff",
+						"background": "4271ae",
+						"token": "meta.diff.header.from-file"
+					},
+					{
+						"foreground": "ffffff",
+						"background": "4271ae",
+						"token": "meta.diff.header.to-file"
+					},
+					{
+						"foreground": "3e999f",
+						"fontStyle": "italic",
+						"token": "meta.diff.range"
+					}
+				],
+				"colors": {
+					"editor.foreground": "#CCCCCC",
+					"editor.background": "#13141A",
+					"editor.selectionBackground": "#515151",
+					"editor.lineHighlightBackground": "#191B24",
+					"editorCursor.foreground": "#CCCCCC",
+					"editorWhitespace.foreground": "#6A6A6A"
+				}
+			}
+
+			monaco.editor.defineTheme('darkTheme', themeData);
+
+			editor = monaco.editor.create(document.getElementById('container'), {
+				language: 'lua',
+				theme: 'darkTheme',
+				acceptSuggestionOnEnter: "smart",
+				suggestOnTriggerCharacters: true,
+				suggestSelection: "recentlyUsed",
+				folding: true,
+				wordBasedSuggestions: true,
+				cursorSmoothCaretAnimation: true,
+				cursorBlinking: "smooth",
+				scrollbar: {
+					verticalHasArrows: true,
+				},
+				minimap: {
+					enabled: false,
+				},
+				showFoldingControls: "always",
+				smoothScrolling: true,
+				contextmenu: true
+			});
+
+			window.onresize = function () {
+				editor.layout();
+			};
+
+			GetText = function () {
+				return editor.getValue();
+			}
+
+			SetText = function (x) {
+				editor.setValue(x);
+			}
+
+			SetTheme = function (themeName) {
+				monaco.editor.setTheme(themeName)
+			}
+
+			SwitchMinimap = function (flag) {
+				editor.updateOptions({
+					minimap: {
+						enabled: flag,
+					}
+				});
+			}
+
+			SwitchReadonly = function (flag) {
+				editor.updateOptions({
+					readOnly: flag,
+				});
+			}
+
+			SwitchRenderWhitespace = function (op) {
+				editor.updateOptions({
+					renderWhitespace: op,
+				});
+			}
+
+			SwitchLinks = function (flag) {
+				editor.updateOptions({
+					links: flag,
+				});
+			}
+
+			SwitchLineHeight = function (num) {
+				editor.updateOptions({
+					lineHeight: num,
+				});
+			}
+
+			SwitchFontSize = function (num) {
+				editor.updateOptions({
+					fontSize: num,
+				});
+			}
+
+			SwitchFolding = function (flag) {
+				editor.updateOptions({
+					folding: flag,
+				});
+			}
+
+			SwitchAutoIndent = function (flag) {
+				editor.updateOptions({
+					autoIndent: flag,
+				});
+			}
+
+			SwitchFontFamily = function (name) {
+				editor.updateOptions({
+					fontFamily: name,
+				});
+			}
+
+			SwitchFontLigatures = function (flag) {
+				editor.updateOptions({
+					fontLigatures: flag,
+				});
+			}
+
+
+			ShowErr = function (line, column, endline, endcolumn, errMessage) {
+				editor.revealPositionInCenter({ lineNumber: line, column: column });
+				editor.deltaDecorations([], [
+					{
+						range: new monaco.Range(line, column, endline, endcolumn),
+						options: {
+							inlineClassName: 'squiggly-error',
+							hoverMessage: {
+								value: errMessage,
+							}
+						},
+					},
+				]);
+			}
+
+			AddIntellisense = function (l, k, d, i) {
+				var t;
+				switch (k) {
+					case "Class":
+						t = monaco.languages.CompletionItemKind.Class;
+						break;
+					case "Color":
+						t = monaco.languages.CompletionItemKind.Color;
+						break;
+					case "Constructor":
+						t = monaco.languages.CompletionItemKind.Constructor;
+						break;
+					case "Enum":
+						t = monaco.languages.CompletionItemKind.Enum;
+						break;
+					case "Field":
+						t = monaco.languages.CompletionItemKind.Field;
+						break;
+					case "File":
+						t = monaco.languages.CompletionItemKind.File;
+						break;
+					case "Folder":
+						t = monaco.languages.CompletionItemKind.Folder;
+						break;
+					case "Function":
+						t = monaco.languages.CompletionItemKind.Function;
+						break;
+					case "Interface":
+						t = monaco.languages.CompletionItemKind.Interface;
+						break;
+					case "Keyword":
+						t = monaco.languages.CompletionItemKind.Keyword;
+						break;
+					case "Method":
+						t = monaco.languages.CompletionItemKind.Method;
+						break;
+					case "Module":
+						t = monaco.languages.CompletionItemKind.Module;
+						break;
+					case "Property":
+						t = monaco.languages.CompletionItemKind.Property;
+						break;
+					case "Reference":
+						t = monaco.languages.CompletionItemKind.Reference;
+						break;
+					case "Snippet":
+						t = monaco.languages.CompletionItemKind.Snippet;
+						break;
+					case "Text":
+						t = monaco.languages.CompletionItemKind.Text;
+						break;
+					case "Unit":
+						t = monaco.languages.CompletionItemKind.Unit;
+						break;
+					case "Value":
+						t = monaco.languages.CompletionItemKind.Value;
+						break;
+					case "Variable":
+						t = monaco.languages.CompletionItemKind.Variable;
+						break;
+				}
+
+				Proposals.push({
+					label: l,
+					kind: t,
+					detail: d,
+					insertText: i
+				});
+			}
+
+			SetScroll = function (line) {
+				editor.revealLineInCenter({ lineNumber: line });
+			}
+
+			async function load() {
+
+				for (const Key of ["_G", "_VERSION", "Enum", "game", "plugin", "shared", "script", "workspace", "DebuggerManager", "elapsedTime", "LoadLibrary", "PluginManager", "settings", "tick", "time", "typeof", "UserSettings"])
+					AddIntellisense(Key, "Keyword", Key, Key);
+
+				for (const Key of ["and", "break", "do", "else", "elseif", "end", "false", "for", "function", "if", "in", "local", "nil", "not", "or", "repeat", "return", "then", "true", "until", "while"])
+					AddIntellisense(Key, "Variable", Key, Key);
+
+				for (const Key of ["math.abs", "math.acos", "math.asin", "math.atan", "math.atan2", "math.ceil", "math.cos", "math.cosh", "math.deg", "math.exp", "math.floor", "math.fmod", "math.frexp", "math.huge", "math.ldexp", "math.log", "math.max", "math.min", "math.modf", "math.pi", "math.pow", "math.rad", "math.random", "math.randomseed", "math.sin", "math.sinh", "math.sqrt", "math.tan", "math.tanh", "table.concat", "table.foreach", "table.foreachi", "table.sort", "table.insert", "table.remove", "Color3.new", "Instance.new", "BrickColor.new", "Vector3.new", "Vector2.new", "debug.gethook", "debug.getinfo", "debug.getlocal", "debug.getmetatable", "debug.getregistry", "debug.getupvalue", "debug.getuservalue", "debug.sethook", "debug.setlocal", "debug.setmetatable", "debug.setupvalue", "debug.setuservalue", "debug.traceback", "debug.upvalueid", "debug.upvaluejoin", "string.byte", "string.char", "string.dump", "string.find", "string.format", "string.gmatch", "string.gsub", "string.len", "string.lower", "string.match", "string.rep", "string.reverse", "string.sub", "string.upper", "coroutine.create", "coroutine.resume", "coroutine.running", "coroutine.status", "coroutine.wrap", "coroutine.yield"])
+					AddIntellisense(Key, "Method", Key, Key);
+
+				for (const Key of ["Drawing", "debug", "Instance", "Color3", "Vector3", "Vector2", "BrickColor", "math", "table", "string", "coroutine", "Humanoid", "ClickDetector", "LocalScript", "Model", "ModuleScript", "Mouse", "Part", "Player", "Script", "Tool", "RunService", "UserInputService", "Workspace"])
+					AddIntellisense(Key, "Class", Key, Key);
+
+				for (const Key of ["print", "warn", "wait", "Websocket.OnClose", "Websocket.connect", "WebSocket:Close", "WebSocket.OnMessage", "autoexec", "setthreadcontext", "isluau", "getexecutorname", "getallthreads", "identifyexecutor", "info", "gethwid", "saveinstance", "getnamecallmethod", "setnamecallmethod", "setfflag", "setclipboard", "dumpstring", "islclosure", "mousemoveabs", "checkcaller", "mousemoverel", "mousescroll", "mouse2release", "mouse2press", "mouse2click", "mouse1release", "mouse1press", "mouse1click", "getsenv", "getrawmetatable", "setrawmetatable", "isrbxactive", "keyrelease", "keypress", "setreadonly", "isreadonly", "getscriptclosure", "getscriptclosure", "getscripthash", "printidentity", "assert", "collectgarbage", "error", "getfenv", "getmetatable", "setmetatable", "ipairs", "loadfile", "loadstring", "newproxy", "next", "pairs", "pcall", "spawn", "rawequal", "rawget", "rawset", "select", "tonumber", "tostring", "type", "unpack", "xpcall", "delay", "stats", "getscriptclosure", ":Remove()", ":BreakJoints()", ":GetChildren()", ":FindFirstChild()", ":FireServer()", ":InvokeServer()", ":ClearAllChildren()", ":Clone()", ":Destroy()", ":FindFirstAncestor()", ":FindFirstAncestorOfClass()", ":FindFirstAncestorWhichIsA()", ":FindFirstChildOfClass()", ":FindFirstChildWhichIsA()", ":GetDebugId()", ":GetDescendants()", ":GetFullName()", ":IsA()", ":GetPropertyChangedSignal()", ":IsAncestorOf()", ":IsDescendantOf()", ":WaitForChild()", ":Connect()", ":AncestryChanged()", ":Changed()", ":ChildAdded()", ":ChildRemoved()", ":DescendantAdded()", ":DescendantRemoving()", ":GetService()", ":GetObjects()", ":HttpGet()", ":Wait()"])
+					AddIntellisense(Key, "Function", Key, Key.includes(":") ? Key.substring(1, Key.length) : Key);
+
+				for (const Key of ["Visible", "Color", "Transparency", "Thickness", "From", "To", "Text", "Size", "Center", "Outline", "OutlineColor", "Position", "TextBounds", "Font", "Data", "Rounding", "NumSides", "Radius", "Filled", "PointA", "PointB", "PointC", "PointD"])
+					AddIntellisense(Key, "Property", "Drawing Library");
+				for (const Key of ["hookfunction"])
+					AddIntellisense(Key, "Property", "misc");
+
+					const loopSkeleton = {
+						label: 'for loop',
+						kind: monaco.languages.CompletionItemKind.Snippet,
+						insertText: [
+							'for ${1:i} = ${2:1}, ${3:10} do',
+							'\t${0:-- your code here}',
+							'end'
+						].join('\n'),
+						insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+						documentation: 'Inserts a for-loop skeleton'
+					};
+        			Proposals.push(loopSkeleton);
+
+			}
+			load();
+
+			Refresh = function () {
+				var text = getText();
+				setText("");
+				editor.trigger('keyboard', 'type', { text: text });
+			}
+		});
+	</script>
+</body>
+
 </html>
