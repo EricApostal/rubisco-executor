@@ -73,7 +73,7 @@ dependencies:
   url_launcher: ^6.1.12
 
 # To apply the icon stuffs, run
-# flutter pub run flutter_launcher_icons -f pubspec.yaml
+# dart run flutter_launcher_icons -f pubspec.yaml
 flutter_launcher_icons:
   windows:
     generate: true
