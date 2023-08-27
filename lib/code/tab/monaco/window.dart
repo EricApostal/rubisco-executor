@@ -72,24 +72,25 @@ class _TabState extends State<MonacoTabs> {
     }
 
     String generateTabId() {
-      // return "t ${Random().nextInt(100) + 50}";
-      var tabIdList = [];
-      g['tabData'].forEach((index, value) {
-        tabIdList.add(index);
-      });
+      return "t ${Random().nextInt(100000) + 10000}";
+      // var tabIdList = [];
+      // g['tabData'].forEach((index, value) {
+      //   tabIdList.add(index);
+      // });
 
-      num tabIdIndex = 1;
-      while (true) {
-        if (!tabIdList.contains("t $tabIdIndex")) {
-          return "t $tabIdIndex";
-        }
-        tabIdIndex += 1;
-      }
+      // num tabIdIndex = 1;
+      // while (true) {
+      //   if (!tabIdList.contains("t $tabIdIndex")) {
+      //     return "t $tabIdIndex";
+      //   }
+      //   tabIdIndex += 1;
+      // }
     }
 
     // Creates a tab then fills monaco with specified content
-    addTabWithContent = (String content) async {
+    addTabWithContent = (String name, String content) async {
       String tabId = generateTabId();
+      g['tabData'][tabId] = {'name': name};
       if (setContentCallbacks[tabId] == null) {
         setContentCallbacks[tabId] = null;
       }
@@ -98,6 +99,7 @@ class _TabState extends State<MonacoTabs> {
         await Future.delayed(const Duration(milliseconds: 100));
       }
       setContentCallbacks[tabId](content);
+      
     };
 
     void initTabStates() async {
@@ -129,7 +131,7 @@ class _TabState extends State<MonacoTabs> {
   Widget buildTab(BuildContext context, BlossomTab<int> tab, bool isActive) {
     if (g['tabData'][tab.id] == null) {
       // crappy, but tends to work
-      g['tabData'][tab.id] = {'name': "Script 1"};
+      g['tabData'][tab.id] = {'name': "Script"};
       setScript(tab.id, "");
     }
 
@@ -203,7 +205,7 @@ class _TabState extends State<MonacoTabs> {
                         // Make tab ID
                         c = 't ${numericPart + 1}';
                         // Auto-generated tab name
-                        g['tabData'][c] = {'name': "Script ${numericPart + 1}"};
+                        g['tabData'][c] = {'name': "Script"};
                         setScript(c, "");
                         saveData(g);
                         setScript(c, "");

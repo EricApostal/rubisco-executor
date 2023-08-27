@@ -167,9 +167,10 @@ class MonacoWindowState extends State<MonacoWindow> {
       print(widget.tabID);
       // await Future.delayed(Duration(milliseconds: 0));
       // await _controller.executeScript('editor.setValue(`$escapedScript`)');
-      print("Script: ");
+      print("Is editor null?: ");
       print(await _controller.executeScript("editor.getValue();") == null);
       while ((await _controller.executeScript("editor.getValue();")) == null) {
+        print("Set content attempt...");
         await Future.delayed(const Duration(milliseconds: 250));
         await _controller.executeScript('editor.setValue(`$escapedScript`)');
       }

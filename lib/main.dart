@@ -4,6 +4,7 @@ import 'package:rubisco/code/executor.dart';
 import 'package:rubisco/cloud/script_search.dart';
 import 'package:rubisco/settings/settings.dart';
 import 'package:rubisco/misc/data_store.dart';
+import 'package:rubisco/misc/top_dropdowns.dart';
 import 'package:rubisco/session/globals.dart';
 import 'package:rubisco/key/key_system.dart';
 import 'package:rubisco/script/local_scripts.dart';
@@ -17,7 +18,6 @@ import 'package:flutter_acrylic/flutter_acrylic.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:aptabase_flutter/aptabase_flutter.dart';
 import 'package:csharp_rpc/csharp_rpc.dart';
-import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:fluent_ui/fluent_ui.dart' as fluent;
 
 late CsharpRpc shadowRPC;
@@ -244,6 +244,7 @@ class _SidebarState extends State<Sidebar> {
                 height: 45,
                 width: 55,
                 child: TextButton(
+                  style: const ButtonStyle(splashFactory: NoSplash.splashFactory),
                   onPressed: () {
                     setPage(pageIndex);
                   },
@@ -264,109 +265,6 @@ class _SidebarState extends State<Sidebar> {
   }
 }
 
-class DropDown extends StatefulWidget {
-  const DropDown({super.key});
-
-  @override
-  State<DropDown> createState() => _DropDownState();
-}
-
-class _DropDownState extends State<DropDown> {
-  final List<String> items = [
-    'Item1',
-    'Item2',
-    'Item3',
-    'Item4',
-    'Item5',
-    'Item6',
-    'Item7',
-    'Item8',
-  ];
-  String? selectedValue;
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: DropdownButtonHideUnderline(
-          child: DropdownButton2<String>(
-            isExpanded: true,
-            hint: Row(
-              children: [
-                const SizedBox(
-                  width: 4,
-                ),
-                Expanded(
-                  child: Text(
-                    "View",
-                    style: GoogleFonts.content(
-                      fontSize: 16,
-                      fontWeight: FontWeight.normal,
-                      color: const Color(0xFFC8C8C8),
-                    ),
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ),
-              ],
-            ),
-            items: items
-                .map((String item) => DropdownMenuItem<String>(
-                      value: item,
-                      child: Center(
-                        child: Text(
-                          item,
-                          style: GoogleFonts.content(
-                            fontSize: 16,
-                            fontWeight: FontWeight.normal,
-                            color: const Color(0xFFC8C8C8),
-                          ),
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                    ))
-                .toList(),
-            value: selectedValue,
-            onChanged: (value) {
-              setState(() {
-                selectedValue = value;
-              });
-            },
-            buttonStyleData: ButtonStyleData(
-              height: 100,
-              width: 160,
-              padding: const EdgeInsets.only(left: 14, right: 14),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(4),
-                color: const Color(0xFF222735),
-              ),
-              elevation: 2,
-            ),
-            iconStyleData: const IconStyleData(icon: SizedBox()),
-            dropdownStyleData: DropdownStyleData(
-              maxHeight: 200,
-              width: 200,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(4),
-                color: const Color(0xFF13141A),
-              ),
-              offset: const Offset(-20, 0),
-              scrollbarTheme: ScrollbarThemeData(
-                radius: const Radius.circular(40),
-                thickness: MaterialStateProperty.all(6),
-                thumbVisibility: MaterialStateProperty.all(true),
-              ),
-            ),
-            menuItemStyleData: const MenuItemStyleData(
-              height: 40,
-              padding: EdgeInsets.only(left: 14, right: 14),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
 class RubiscoFrame extends StatefulWidget {
   const RubiscoFrame({Key? key, required this.updateOpacity}) : super(key: key);
 
@@ -379,12 +277,19 @@ class RubiscoFrame extends StatefulWidget {
 class _RubiscoFrameState extends State<RubiscoFrame> {
   final _pageController = PageController();
   int selectedPage = 0;
+  bool explorerShown = true;
 
   void setPage(int newPage) {
     setState(() {
       selectedPage = newPage;
     });
     _pageController.jumpToPage(newPage);
+  }
+
+  void toggleExplorer() {
+    setState(() {
+      explorerShown = !explorerShown;
+    });
   }
 
   @override
@@ -402,16 +307,54 @@ class _RubiscoFrameState extends State<RubiscoFrame> {
                     child: MoveWindow(
                   child: Padding(
                     padding: const EdgeInsets.only(left: 10, top: 5),
-                    child: Text(
-                      "RUBISCO",
-                      style: GoogleFonts.istokWeb(
-                        fontSize: 24,
-                        color: Color.fromARGB(255, 218, 218, 218),
-                      ),
+                    child: Row(
+                      children: [
+                        Text(
+                          "RUBISCO",
+                          style: GoogleFonts.istokWeb(
+                            fontSize: 24,
+                            color: Color.fromARGB(255, 218, 218, 218),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 8, bottom: 4),
+                          child: Row(
+                            
+                            children: [
+                              // SizedBox(
+                              //   width: 70,
+                              //   height: 28,
+                              //   child: DropDown(
+                              //     name: "File",
+                              //     options: {
+                              //       "Open File": () {
+                              //         print("Open file!");
+                              //       },
+                              //       "Save File": () {
+                              //         print("save file moment");
+                              //       }
+                              //     },
+                              //   ),
+                              // ),
+                              SizedBox(
+                                width: 70,
+                                height: 28,
+                                child: DropDown(
+                                  name: "View",
+                                  options: {
+                                    "Explorer": () {
+                                      toggleExplorer();
+                                    }
+                                  },
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 )),
-                // Container(width: 70, height: 30, child: DropDown()),
                 const WindowButtons(),
               ],
             ),
@@ -436,7 +379,7 @@ class _RubiscoFrameState extends State<RubiscoFrame> {
                             child: Row(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                LocalScripts(),
+                                if (explorerShown) LocalScripts(),
                                 ExecutorWindow(),
                               ],
                             ),

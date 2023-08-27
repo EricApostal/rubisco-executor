@@ -4,7 +4,7 @@ import 'package:rubisco/session/globals.dart';
 import 'package:animated_toggle_switch/animated_toggle_switch.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:window_manager/window_manager.dart';
-import 'package:rubisco/Misc/data_store.dart';
+import 'package:rubisco/misc/data_store.dart';
 
 class SettingsSidebar extends StatefulWidget {
   final void Function(int) setPage;

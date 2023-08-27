@@ -70,6 +70,7 @@ dependencies:
   fluent_ui: ^4.7.3
   go_router: ^10.1.0
   debug_console: ^0.0.1
+  url_launcher: ^6.1.12
 
 # To apply the icon stuffs, run
 # flutter pub run flutter_launcher_icons -f pubspec.yaml

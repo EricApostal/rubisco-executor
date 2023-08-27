@@ -1,6 +1,6 @@
 import 'dart:io';
-import 'dart:ffi';
 
+import 'dart:ffi';
 import 'package:ffi/ffi.dart';
 import 'package:win32/win32.dart';
 
@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:path/path.dart' as path;
+import 'package:url_launcher/url_launcher.dart';
 
 import 'package:rubisco/code/tab/monaco/window.dart';
 
@@ -50,20 +51,80 @@ class FolderIcon extends StatefulWidget {
       required this.fileItem,
       required this.onDoubleTap,
       required this.iconColor,
-      required this.textColor})
+      required this.textColor,
+      required this.context})
       : super(key: key);
 
   final FileItem fileItem;
   final VoidCallback onDoubleTap;
   final Color iconColor;
   final Color textColor;
+  final BuildContext context;
 
   @override
   State<FolderIcon> createState() => _FolderIconState();
 }
 
+class CustomMenuItem {
+  final String text;
+  final Function onTap;
+
+  CustomMenuItem({required this.text, required this.onTap});
+}
+
 class _FolderIconState extends State<FolderIcon> {
   bool _isHovered = false;
+
+  void _showContextMenu(TapDownDetails details) {
+    final RenderBox overlay =
+        Overlay.of(widget.context)!.context.findRenderObject() as RenderBox;
+    print("PATH: ");
+    print(widget.fileItem.entity.path);
+    final items = <CustomMenuItem>[
+      CustomMenuItem(
+        text: 'Open in File Explorer',
+        onTap: () {
+          // Implement the logic to open the folder in the native file explorer
+          if (widget.fileItem.isFolder) {
+            if (widget.fileItem.entity.path != "scripts") {
+              launch('file://${widget.fileItem.entity.path}');
+
+            } else {
+              launch('${Directory.current.path}\\scripts');
+            }
+          } else {
+            launch('file://${widget.fileItem.entity.parent.path}');
+          }
+        },
+      ),
+      // Add more CustomMenuItem objects here
+    ];
+
+    showMenu(
+      context: widget.context,
+      position: RelativeRect.fromLTRB(
+        details.globalPosition.dx,
+        details.globalPosition.dy,
+        overlay.size.width - details.globalPosition.dx,
+        overlay.size.height - details.globalPosition.dy,
+      ),
+      items: items.map((item) {
+        return PopupMenuItem<String>(
+          height: 10,
+          value: item.text,
+          child: Text(
+            item.text,
+            style: TextStyle(color: Colors.black), // Style the text color
+          ),
+        );
+      }).toList(),
+    ).then((value) {
+      if (value != null) {
+        final item = items.firstWhere((element) => element.text == value);
+        item.onTap();
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -72,8 +133,12 @@ class _FolderIconState extends State<FolderIcon> {
           ? widget.onDoubleTap
           : () async {
               addTabWithContent(
+                widget.fileItem.name,
                   await File(widget.fileItem.entity.path).readAsString());
             },
+      onSecondaryTapDown: (details) {
+        _showContextMenu(details);
+      },
       child: MouseRegion(
         onEnter: (_) => setState(() => _isHovered = true),
         onExit: (_) => setState(() => _isHovered = false),
@@ -298,6 +363,7 @@ class _LocalScriptsState extends State<LocalScripts> {
               Row(
                 children: [
                   IconButton(
+                    style: const ButtonStyle(splashFactory: NoSplash.splashFactory),
                       icon: const Icon(Icons.arrow_back), onPressed: _goBack),
                   Expanded(
                     child: SingleChildScrollView(
@@ -331,6 +397,7 @@ class _LocalScriptsState extends State<LocalScripts> {
                         : path.basename(fileEntity.path);
 
                     return FolderIcon(
+                      context: context,
                       fileItem: FileItem(
                         name: displayName,
                         isFolder: isFolder,
