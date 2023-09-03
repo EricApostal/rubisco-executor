@@ -327,7 +327,7 @@ class _RubiscoFrameState extends State<RubiscoFrame> {
                           child: Container(),
                         ),
                         Text(
-                          "v2.0.1",
+                          "v1.1.0",
                           style: GoogleFonts.inriaSans(
                               fontWeight: FontWeight.w800,
                               fontSize: 24,
