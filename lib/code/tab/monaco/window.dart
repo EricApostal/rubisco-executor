@@ -10,6 +10,7 @@ import 'dart:math';
 import 'dart:io';
 
 late Function addTabWithContent;
+late Function getCurrentTabContent;
 
 // ignore: must_be_immutable
 class MonacoTabs extends StatefulWidget {
@@ -99,7 +100,10 @@ class _TabState extends State<MonacoTabs> {
         await Future.delayed(const Duration(milliseconds: 100));
       }
       setContentCallbacks[tabId](content);
-      
+    };
+
+    getCurrentTabContent = () {
+      return File('bin/tabs/${editorTabController.currentTab}.txt').readAsStringSync();
     };
 
     void initTabStates() async {
@@ -224,11 +228,10 @@ class _TabState extends State<MonacoTabs> {
             monacoEditorKeys.putIfAbsent(
                 tab.id, () => GlobalKey<MonacoWindowState>());
             return MonacoWindow(
-                        key: monacoEditorKeys[tab.id],
-                        tabController: _controller,
-                        tabID: tab.id,
-                        shadowRPC: widget.shadowRPC,
-                      
+              key: monacoEditorKeys[tab.id],
+              tabController: _controller,
+              tabID: tab.id,
+              shadowRPC: widget.shadowRPC,
             );
           },
         ),

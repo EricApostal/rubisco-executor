@@ -72,6 +72,8 @@ dependencies:
   debug_console: ^0.0.1
   url_launcher: ^6.1.12
   loading_animation_widget: ^1.2.0+4
+  open_file: ^3.3.2
+  file_picker: ^5.2.10
 
 # To apply the icon stuffs, run
 # dart run flutter_launcher_icons -f pubspec.yaml

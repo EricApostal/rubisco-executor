@@ -1,7 +1,9 @@
 import 'dart:io';
+import 'package:path/path.dart';
 
 import 'package:rubisco/code/executor.dart';
 import 'package:rubisco/cloud/script_search.dart';
+import 'package:rubisco/code/tab/monaco/window.dart';
 import 'package:rubisco/settings/settings.dart';
 import 'package:rubisco/misc/data_store.dart';
 import 'package:rubisco/misc/top_dropdowns.dart';
@@ -20,6 +22,7 @@ import 'package:aptabase_flutter/aptabase_flutter.dart';
 import 'package:csharp_rpc/csharp_rpc.dart';
 import 'package:fluent_ui/fluent_ui.dart' as fluent;
 import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'package:file_picker/file_picker.dart';
 
 late CsharpRpc shadowRPC;
 void main() async {
@@ -615,11 +618,28 @@ class BottomBar extends StatelessWidget {
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _buildBottomButton("Open", () {
-                print("open");
+              _buildBottomButton("Open", () async {
+                print("opening file");
+                FilePickerResult? result = await FilePicker.platform.pickFiles();
+
+                if (result != null) {
+                  File file = File(result.files.single.path ?? "");
+                  addTabWithContent(basename(file.path), file.readAsStringSync());
+                } else {
+                  // User canceled the picker
+                }
+                
               }),
-              _buildBottomButton("Save", () {
-                print("save");
+              _buildBottomButton("Save", () async {
+
+                String? outputFile = await FilePicker.platform.saveFile(
+                dialogTitle: 'Please select an output file:',
+                fileName: 'script.txt',
+              );
+              File(outputFile ?? "").writeAsStringSync(getCurrentTabContent());
+              if (outputFile == null) {
+                // User canceled the picker
+              }
               }),
               Expanded(child: Container()),
               RunButton()

@@ -12,7 +12,9 @@ import 'package:rubisco/misc/data_store.dart';
 
 final navigatorKey = GlobalKey<NavigatorState>();
 bool webviewInitialized = false;
+
 Map<dynamic, dynamic> setContentCallbacks = {};
+late BlossomTabController editorTabController;
 
 String getScript(String tabID) {
   if (File('bin/tabs/${tabID}.txt').existsSync()) {
@@ -179,6 +181,7 @@ class MonacoWindowState extends State<MonacoWindow> {
   }
 
   Future<void> initPlatformState() async {
+    editorTabController = widget.tabController;
     try {
       await _controller.initialize();
       _controller.url.listen((url) {
