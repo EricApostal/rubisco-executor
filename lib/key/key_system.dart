@@ -269,9 +269,12 @@ class _KeySystemState extends State<KeySystem> {
                           padding: const EdgeInsets.only(bottom: 2),
                           child: Center(
                               child: Text(
-                                  "${states['currentKeyPasses']}/${states['requiredKeyPasses']}",
-                                  style: GoogleFonts.montserrat(
-                                      color: Colors.white, fontSize: 22))),
+                            "${states['currentKeyPasses']}/${states['requiredKeyPasses']}",
+                            style: GoogleFonts.inriaSans(
+                              fontWeight: FontWeight.w800,
+                              fontSize: 22,
+                            ),
+                          )),
                         )),
                   )
                 ],
@@ -280,29 +283,35 @@ class _KeySystemState extends State<KeySystem> {
               child: Container(
                 width: 350,
                 height: 200,
-                decoration: const BoxDecoration(
-                    color: Color(0xFF222735),
-                    borderRadius: BorderRadius.all(Radius.circular(8))),
+                decoration: BoxDecoration(
+                    color: colors['secondary'],
+                    borderRadius: const BorderRadius.all(Radius.circular(8))),
                 child: Center(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Padding(
-                        padding: EdgeInsets.only(bottom: 16),
-                        child: Text(
-                          "Key Time Remaining",
-                          style: GoogleFonts.montserrat(
-                              color: Colors.white, fontSize: 24),
-                        ),
+                        padding: const EdgeInsets.only(bottom: 16),
+                        child: Text("Key Time Remaining",
+                            style: GoogleFonts.inriaSans(
+                                fontWeight: FontWeight.w800,
+                                fontSize: 30,
+                                color: const Color(0xFFD3D3D3))),
                       ),
                       TimerCountdown(
-                        colonsTextStyle: GoogleFonts.montserrat(
-                            color: Colors.white, fontSize: 16),
-                        timeTextStyle: GoogleFonts.montserrat(
-                            color: Colors.white, fontSize: 32),
-                        descriptionTextStyle: GoogleFonts.montserrat(
-                            color: Colors.white, fontSize: 16),
+                        colonsTextStyle: GoogleFonts.inriaSans(
+                            fontWeight: FontWeight.w800,
+                            fontSize: 22,
+                            color: const Color(0xFFD3D3D3)),
+                        timeTextStyle: GoogleFonts.inriaSans(
+                            fontWeight: FontWeight.w800,
+                            fontSize: 32,
+                            color: const Color(0xFFD3D3D3)),
+                        descriptionTextStyle: GoogleFonts.inriaSans(
+                            fontWeight: FontWeight.w800,
+                            fontSize: 16,
+                            color: const Color(0xFFD3D3D3)),
                         format: CountDownTimerFormat.hoursMinutesSeconds,
                         endTime: DateTime.fromMillisecondsSinceEpoch(int.parse(
                             encryption.decryptKey(g['keyExpires']).toString())),

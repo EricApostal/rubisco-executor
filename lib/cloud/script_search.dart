@@ -7,6 +7,9 @@ import 'package:image_network/image_network.dart';
 import 'package:flutter/services.dart';
 import 'package:csharp_rpc/csharp_rpc.dart';
 import 'package:aptabase_flutter/aptabase_flutter.dart';
+import 'package:google_fonts/google_fonts.dart';
+
+import 'package:rubisco/session/globals.dart';
 import 'package:rubisco/main.dart';
 
 // ignore: must_be_immutable
@@ -21,9 +24,9 @@ class SearchItem extends StatelessWidget {
       padding: const EdgeInsets.only(bottom: 12),
       child: Container(
         height: 130,
-        decoration: const BoxDecoration(
-          color: Color(0xff222735),
-          borderRadius: BorderRadius.all(
+        decoration: BoxDecoration(
+          color: colors['secondary'],
+          borderRadius: const BorderRadius.all(
             Radius.circular(8),
           ),
         ),
@@ -34,9 +37,9 @@ class SearchItem extends StatelessWidget {
               child: Container(
                   width: 110,
                   height: 110,
-                  decoration: const BoxDecoration(
-                      color: Color(0xff13141A),
-                      borderRadius: BorderRadius.all(Radius.circular(8))),
+                  decoration: BoxDecoration(
+                      color: colors['primary'],
+                      borderRadius: const BorderRadius.all(Radius.circular(8))),
                   child: ImageNetwork(
                     image:
                         "https://scriptblox.com/${scriptJson["game"]["imageUrl"]}",
@@ -77,8 +80,10 @@ class SearchItem extends StatelessWidget {
                           overflow: TextOverflow.fade,
                           softWrap: false,
                           textAlign: TextAlign.start,
-                          style: const TextStyle(
-                              color: Colors.white, fontSize: 18),
+                          style: GoogleFonts.inriaSans(
+                              fontWeight: FontWeight.w800,
+                              fontSize: 22,
+                              color: const Color(0xFFD3D3D3)),
                         ),
                       ),
                       Align(
@@ -88,8 +93,10 @@ class SearchItem extends StatelessWidget {
                           softWrap: false,
                           overflow: TextOverflow.fade,
                           textAlign: TextAlign.start,
-                          style: const TextStyle(
-                              color: Color(0xFF969696), fontSize: 16),
+                          style: GoogleFonts.inriaSans(
+                              fontWeight: FontWeight.w500,
+                              fontSize: 16,
+                              color: const Color(0xFFD3D3D3)),
                         ),
                       ),
                       Expanded(child: Container()),
@@ -133,8 +140,8 @@ class SearchItem extends StatelessWidget {
                                           child: Center(
                                               child: SvgPicture.asset(
                                             "assets/paste.svg",
-                                            colorFilter: const ColorFilter.mode(
-                                                Color(0xff13141A),
+                                            colorFilter: ColorFilter.mode(
+                                                colors['primary']!,
                                                 BlendMode.srcIn),
                                             semanticsLabel: "Run",
                                           )),
@@ -216,7 +223,7 @@ class _ScriptSearchState extends State<ScriptSearch> {
     return Container(
         width: MediaQuery.of(context).size.width - 80,
         height: MediaQuery.of(context).size.height - 60,
-        decoration: const BoxDecoration(color: Color(0xFF13141A)),
+        decoration: BoxDecoration(color: colors['primary']!),
         child: Column(
           children: [
             Padding(
@@ -224,9 +231,9 @@ class _ScriptSearchState extends State<ScriptSearch> {
               child: Container(
                   height: 42,
                   width: double.infinity,
-                  decoration: const BoxDecoration(
-                      color: Color(0xff222735),
-                      borderRadius: BorderRadius.all(Radius.circular(8))),
+                  decoration: BoxDecoration(
+                      color: colors['secondary']!,
+                      borderRadius: const BorderRadius.all(Radius.circular(8))),
                   child: Row(
                     children: [
                       Padding(
@@ -237,7 +244,7 @@ class _ScriptSearchState extends State<ScriptSearch> {
                           child: SvgPicture.asset(
                             "assets/search.svg",
                             colorFilter: const ColorFilter.mode(
-                              Color(0xFF41D1FE),
+                              Color(0xFF69C0FF),
                               BlendMode.srcIn,
                             ),
                             semanticsLabel: 'Search',
@@ -255,8 +262,10 @@ class _ScriptSearchState extends State<ScriptSearch> {
                                 });
                               },
                               cursorColor: Colors.white,
-                              style: const TextStyle(
-                                  color: Color.fromARGB(255, 255, 255, 255)),
+                              style: GoogleFonts.inriaSans(
+                            fontWeight: FontWeight.w800,
+                            fontSize: 16,
+                            color: const Color(0xFFD3D3D3)),
                               decoration: const InputDecoration(
                                 border: InputBorder.none,
                               )
@@ -293,7 +302,7 @@ class _ScriptSearchState extends State<ScriptSearch> {
             ),
             Padding(
               padding: const EdgeInsets.only(left: 8, right: 8),
-              child: Container(
+              child: SizedBox(
                 width: MediaQuery.of(context).size.width - 80,
                 height: MediaQuery.of(context).size.height - 116,
                 child: FutureBuilder(
@@ -307,7 +316,7 @@ class _ScriptSearchState extends State<ScriptSearch> {
                     var snapdata = snapshot.data;
                     if (snapdata == null) {
                       // print("DATA IS NULL, VERY BAD, PROGRAM WILL NOT WORK VERY WELL");
-                      return Center(child: CircularProgressIndicator());
+                      return const Center(child: CircularProgressIndicator());
                     }
                     // print( snapdata.body);
                     dynamic data = json.decode(snapdata.body);

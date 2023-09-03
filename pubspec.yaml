@@ -71,6 +71,7 @@ dependencies:
   go_router: ^10.1.0
   debug_console: ^0.0.1
   url_launcher: ^6.1.12
+  loading_animation_widget: ^1.2.0+4
 
 # To apply the icon stuffs, run
 # dart run flutter_launcher_icons -f pubspec.yaml

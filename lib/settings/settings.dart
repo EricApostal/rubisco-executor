@@ -64,15 +64,15 @@ class SettingsSidebarState extends State<SettingsSidebar> {
             width: 200,
             decoration: BoxDecoration(
               color: _selectedPage == pageIndex
-                  ? const Color.fromARGB(255, 103, 245, 255)
-                  : const Color(0xFF222735),
+                  ? colors['selected']
+                  : colors['secondary'],
               borderRadius: BorderRadius.circular(8),
             ),
             child: TextButton(
               onPressed: () {
                 setPage(pageIndex);
               },
-              style: ButtonStyle(splashFactory: NoSplash.splashFactory),
+              style: const ButtonStyle(splashFactory: NoSplash.splashFactory),
               child: Align(
                 alignment: Alignment.centerLeft,
                 child: Row(
@@ -97,11 +97,11 @@ class SettingsSidebarState extends State<SettingsSidebar> {
                     Text(
                       buttonText,
                       textAlign: TextAlign.start,
-                      style: GoogleFonts.lato(
-                        color: _selectedPage == pageIndex
-                            ? const Color.fromARGB(255, 0, 0, 0)
-                            : const Color.fromARGB(255, 255, 255, 255),
-                      ),
+                      style: GoogleFonts.inriaSans(
+                            fontWeight: FontWeight.w800,
+                            fontSize: 14,
+                            color: colors['primary'],
+                      )
                     ),
                   ],
                 ),
@@ -136,8 +136,8 @@ class _SettingsCardsState extends State<SettingsCard> {
       padding: const EdgeInsets.only(bottom: 8, left: 8, right: 8),
       child: Container(
         height: 60,
-        decoration: const BoxDecoration(
-          color: Color(0xff222735),
+        decoration: BoxDecoration(
+          color: colors['secondary'],
           borderRadius: BorderRadius.all(Radius.circular(6)),
         ),
         child: Padding(
@@ -155,7 +155,10 @@ class _SettingsCardsState extends State<SettingsCard> {
                       overflow: TextOverflow.fade,
                       textAlign: TextAlign.start,
                       style:
-                          GoogleFonts.lato(color: Colors.white, fontSize: 18),
+                          GoogleFonts.inriaSans(
+                            fontWeight: FontWeight.w800,
+                            fontSize: 18,
+                            color: const Color(0xFFD3D3D3)),
                     ),
                     Padding(
                       padding: const EdgeInsets.only(top: 4),
@@ -164,8 +167,10 @@ class _SettingsCardsState extends State<SettingsCard> {
                         softWrap: false,
                         overflow: TextOverflow.fade,
                         textAlign: TextAlign.start,
-                        style: GoogleFonts.lato(
-                            color: Color(0xffB8B3B3), fontSize: 14),
+                        style: GoogleFonts.inriaSans(
+                            fontWeight: FontWeight.w500,
+                            fontSize: 14,
+                            color: const Color(0xFFD3D3D3)),
                       ),
                     ),
                   ],
@@ -217,9 +222,9 @@ class SettingsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-        decoration: const BoxDecoration(
-            color: Color(0xff13141A),
-            borderRadius: BorderRadius.all(Radius.circular(8))),
+        decoration: BoxDecoration(
+            color: colors['primary'],
+            borderRadius: const BorderRadius.all(Radius.circular(8))),
         child: ListView(
           children: [
             const SizedBox(
@@ -271,7 +276,7 @@ class _SettingsFrameState extends State<SettingsFrame> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(color: Color(0xFF13141A)),
+      decoration: BoxDecoration(color: colors['primary']),
       child: SingleChildScrollView(
         child: Row(
           mainAxisAlignment: MainAxisAlignment.start,

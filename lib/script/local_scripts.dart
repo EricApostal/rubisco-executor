@@ -11,6 +11,7 @@ import 'package:path/path.dart' as path;
 import 'package:url_launcher/url_launcher.dart';
 
 import 'package:rubisco/code/tab/monaco/window.dart';
+import 'package:rubisco/session/globals.dart';
 
 const unLen = 256;
 
@@ -145,7 +146,7 @@ class _FolderIconState extends State<FolderIcon> {
         child: Container(
           decoration: BoxDecoration(
             color:
-                _isHovered ? const Color(0xFF222735) : const Color(0xFF13141A),
+                _isHovered ? const Color(0xFF222735) : colors['background'],
             borderRadius: const BorderRadius.all(Radius.circular(2)),
           ),
           child: SingleChildScrollView(

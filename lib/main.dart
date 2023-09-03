@@ -19,6 +19,7 @@ import 'package:device_info_plus/device_info_plus.dart';
 import 'package:aptabase_flutter/aptabase_flutter.dart';
 import 'package:csharp_rpc/csharp_rpc.dart';
 import 'package:fluent_ui/fluent_ui.dart' as fluent;
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 
 late CsharpRpc shadowRPC;
 void main() async {
@@ -150,10 +151,9 @@ class _MyAppState extends State<MyApp> with WindowListener {
               splashColor: Colors.transparent,
               highlightColor: Colors.transparent,
               iconTheme: const IconThemeData(color: Colors.white),
-              colorScheme:
-                  ColorScheme.fromSeed(seedColor: const Color(0xFF13141A)),
-              primaryColor: const Color(0xFF13141A),
-              scaffoldBackgroundColor: const Color(0xFF13141A),
+              colorScheme: ColorScheme.fromSeed(seedColor: colors['primary']!),
+              primaryColor: colors['primary'],
+              scaffoldBackgroundColor: colors['primary'],
               useMaterial3: true,
             ),
             home: MainWindow(updateOpacity: updateOpacity),
@@ -200,9 +200,9 @@ class _SidebarState extends State<Sidebar> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 55,
+      width: 60,
       height: MediaQuery.of(context).size.height - 40,
-      decoration: const BoxDecoration(color: Color(0xFF13141A)),
+      decoration: BoxDecoration(color: colors['primary']),
       child: Align(
         alignment: Alignment.topLeft,
         child: Column(
@@ -215,7 +215,10 @@ class _SidebarState extends State<Sidebar> {
             _buildTextButton("assets/cloud.svg", 'Go to Script Search', 1),
             _buildTextButton("assets/key.svg", 'Key System', 2),
             Expanded(child: Container()),
-            _buildTextButton("assets/settings.svg", 'Settings', 3),
+            Padding(
+              padding: const EdgeInsets.only(bottom: 2),
+              child: _buildTextButton("assets/settings.svg", 'Settings', 3),
+            ),
           ],
         ),
       ),
@@ -237,14 +240,18 @@ class _SidebarState extends State<Sidebar> {
                   width: 5,
                   height: 100,
                   color: _selectedPage == pageIndex
-                      ? const Color(0xFF23CAFF)
-                      : const Color(0xFF13141A),
+                      ? colors['selected']
+                      : colors['primary'],
                 )),
             SizedBox(
                 height: 45,
                 width: 55,
                 child: TextButton(
-                  style: const ButtonStyle(splashFactory: NoSplash.splashFactory),
+                  style: ButtonStyle(
+                    splashFactory: NoSplash.splashFactory,
+                    overlayColor: MaterialStateColor.resolveWith(
+                        (states) => Colors.transparent),
+                  ),
                   onPressed: () {
                     setPage(pageIndex);
                   },
@@ -300,56 +307,31 @@ class _RubiscoFrameState extends State<RubiscoFrame> {
         children: [
           Container(
             height: 40,
-            color: const Color(0xFF13141A),
+            color: colors['primary'],
             child: Row(
               children: [
                 Expanded(
                     child: MoveWindow(
                   child: Padding(
-                    padding: const EdgeInsets.only(left: 10, top: 5),
+                    padding: const EdgeInsets.only(left: 10, top: 2),
                     child: Row(
                       children: [
                         Text(
                           "RUBISCO",
-                          style: GoogleFonts.istokWeb(
-                            fontSize: 24,
-                            color: Color.fromARGB(255, 218, 218, 218),
-                          ),
+                          style: GoogleFonts.inriaSans(
+                              fontWeight: FontWeight.w800,
+                              fontSize: 30,
+                              color: const Color(0xFF69C0FF)),
                         ),
-                        Padding(
-                          padding: const EdgeInsets.only(left: 8, bottom: 4),
-                          child: Row(
-                            
-                            children: [
-                              // SizedBox(
-                              //   width: 70,
-                              //   height: 28,
-                              //   child: DropDown(
-                              //     name: "File",
-                              //     options: {
-                              //       "Open File": () {
-                              //         print("Open file!");
-                              //       },
-                              //       "Save File": () {
-                              //         print("save file moment");
-                              //       }
-                              //     },
-                              //   ),
-                              // ),
-                              SizedBox(
-                                width: 70,
-                                height: 28,
-                                child: DropDown(
-                                  name: "View",
-                                  options: {
-                                    "Explorer": () {
-                                      toggleExplorer();
-                                    }
-                                  },
-                                ),
-                              ),
-                            ],
-                          ),
+                        Expanded(
+                          child: Container(),
+                        ),
+                        Text(
+                          "v2.0.1",
+                          style: GoogleFonts.inriaSans(
+                              fontWeight: FontWeight.w800,
+                              fontSize: 24,
+                              color: const Color(0xFFD3D3D3)),
                         ),
                       ],
                     ),
@@ -376,10 +358,10 @@ class _RubiscoFrameState extends State<RubiscoFrame> {
                           SizedBox(
                             width: MediaQuery.of(context).size.width - 89,
                             height: MediaQuery.of(context).size.height - 150,
-                            child: Row(
+                            child: const Row(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                if (explorerShown) LocalScripts(),
+                                // if (explorerShown) LocalScripts(),
                                 ExecutorWindow(),
                               ],
                             ),
@@ -449,29 +431,31 @@ class RunButton extends StatefulWidget {
 
 class _RunButtonState extends State<RunButton> {
   var currentColor = const Color.fromARGB(255, 11, 96, 214);
-  var iconColor = Colors.white;
+  var textColor = Colors.white;
   var isAttached = false;
-  var assetPath = "assets/attach.svg";
+  int injectionState = 0;
+  String buttonText = "Attach";
 
   void updateButtonState(int newState) {
     setState(() {
       // Idle: 1, Injecting: 2, Ready: 3
+      injectionState = newState;
       if (newState == 1) {
-        currentColor = const Color.fromARGB(255, 11, 96, 214);
-        iconColor = Colors.white;
+        currentColor = Colors.white;
+        textColor = Colors.black;
         isAttached = false;
-        assetPath = "assets/attach.svg";
+        buttonText = "Attach";
       }
       if (newState == 2) {
         currentColor = const Color.fromARGB(255, 235, 255, 54);
-        iconColor = Colors.black;
-        assetPath = "assets/wait.svg";
+        textColor = Colors.black;
+        buttonText = "Attaching";
       }
       if (newState == 3) {
         isAttached = true;
         currentColor = const Color.fromARGB(255, 54, 255, 141);
-        iconColor = Colors.black;
-        assetPath = "assets/play_arrow.svg";
+        textColor = Colors.black;
+        buttonText = "Run";
       }
     });
   }
@@ -506,16 +490,15 @@ class _RunButtonState extends State<RunButton> {
 
   @override
   Widget build(BuildContext context) {
-    return Positioned(
-      right: 20,
-      bottom: 12,
+    return Padding(
+      padding: const EdgeInsets.only(right: 8),
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
-        width: 50,
-        height: 50,
+        width: 100,
+        height: 40,
         decoration: BoxDecoration(
           color: currentColor,
-          borderRadius: const BorderRadius.all(Radius.circular(14)),
+          borderRadius: const BorderRadius.all(Radius.circular(6)),
         ),
         child: TextButton(
           onPressed: () async {
@@ -541,22 +524,32 @@ class _RunButtonState extends State<RunButton> {
               }
             });
           },
+          style: ButtonStyle(
+              splashFactory: NoSplash.splashFactory,
+              overlayColor: MaterialStateColor.resolveWith(
+                  (states) => Colors.transparent)),
           child: Center(
             child: AnimatedSwitcher(
-              duration: const Duration(milliseconds: 100),
-              transitionBuilder: (child, animation) {
-                return ScaleTransition(
-                  scale: animation,
-                  child: child,
-                );
-              },
-              child: SvgPicture.asset(
-                assetPath,
-                key: ValueKey<String>(assetPath),
-                colorFilter: ColorFilter.mode(iconColor, BlendMode.srcIn),
-                semanticsLabel: 'Run script',
-              ),
-            ),
+                duration: const Duration(milliseconds: 100),
+                transitionBuilder: (child, animation) {
+                  return ScaleTransition(
+                    scale: animation,
+                    child: child,
+                  );
+                },
+                child: (injectionState == 2)
+                    ? SizedBox(
+                        width: 100,
+                        height: 30,
+                        child: LoadingAnimationWidget.fallingDot(
+                            color: colors['primary']!, size: 40))
+                    : Text(
+                        buttonText,
+                        style: GoogleFonts.inriaSans(
+                            fontWeight: FontWeight.w800,
+                            fontSize: 17,
+                            color: textColor),
+                      )),
           ),
         ),
       ),
@@ -566,7 +559,63 @@ class _RunButtonState extends State<RunButton> {
 
 extension SetPageContext on BuildContext {
   Function get setPage =>
-      this.findAncestorStateOfType<_RubiscoFrameState>()!.setPage;
+      findAncestorStateOfType<_RubiscoFrameState>()!.setPage;
+}
+
+class BottomBar extends StatelessWidget {
+  const BottomBar({super.key});
+
+  Widget _buildBottomButton(String label, Function callback) {
+    return Padding(
+      padding: const EdgeInsets.only(right: 6),
+      child: Container(
+          width: 100,
+          height: 40,
+          decoration: BoxDecoration(
+              color: colors['secondary'],
+              borderRadius: const BorderRadius.all(Radius.circular(6))),
+          child: TextButton(
+            onPressed: () {
+              callback();
+            },
+            style: ButtonStyle(
+              splashFactory: NoSplash.splashFactory,
+              overlayColor: MaterialStateColor.resolveWith(
+                  (states) => Colors.transparent),
+            ),
+            child: Text(
+              label,
+              style: GoogleFonts.inriaSans(
+                  fontWeight: FontWeight.w800,
+                  fontSize: 17,
+                  color: const Color(0xFFDFDFDF)),
+            ),
+          )),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 7),
+      child: Container(
+          height: 40,
+          width: MediaQuery.of(context).size.width - 60,
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildBottomButton("Open", () {
+                print("open");
+              }),
+              _buildBottomButton("Save", () {
+                print("save");
+              }),
+              Expanded(child: Container()),
+              RunButton()
+            ],
+          )),
+    );
+  }
 }
 
 class ExecutorWindow extends StatelessWidget {
@@ -574,9 +623,18 @@ class ExecutorWindow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-      child: Stack(
-          children: [ExecutorMain(shadowRPC: shadowRPC), const RunButton()]),
+    return Padding(
+      padding: const EdgeInsets.only(top: 5),
+      child: Column(
+        children: [
+          SizedBox(
+            width: MediaQuery.of(context).size.width - 60,
+            height: MediaQuery.of(context).size.height - 105,
+            child: ExecutorMain(shadowRPC: shadowRPC),
+          ),
+          const BottomBar()
+        ],
+      ),
     );
   }
 }

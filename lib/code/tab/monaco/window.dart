@@ -168,10 +168,11 @@ class _TabState extends State<MonacoTabs> {
                 dragColor: const Color(0xFF222735),
                 stickyColor: Colors.white,
                 dividerColor: const Color(0xFF222735),
-                shadowColor: const Color(0xFF13141A),
+                // shadowColor: const Color(0xFF13141A),
+                shadowColor: const Color(0x0),
                 bottomColor: const Color(0xFF222735),
                 margin: const EdgeInsets.only(left: 20, top: 0, right: 10),
-                tabBarMargin: 0,
+                tabBarMargin: 2,
                 tabBuilder: (context, tab, isActive) =>
                     buildTab(context, tab, isActive),
                 tabActions: (context, tab) => [
@@ -222,25 +223,12 @@ class _TabState extends State<MonacoTabs> {
           builder: (tab) {
             monacoEditorKeys.putIfAbsent(
                 tab.id, () => GlobalKey<MonacoWindowState>());
-            return Stack(
-              children: [
-                Positioned(
-                  left: 0,
-                  top: 4,
-                  child: SizedBox(
-                    width: 4000,
-                    height: 2000,
-                    child: ClipRect(
-                      child: MonacoWindow(
+            return MonacoWindow(
                         key: monacoEditorKeys[tab.id],
                         tabController: _controller,
                         tabID: tab.id,
                         shadowRPC: widget.shadowRPC,
-                      ),
-                    ),
-                  ),
-                ),
-              ],
+                      
             );
           },
         ),

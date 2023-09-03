@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:rubisco/session/globals.dart';
 
 class HoverableContainer extends StatefulWidget {
@@ -27,7 +28,7 @@ class HoverableContainerState extends State<HoverableContainer> {
             height: 25,
             decoration: BoxDecoration(
               color:
-                  isHovered ? const Color(0xFF13141A) : const Color(0xFF222735),
+                  isHovered ? colors['primary']: colors['secondary'],
               borderRadius: const BorderRadius.all(Radius.circular(4)),
             ),
             child: const Icon(
@@ -74,15 +75,15 @@ class _CustomTabState extends State<CustomTab> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         border: Border.symmetric(
-          vertical: BorderSide(color: Color(0xff13141A), width: 2),
+          vertical: BorderSide(color: colors['primary']!, width: 2),
         ),
       ),
       child: Container(
         decoration: BoxDecoration(
-          color: widget.isActive ? const Color(0xff222735) : Color(0xFF13141A),
-          borderRadius: const BorderRadius.all(Radius.circular(8)),
+          color: widget.isActive ? colors['secondary'] : colors['primary'],
+          borderRadius: const BorderRadius.all(Radius.circular(6)),
         ),
         child: SizedBox(
           width: 200,
@@ -163,12 +164,13 @@ class _CustomTabState extends State<CustomTab> {
       child: Text(
         title,
         softWrap: false,
-        style: TextStyle(
-          overflow: TextOverflow.fade,
+        style: GoogleFonts.inriaSans(
+          // overflow: TextOverflow.fade,
+          fontWeight: FontWeight.w800,
           color: widget.isActive
-              ? Colors.white
+              ? const Color(0xFFDFDFDF)
               : const Color.fromARGB(255, 189, 189, 189),
-          fontSize: 15,
+          fontSize: 17,
         ),
       ),
     );
@@ -181,9 +183,6 @@ class _CustomTabState extends State<CustomTab> {
       child: Padding(
           padding: const EdgeInsets.only(right: 8.0),
           child: Listener(
-            onPointerDown: (PointerDownEvent event) {
-              print("pointer is indeed down");
-            },
             onPointerUp: (PointerUpEvent event) {
               widget.onClose();
             },

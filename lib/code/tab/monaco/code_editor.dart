@@ -263,10 +263,25 @@ class RunButton extends StatefulWidget {
 class _RunButtonState extends State<RunButton> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Webview(
-        widget.webviewController,
-        permissionRequested: _onPermissionRequested,
+    // borderRadius: const BorderRadius.all( Radius.circular(4) ),
+    return Padding(
+      padding: const EdgeInsets.only(top: 0, right: 8),
+      child: Scaffold(
+        body: ClipRRect(
+          borderRadius: const BorderRadius.all( Radius.circular(4) ),
+          child: Container(
+            decoration: BoxDecoration(
+              color: colors['secondary']
+            ),
+            child: Padding(
+              padding: const EdgeInsets.only(top: 8),
+              child: Webview(
+                widget.webviewController,
+                permissionRequested: _onPermissionRequested,
+              ),
+            ),
+          ),
+        ),
       ),
     );
   }
