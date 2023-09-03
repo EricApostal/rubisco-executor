@@ -112,6 +112,7 @@ class MonacoWindowState extends State<MonacoWindow> {
         print("UPDATING CONTENT!");
         // bad fix, just for tab 1 which initializes seperately
         if (g['tabData'][widget.tabID] == null) {
+          return;
           print("Tab is Null!");
           g['tabData'][widget.tabID] = {'name': "Script ${widget.tabID}"};
           setScript(widget.tabID, currentContent);

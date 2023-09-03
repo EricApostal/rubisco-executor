@@ -68,24 +68,20 @@ class _TabState extends State<MonacoTabs> {
         await Future.delayed(const Duration(milliseconds: 100));
       }
       g['tabData'].forEach((index, value) {
-        _controller.addTab(_getTab(index));
+        print("Adding tab with data: ");
+        print(g['tabData'][index]);
+        if (File("bin/tabs/${index}.txt").existsSync()){
+          _controller.addTab(_getTab(index));
+        } else {
+          print("File for tab doesn't exist!");
+          File("bin/tabs/${index}.txt").delete();
+        }
+        
       });
     }
 
     String generateTabId() {
       return "t ${Random().nextInt(100000) + 10000}";
-      // var tabIdList = [];
-      // g['tabData'].forEach((index, value) {
-      //   tabIdList.add(index);
-      // });
-
-      // num tabIdIndex = 1;
-      // while (true) {
-      //   if (!tabIdList.contains("t $tabIdIndex")) {
-      //     return "t $tabIdIndex";
-      //   }
-      //   tabIdIndex += 1;
-      // }
     }
 
     // Creates a tab then fills monaco with specified content
@@ -149,7 +145,13 @@ class _TabState extends State<MonacoTabs> {
         File("bin/tabs/${tab.id}.txt").delete();
         g['tabData'].remove(tab.id);
         saveData(g);
-
+        await Future.delayed( Duration(seconds: 1) );
+        if (await File("bin/tabs/${tab.id}.txt").exists()){
+          print("file didn't delete, wat?");
+          File("bin/tabs/${tab.id}.txt").delete();
+          g['tabData'].remove(tab.id);
+        }
+ 
         // Set the new current tab
         // _controller.currentTab = 0;
       },

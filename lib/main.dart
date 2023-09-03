@@ -329,12 +329,15 @@ class _RubiscoFrameState extends State<RubiscoFrame> {
                         Expanded(
                           child: Container(),
                         ),
-                        Text(
-                          "v1.1.0",
-                          style: GoogleFonts.inriaSans(
-                              fontWeight: FontWeight.w800,
-                              fontSize: 24,
-                              color: const Color(0xFFD3D3D3)),
+                        Padding(
+                          padding: const EdgeInsets.only(right: 4),
+                          child: Text(
+                            "v1.1.0",
+                            style: GoogleFonts.inriaSans(
+                                fontWeight: FontWeight.w800,
+                                fontSize: 24,
+                                color: const Color(0xFFD3D3D3)),
+                          ),
                         ),
                       ],
                     ),
@@ -497,7 +500,7 @@ class _RunButtonState extends State<RunButton> {
         padding: const EdgeInsets.only(right: 8),
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 200),
-          width: 100,
+          width: 40,
           height: 40,
           decoration: BoxDecoration(
             color: currentColor,
@@ -533,38 +536,39 @@ class _RunButtonState extends State<RunButton> {
                     (states) => Colors.transparent)),
             child: Center(
               child: AnimatedSwitcher(
-                duration: const Duration(milliseconds: 100),
-                transitionBuilder: (child, animation) {
-                  return ScaleTransition(
-                    scale: animation,
-                    child: child,
-                  );
-                },
-                child: (injectionState == 2)
-                    ? SizedBox(
-                        width: 100,
-                        height: 30,
-                        child: LoadingAnimationWidget.fallingDot(
-                            color: colors['primary']!, size: 40))
-                    : (injectionState == 1)
-                        ? Text(
-                            buttonText,
-                            style: GoogleFonts.inriaSans(
-                                fontWeight: FontWeight.w800,
-                                fontSize: 17,
-                                color: textColor),
-                          )
-                        : SizedBox(
+                  duration: const Duration(milliseconds: 100),
+                  transitionBuilder: (child, animation) {
+                    return ScaleTransition(
+                      scale: animation,
+                      child: child,
+                    );
+                  },
+                  child: (injectionState == 2)
+                      ? SizedBox(
                           width: 100,
-                          height: 300,
-                          child: SvgPicture.asset(
-                              "assets/play_arrow.svg",
-                              colorFilter: ColorFilter.mode(
-                                  colors['primary']!, BlendMode.srcIn),
-                              semanticsLabel: "Run",
-                            ),
-                        ),
-              ),
+                          height: 30,
+                          child: LoadingAnimationWidget.fallingDot(
+                              color: colors['primary']!, size: 40))
+                      : (injectionState == 1)
+                          ? SvgPicture.asset(
+                                "assets/attach.svg",
+                                width: 100,
+                                height: 100,
+                                colorFilter: ColorFilter.mode(
+                                    colors['primary']!, BlendMode.srcIn),
+                                semanticsLabel: "Attach",
+                              )
+                            
+                          : SizedBox(
+                              width: 100,
+                              height: 300,
+                              child: SvgPicture.asset(
+                                "assets/play_arrow.svg",
+                                colorFilter: ColorFilter.mode(
+                                    colors['primary']!, BlendMode.srcIn),
+                                semanticsLabel: "Run",
+                              ),
+                            )),
             ),
           ),
         ));
@@ -620,26 +624,27 @@ class BottomBar extends StatelessWidget {
             children: [
               _buildBottomButton("Open", () async {
                 print("opening file");
-                FilePickerResult? result = await FilePicker.platform.pickFiles();
+                FilePickerResult? result =
+                    await FilePicker.platform.pickFiles();
 
                 if (result != null) {
                   File file = File(result.files.single.path ?? "");
-                  addTabWithContent(basename(file.path), file.readAsStringSync());
+                  addTabWithContent(
+                      basename(file.path), file.readAsStringSync());
                 } else {
                   // User canceled the picker
                 }
-                
               }),
               _buildBottomButton("Save", () async {
-
                 String? outputFile = await FilePicker.platform.saveFile(
-                dialogTitle: 'Please select an output file:',
-                fileName: 'script.txt',
-              );
-              File(outputFile ?? "").writeAsStringSync(getCurrentTabContent());
-              if (outputFile == null) {
-                // User canceled the picker
-              }
+                  dialogTitle: 'Please select an output file:',
+                  fileName: 'script.txt',
+                );
+                File(outputFile ?? "")
+                    .writeAsStringSync(getCurrentTabContent());
+                if (outputFile == null) {
+                  // User canceled the picker
+                }
               }),
               Expanded(child: Container()),
               RunButton()

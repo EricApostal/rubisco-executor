@@ -273,6 +273,7 @@ class _KeySystemState extends State<KeySystem> {
                             style: GoogleFonts.inriaSans(
                               fontWeight: FontWeight.w800,
                               fontSize: 22,
+                              color: const Color(0xFFD3D3D3)
                             ),
                           )),
                         )),
