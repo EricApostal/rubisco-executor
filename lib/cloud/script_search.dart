@@ -263,40 +263,14 @@ class _ScriptSearchState extends State<ScriptSearch> {
                               },
                               cursorColor: Colors.white,
                               style: GoogleFonts.inriaSans(
-                            fontWeight: FontWeight.w800,
-                            fontSize: 16,
-                            color: const Color(0xFFD3D3D3)),
+                                  fontWeight: FontWeight.w800,
+                                  fontSize: 16,
+                                  color: const Color(0xFFD3D3D3)),
                               decoration: const InputDecoration(
                                 border: InputBorder.none,
-                              )
-
-                              //textColo: Color.fromARGB(255, 148, 149, 153),)
-                              ),
+                              )),
                         ),
                       ),
-                      // Padding(
-                      //   padding: const EdgeInsets.only(top: 4, bottom: 4),
-                      //   child: Padding(
-                      //     padding: const EdgeInsets.only(right: 4),
-                      //     child: Container(
-                      //       width: 80,
-                      //       height: 40,
-                      //       decoration: const BoxDecoration(
-                      //           color: Color.fromARGB(255, 103, 245, 255),
-                      //           borderRadius:
-                      //               BorderRadius.all(Radius.circular(8))),
-                      //       child: TextButton(
-                      //         onPressed: () {},
-                      //         child: const Center(
-                      //             child: Text("Search",
-                      //                 style: TextStyle(
-                      //                   color:
-                      //                       Color.fromARGB(255, 0, 0, 0),
-                      //                 ))),
-                      //       ),
-                      //     ),
-                      //   ),
-                      // )
                     ],
                   )),
             ),
@@ -313,6 +287,7 @@ class _ScriptSearchState extends State<ScriptSearch> {
                     //     ConnectionState.waiting) {
                     //   return Center(child: CircularProgressIndicator());
                     // }
+
                     var snapdata = snapshot.data;
                     if (snapdata == null) {
                       // print("DATA IS NULL, VERY BAD, PROGRAM WILL NOT WORK VERY WELL");

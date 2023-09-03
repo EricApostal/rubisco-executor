@@ -433,7 +433,7 @@ class _RunButtonState extends State<RunButton> {
   var currentColor = const Color.fromARGB(255, 11, 96, 214);
   var textColor = Colors.white;
   var isAttached = false;
-  int injectionState = 0;
+  int injectionState = 1;
   String buttonText = "Attach";
 
   void updateButtonState(int newState) {
@@ -491,45 +491,45 @@ class _RunButtonState extends State<RunButton> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(right: 8),
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        width: 100,
-        height: 40,
-        decoration: BoxDecoration(
-          color: currentColor,
-          borderRadius: const BorderRadius.all(Radius.circular(6)),
-        ),
-        child: TextButton(
-          onPressed: () async {
-            if (!isKeyValid()) {
-              context.setPage(2); // Navigate to the KeySystem page
-              return;
-            }
+        padding: const EdgeInsets.only(right: 8),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          width: 100,
+          height: 40,
+          decoration: BoxDecoration(
+            color: currentColor,
+            borderRadius: const BorderRadius.all(Radius.circular(6)),
+          ),
+          child: TextButton(
+            onPressed: () async {
+              if (!isKeyValid()) {
+                context.setPage(2); // Navigate to the KeySystem page
+                return;
+              }
 
-            if (!isAttached) {
-              updateButtonState(2);
-            }
-            shadowRPC.invoke(method: "IsAttached").then((isAttached) async {
               if (!isAttached) {
                 updateButtonState(2);
-                shadowRPC.invoke(method: "Attach");
-                while (!await shadowRPC.invoke(method: "IsAttached")) {
-                  updateButtonState(2);
-                  await Future.delayed(const Duration(milliseconds: 50));
-                }
-                onAttach();
-              } else {
-                onRunScript();
               }
-            });
-          },
-          style: ButtonStyle(
-              splashFactory: NoSplash.splashFactory,
-              overlayColor: MaterialStateColor.resolveWith(
-                  (states) => Colors.transparent)),
-          child: Center(
-            child: AnimatedSwitcher(
+              shadowRPC.invoke(method: "IsAttached").then((isAttached) async {
+                if (!isAttached) {
+                  updateButtonState(2);
+                  shadowRPC.invoke(method: "Attach");
+                  while (!await shadowRPC.invoke(method: "IsAttached")) {
+                    updateButtonState(2);
+                    await Future.delayed(const Duration(milliseconds: 50));
+                  }
+                  onAttach();
+                } else {
+                  onRunScript();
+                }
+              });
+            },
+            style: ButtonStyle(
+                splashFactory: NoSplash.splashFactory,
+                overlayColor: MaterialStateColor.resolveWith(
+                    (states) => Colors.transparent)),
+            child: Center(
+              child: AnimatedSwitcher(
                 duration: const Duration(milliseconds: 100),
                 transitionBuilder: (child, animation) {
                   return ScaleTransition(
@@ -543,17 +543,28 @@ class _RunButtonState extends State<RunButton> {
                         height: 30,
                         child: LoadingAnimationWidget.fallingDot(
                             color: colors['primary']!, size: 40))
-                    : Text(
-                        buttonText,
-                        style: GoogleFonts.inriaSans(
-                            fontWeight: FontWeight.w800,
-                            fontSize: 17,
-                            color: textColor),
-                      )),
+                    : (injectionState == 1)
+                        ? Text(
+                            buttonText,
+                            style: GoogleFonts.inriaSans(
+                                fontWeight: FontWeight.w800,
+                                fontSize: 17,
+                                color: textColor),
+                          )
+                        : SizedBox(
+                          width: 100,
+                          height: 300,
+                          child: SvgPicture.asset(
+                              "assets/play_arrow.svg",
+                              colorFilter: ColorFilter.mode(
+                                  colors['primary']!, BlendMode.srcIn),
+                              semanticsLabel: "Run",
+                            ),
+                        ),
+              ),
+            ),
           ),
-        ),
-      ),
-    );
+        ));
   }
 }
 
