@@ -1,16 +1,14 @@
-# rubisco_one
+# Rubisco
+A modern scripting utility interface for Roblox.
 
-A new Flutter project.
+# About
+Rubisco provides the interface for APIs that run scripts within Roblox. This project stayed private as I was largely doing it to learn more flutter.
 
-## Getting Started
-
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+# Features
+- Cross Platform
+- Syntax highlighting using Monaco
+- Tab integration for programming space
+- Online script search
+- Automatic updates (via external loader)
+- Key system integration via webview for monetization
+- HWID-based cryptographic key generation
